@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <HomeView/>
+    <LoginView/>
   </div>
 </template>
 
@@ -19,8 +19,9 @@
 
 
 
-import HomeView from "@/views/HomeView";
+
+import LoginView from "@/views/LoginView";
 export default {
-  components: {HomeView}
+  components: {LoginView}
 }
 </script>
