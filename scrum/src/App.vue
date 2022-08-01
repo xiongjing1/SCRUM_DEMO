@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <LoginView/>
+    <router-view/>
   </div>
 </template>
 
@@ -20,8 +20,8 @@
 
 
 
-import LoginView from "@/views/LoginView";
+
 export default {
-  components: {LoginView}
+  components: {}
 }
 </script>

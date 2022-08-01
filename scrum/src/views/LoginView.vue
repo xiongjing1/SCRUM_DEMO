@@ -5,18 +5,40 @@
   <!--  <div class="choice">
    </div>
     <div class="underline"></div> -->
-    <ul class="tabs">
+    <ul class="tabs" v-if="iffind===0">
       <i class="line" :style="{left: slideLeft}"></i>
       <li v-for="(item, index) in tabList" :key="index" class="tab" :class="{'tab-current':  index == currentIndex}" @click="clickTab(index)">{{item}}</li>
     </ul>
-    <div class="login" v-if="currentIndex===0">
+    <div class="login" v-if="currentIndex===0&&iffind===0">
     <h2 style="margin-left: 55px; margin-top: 50px">Log in to your account</h2>
       <div class="small_title">Your Email</div>
-      <el-input v-model="username" prefix-icon="el-icon-message" placeholder="请输入邮箱地址"></el-input>
+      <el-input v-model="login_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址"></el-input>
       <div class="small_title">Password</div>
-      <el-input v-model="username" show-password prefix-icon="el-icon-key" placeholder="请输入密码"></el-input>
-      <div class="forget">Forgot your Password?</div>
+      <el-input v-model="login_password" show-password prefix-icon="el-icon-key" placeholder="请输入密码"></el-input>
+      <div class="forget" v-on:click="find">Forgot your Password?</div>
       <el-button type="login_button" v-on:click="login_0">Log in</el-button>
+    </div>
+    <div class="register" v-if="currentIndex===1&&iffind===0">
+      <h2 style="margin-left: 55px; margin-top: 50px">Create account</h2>
+      <el-input class="register_input" v-model="register_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址" @blur="email_blur"></el-input>
+      <el-button type="email_check" v-on:click="send_code">send code</el-button>
+      <div class="email_warn" v-if="fault_code===1">邮箱不存在</div>
+      <div class="email_warn" v-if="fault_code===2">邮箱格式错误</div>
+      <el-input  class="code_input" v-model="register_code"  placeholder="请输入验证码"></el-input>
+      <el-input  class="register_input" v-model="register_name" prefix-icon="el-icon-user" placeholder="请输入真实姓名"></el-input>
+      <div class="name_warn" v-if="fault_code===3">请输入正确的姓名</div>
+      <el-input  class="register_input" v-model="register_password" show-password prefix-icon="el-icon-key" placeholder="请输入密码"></el-input>
+      <el-button type="login_button" v-on:click="login_0">Register</el-button>
+    </div>
+    <div class="find" v-if="iffind===1">
+      <h2 style="margin-left: 55px; margin-top: 50px">Forgot your password?</h2>
+      <div class="detail">Enter the email you registered with and we'll send the vertification code to reset the password</div>
+      <el-input class="register_input" v-model="reset_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址"></el-input>
+      <el-button type="email_check">send code</el-button>
+      <el-input  class="code_input" v-model="reset_code"  placeholder="请输入验证码"></el-input>
+      <el-input  class="register_input" v-model="reset_password" show-password prefix-icon="el-icon-key" placeholder="请输入新密码"></el-input>
+      <div class="return" v-on:click="returnTologin">Return to Log in</div>
+      <el-button type="login_button" v-on:click="login_0">Reset</el-button>
     </div>
   </div>
 </div>
@@ -34,7 +56,18 @@ export default {
       tabList: ['Log in', 'Register'],
       tabLen: '',
       currentIndex: 0,
-      slideLeft: ''
+      slideLeft: '',
+      iffind:0,
+      register_email:'',
+      register_code:"",
+      register_name:'',
+      register_password:'',
+      login_email:'',
+      login_password:'',
+      reset_email:'',
+      reset_code:'',
+      reset_password:'',
+      fault_code:0,
     }
   },
   methods: {
@@ -55,7 +88,25 @@ export default {
       this.tabLen = this.tabList.length
       //const left = 100 / this.tabLen / 2
       this.slideLeft = this.currentIndex * 100+55 + 'px'
-    }
+    },
+    find(){
+      this.iffind=1
+    },
+    returnTologin(){
+      this.iffind=0
+    },
+    login_0(){
+      this.$router.push('/user');
+    },
+    email_blur() {
+      var verify = /^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
+      if (!verify.test(this.email)) this.fault_code = 2
+    },
+    send_code(){
+      if(this.fault_code!==1&&this.fault_code!==2){
+        console.log("send")
+      }
+    },
   },
 
 }
@@ -76,6 +127,14 @@ export default {
 }
 /deep/ .el-input__inner:focus {
   border-color: #383838;
+}
+.register_input{
+  margin-top: 30px;
+}
+.code_input{
+  width: 23%;
+  margin-left: 162px;
+  height: 40px;
 }
 .block{
   background-color: white;
@@ -184,5 +243,67 @@ export default {
   border-color: #F2595D;
   font-size: 18px;
   letter-spacing: 1px;
+}
+.el-button--email_check {
+  color: #FFF;
+  margin-left: 65px;
+  margin-top: 10px;
+  width: 120px;
+  height: 40px;
+  background-color: #F2595D;
+  border-color: #F2595D;
+  font-size: 16px;
+}
+.el-button--email_check:hover {
+  color: #FFF;
+  margin-left: 65px;
+  margin-top: 10px;
+  width: 120px;
+  height: 40px;
+  background-color: #F79B9D;
+  border-color: #F79B9D;
+  font-size: 16px;
+}
+.el-button--email_check:focus {
+  color: #FFF;
+  margin-left: 65px;
+  margin-top: 10px;
+  width: 120px;
+  height: 40px;
+  background-color: #F2595D;
+  border-color: #F2595D;
+  font-size: 16px;
+}
+.detail{
+  color: #383838;
+  margin-left: 55px;
+  font-size: 15px;
+  width: 440px;
+  line-height:24px;
+}
+.return{
+  height: 25px;
+  width: 130px;
+  cursor: pointer;
+  margin-top: 50px;
+  margin-left: 50px;
+  text-align: center;
+  line-height: 25px;
+  border-bottom: 1px solid #ABABAB;
+}
+.return:hover{
+  border-bottom: 1px solid #383838;
+}
+.email_warn{
+  width: 140px;
+  position: absolute;
+  overflow: hidden;
+  line-height: 30px;
+  float: left;
+  font-size: 13px;
+  text-align: left;
+  left:190px;
+  top:250px;
+  color: #F2595D;
 }
 </style>

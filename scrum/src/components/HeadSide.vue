@@ -12,7 +12,7 @@
   <div class="setting">
     <img src="../assets/setting.png" height="20px" alt=" "  style="margin-top: 15px">
   </div>
-  <div class="quit">
+  <div class="quit" v-on:click="quit">
     <img src="../assets/quit.png" height="20px" alt=" "  style="margin-top: 14px">
   </div>
 </div>
@@ -20,7 +20,12 @@
 
 <script>
 export default {
-  name: "HeadSide"
+  name: "HeadSide",
+  methods:{
+    quit(){
+      this.$router.push('/');
+    }
+  }
 }
 </script>
 
