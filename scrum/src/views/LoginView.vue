@@ -25,9 +25,10 @@
       <div class="email_warn" v-if="fault_code===1">邮箱不存在</div>
       <div class="email_warn" v-if="fault_code===2">邮箱格式错误</div>
       <el-input  class="code_input" v-model="register_code"  placeholder="请输入验证码"></el-input>
-      <el-input  class="register_input" v-model="register_name" prefix-icon="el-icon-user" placeholder="请输入真实姓名"></el-input>
+      <el-input  class="register_input" v-model="register_name" prefix-icon="el-icon-user" placeholder="请输入真实姓名" @blur="name_blur"></el-input>
       <div class="name_warn" v-if="fault_code===3">请输入正确的姓名</div>
-      <el-input  class="register_input" v-model="register_password" show-password prefix-icon="el-icon-key" placeholder="请输入密码"></el-input>
+      <el-input  class="register_input" v-model="register_password" show-password prefix-icon="el-icon-key" placeholder="请输入密码"  @blur="password_blur"></el-input>
+      <div class="password_warn" v-if="fault_code===4" >请输入8-16位数字字母或特殊符号且不能纯数字</div>
       <el-button type="login_button" v-on:click="login_0">Register</el-button>
     </div>
     <div class="find" v-if="iffind===1">
@@ -100,13 +101,21 @@ export default {
     },
     email_blur() {
       var verify = /^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
-      if (!verify.test(this.email)) this.fault_code = 2
+      if (!verify.test(this.register_email)) this.fault_code = 2
+      else this.fault_code=0
+    },
+    password_blur(){
+      var verify = /^[\u0021-\u00ff]{8,16}$/;
+      if (!verify.test(this.register_password)) this.fault_code = 4
+      else this.fault_code=0
     },
     send_code(){
       if(this.fault_code!==1&&this.fault_code!==2){
         console.log("send")
       }
     },
+
+
   },
 
 }
@@ -304,6 +313,30 @@ export default {
   text-align: left;
   left:190px;
   top:250px;
+  color: #F2595D;
+}
+.name_warn{
+  width: 140px;
+  position: absolute;
+  overflow: hidden;
+  line-height: 30px;
+  float: left;
+  font-size: 13px;
+  text-align: left;
+  left:65px;
+  top:350px;
+  color: #F2595D;
+}
+.password_warn{
+  width: 340px;
+  position: absolute;
+  overflow: hidden;
+  line-height: 30px;
+  float: left;
+  font-size: 13px;
+  text-align: left;
+  left:65px;
+  top:420px;
   color: #F2595D;
 }
 </style>
