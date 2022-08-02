@@ -34,10 +34,13 @@
     <div class="find" v-if="iffind===1">
       <h2 style="margin-left: 55px; margin-top: 50px">Forgot your password?</h2>
       <div class="detail">Enter the email you registered with and we'll send the vertification code to reset the password</div>
-      <el-input class="register_input" v-model="reset_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址"></el-input>
+      <el-input class="register_input" v-model="reset_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址" @blur="email_blur_reset"></el-input>
       <el-button type="email_check">send code</el-button>
+      <div class="email_warn0" v-if="fault_code===5">邮箱不存在</div>
+      <div class="email_warn0" v-if="fault_code===6">邮箱格式错误</div>
       <el-input  class="code_input" v-model="reset_code"  placeholder="请输入验证码"></el-input>
-      <el-input  class="register_input" v-model="reset_password" show-password prefix-icon="el-icon-key" placeholder="请输入新密码"></el-input>
+      <el-input  class="register_input" v-model="reset_password" show-password prefix-icon="el-icon-key" placeholder="请输入新密码" @blur="password_blur_reset"></el-input>
+      <div class="password_warn0" v-if="fault_code===7" >请输入8-16位数字字母或特殊符号且不能纯数字</div>
       <div class="return" v-on:click="returnTologin">Return to Log in</div>
       <el-button type="login_button" v-on:click="login_0">Reset</el-button>
     </div>
@@ -104,9 +107,19 @@ export default {
       if (!verify.test(this.register_email)) this.fault_code = 2
       else this.fault_code=0
     },
+    email_blur_reset() {
+      var verify = /^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
+      if (!verify.test(this.reset_email)) this.fault_code = 5
+      else this.fault_code=0
+    },
     password_blur(){
       var verify = /^[\u0021-\u00ff]{8,16}$/;
       if (!verify.test(this.register_password)) this.fault_code = 4
+      else this.fault_code=0
+    },
+    password_blur_reset(){
+      var verify = /^[\u0021-\u00ff]{8,16}$/;
+      if (!verify.test(this.reset_password)) this.fault_code = 7
       else this.fault_code=0
     },
     send_code(){
@@ -315,6 +328,18 @@ export default {
   top:250px;
   color: #F2595D;
 }
+.email_warn0{
+  width: 140px;
+  position: absolute;
+  overflow: hidden;
+  line-height: 30px;
+  float: left;
+  font-size: 13px;
+  text-align: left;
+  left:190px;
+  top:240px;
+  color: #F2595D;
+}
 .name_warn{
   width: 140px;
   position: absolute;
@@ -337,6 +362,18 @@ export default {
   text-align: left;
   left:65px;
   top:420px;
+  color: #F2595D;
+}
+.password_warn0{
+  width: 340px;
+  position: absolute;
+  overflow: hidden;
+  line-height: 30px;
+  float: left;
+  font-size: 13px;
+  text-align: left;
+  left:65px;
+  top:340px;
   color: #F2595D;
 }
 </style>
