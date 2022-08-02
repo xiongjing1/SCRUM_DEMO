@@ -3,7 +3,7 @@
 <div class="headside">
   <img src="../assets/logo.png" height="25px" alt=" " style="position: absolute; left: 15px;top:14px" >
   <div class="username">Hilary Hong</div>
-  <div class="email">lluosi1030@gmail.com</div>
+  <div class="email">{{email}}</div>
   <div class="picture">
    <img src="../assets/avatar.jpg" alt="">
   </div>
@@ -121,6 +121,7 @@ export default {
   directives: {infiniteScroll},
   data(){
     return {
+      email:'',
       begin_edit: false,
       modify_nickname:false,
       count: 0,
@@ -139,7 +140,7 @@ export default {
       i : 0,
       droping : false,
       noMore : false,
-      ifNotification:false
+      ifNotification:false,
     }
   },
   methods:{
@@ -174,6 +175,10 @@ export default {
       }
 
 
+  },
+  mounted() {
+    let storage = window.localStorage;
+    this.email=storage.getItem('email');
   }
 }
 </script>

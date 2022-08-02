@@ -29,7 +29,7 @@
       <div class="name_warn" v-if="fault_code===3">请输入正确的姓名</div>
       <el-input  class="register_input" v-model="register_password" show-password prefix-icon="el-icon-key" placeholder="请输入密码"  @blur="password_blur"></el-input>
       <div class="password_warn" v-if="fault_code===4" >请输入8-16位数字字母或特殊符号且不能纯数字</div>
-      <el-button type="login_button" v-on:click="login_0">Register</el-button>
+      <el-button type="login_button" v-on:click="register_0">Register</el-button>
     </div>
     <div class="find" v-if="iffind===1">
       <h2 style="margin-left: 55px; margin-top: 50px">Forgot your password?</h2>
@@ -42,7 +42,7 @@
       <el-input  class="register_input" v-model="reset_password" show-password prefix-icon="el-icon-key" placeholder="请输入新密码" @blur="password_blur_reset"></el-input>
       <div class="password_warn0" v-if="fault_code===7" >请输入8-16位数字字母或特殊符号且不能纯数字</div>
       <div class="return" v-on:click="returnTologin">Return to Log in</div>
-      <el-button type="login_button" v-on:click="login_0">Reset</el-button>
+      <el-button type="login_button" v-on:click="reset_0">Reset</el-button>
     </div>
   </div>
 </div>
@@ -100,7 +100,20 @@ export default {
       this.iffind=0
     },
     login_0(){
+      let storage = window.localStorage;
+      storage.setItem('email',this.login_email);
       this.$router.push('/user');
+    },
+    register_0(){
+      let storage = window.localStorage;
+      storage.setItem('email',this.register_email);
+      storage.setItem('nickname','user');
+      this.$router.push('/user');
+    },
+    reset_0(){
+      this.currentIndex=0;
+      this.iffind=0;
+      this.login_password='';
     },
     email_blur() {
       var verify = /^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
