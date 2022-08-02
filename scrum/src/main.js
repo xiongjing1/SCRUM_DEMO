@@ -4,7 +4,9 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import router from './router'
 import store from './store'
+import infiniteScroll from "vue-infinite-scroll";
 
+Vue.use(infiniteScroll);
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 
@@ -13,3 +15,9 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+export default {
+  name: "ComFlowList",
+  directives: {infiniteScroll},
+  data(){}
+}

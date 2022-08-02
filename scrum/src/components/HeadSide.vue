@@ -8,10 +8,10 @@
    <img src="../assets/avatar.jpg" alt="">
   </div>
   <div class="message">
-    <img src="../assets/message.png" height="20px" alt=" "  style="margin-top: 15px">
+    <img src="../assets/message.png" height="20px" alt=" "  style="margin-top: 15px" v-on:click="ifNotification=!ifNotification">
   </div>
   <div class="setting">
-    <img src="../assets/setting.png" height="20px" alt=" "  style="margin-top: 15px" v-on:click="begin_edit=true">
+    <img src="../assets/setting.png" height="20px" alt=" "  style="margin-top: 15px" v-on:click="begin_edit=true;ifNotification=false">
   </div>
   <div class="quit" v-on:click="quit">
     <img src="../assets/quit.png" height="20px" alt=" "  style="margin-top: 14px">
@@ -56,22 +56,124 @@
       </div>
     </div>
     <input type="file" name="image" accept="image/*" class="real-button" v-if="begin_edit&&!modify_nickname">
+   <div class="thewhole" v-if="ifNotification">
+     <div class="atip"></div>
+    <div class="notification" >
+      <div class="edit_title">Notification</div>
+      <div class="underline"></div>
+      <div class="n-context">
+      <ul class="newsList" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="5">
+        <div v-for="(item,index) in newsList" v-bind:key="index" class="message-block">
+          <div class="type1" v-if="item.type===1">
+            <div class="txt-part">
+            <div class="var">{{item.username}}</div>
+            <div class="const">&nbsp;邀请你加入&nbsp;</div>
+            <div class="var">{{item.team}}</div>
+            <div class="const">&nbsp;团队&nbsp;</div>
+            </div>
+            <div type="primary" class="sure-btn" v-if="!item.accept" v-on:click="item.accept=true">Accept</div>
+            <div type="primary" class="after-sure" v-if="item.accept" >已同意</div>
+          </div>
+          <div class="type1" v-if="item.type===2">
+            <div class="var">{{item.username}}</div>
+            <div class="const">&nbsp;将你移出&nbsp;</div>
+            <div class="var">{{item.team}}</div>
+            <div class="const">&nbsp;团队&nbsp;</div>
+          </div>
+          <div class="type1" v-if="item.type===3">
+            <div class="var">{{item.username}}</div>
+            <div class="const">&nbsp;将你在&nbsp;</div>
+            <div class="var">{{item.team}}</div>
+            <div class="const">&nbsp;团队中的身份改变为&nbsp;</div>
+            <div class="var">{{item.identity}}</div>
+          </div>
+          <div class="type1" v-if="item.type===4">
+            <div class="var">{{item.username}}</div>
+            <div class="const">&nbsp;将你加入&nbsp;</div>
+            <div class="var">{{item.team}}</div>
+            <div class="const">&nbsp;团队的&nbsp;</div>
+            <div class="var">{{item.project}}</div>
+            <div class="const">&nbsp;项目&nbsp;</div>
+          </div>
+          <div class="type1" v-if="item.type===5">
+            <div class="var">{{item.username}}</div>
+            <div class="const">&nbsp;将你移出&nbsp;</div>
+            <div class="var">{{item.team}}</div>
+            <div class="const">&nbsp;团队的&nbsp;</div>
+            <div class="var">{{item.project}}</div>
+            <div class="const">&nbsp;项目&nbsp;</div>
+          </div>
+        </div>
+      </ul>
+      <div id="loadMore" v-show="droping" class="reminder">loading...</div>
+      <div id="loadMore" v-show="noMore"  class="reminder">The End</div>
+      </div>
+    </div>
+    </div>
 </div>
 </template>
 
 <script>
+import infiniteScroll from "vue-infinite-scroll";
+
 export default {
   name: "HeadSide",
+  directives: {infiniteScroll},
   data(){
     return {
       begin_edit: false,
-      modify_nickname:false
+      modify_nickname:false,
+      count: 0,
+      busy: false, //是否正在加载过程中
+      newsList:[
+        {type:1,username:'KA',team:'Hong Team',identity:'',project:'',accept:false},
+        {type:2,username:'KA',team:'Hong Team',identity:'Boss',project:'',accept:false },
+        {type:3,username:'KA',team:'Hong Team',identity:'boss',project:'' ,accept:false},
+        {type:4,username:'KA',team:'Hong Team',identity:'',project:'APTITUDE',accept:false },
+        {type:5,username:'KA',team:'Hong Team',identity:'',project:'APTITUDE' ,accept:false},
+        {type:1,username:'KA',team:'Hong Team',identity:'',project:'' ,accept:false},
+        {type:1,username:'KA',team:'Hong Team',identity:'',project:'',accept:false },
+
+      ],
+      moreList : [],
+      i : 0,
+      droping : false,
+      noMore : false,
+      ifNotification:false
     }
   },
   methods:{
     quit(){
       this.$router.push('/');
-    }
+    },
+      loadMore(){
+        // console.log(111);
+        var _vm = this;
+        this.busy = true;
+        this.droping = true;
+        this.dropDown = false;
+        _vm.i += 1;
+        // setTimeout(() => {
+
+       // console.log(newsList);
+
+        if(this.moreList.length == 0){
+            _vm.noMore = true;
+            _vm.droping = false;
+            _vm.busy = true;
+          }else{
+            _vm.droping = true;
+            _vm.noMore = false;
+            _vm.moreList.forEach(function(item){
+              _vm.newsList.push(item);
+            })
+          }
+
+        this.busy = false;
+        // }, 1000);
+      }
+
+
   }
 }
 </script>
@@ -311,5 +413,112 @@ export default {
 .save-btn{
   margin-top: 30px;
   margin-left: 330px;
+}
+.notification{
+  z-index: 10000;
+  width:430px;
+  height: 450px;
+  left:1088px;
+  top:60px;
+  position: absolute;
+  background-color: white;
+  border: none;
+  overflow: auto;
+  border-radius: 1%;
+  box-shadow: 0px 0px 9px rgba(0,0,0,0.2);
+}
+.atip{
+  z-index: 10001;
+  left:1378px;
+  top:54px;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  transform:rotate(45deg);
+  box-shadow: -3em -3em 0px rgba(0,0,0,0.2);
+
+}
+.n-context{
+  overflow: auto;
+
+  width: 100%;
+  height: 385px;
+}
+::-webkit-scrollbar{
+  width: 7px;
+}
+::-webkit-scrollbar-track{
+  background-color: #f5f5f5;
+  -webkit-box-shadow:inset 0 0 3px rgba(0,0,0,0.1);
+  border-radius:5px;
+}
+::-webkit-scrollbar-thumb{
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-button{
+  background-color: #eee;
+  display: none;
+}
+::-webkit-scrollbar-corner{
+  background-color: black;
+}
+.message-block{
+
+  margin-left: -10px;
+  text-align: left;
+  min-height: 40px;
+  overflow: hidden;
+  width: 96%;
+  line-height: 20px;
+  margin-top: 21px;
+  border-bottom: 1px solid #E9E9E9;
+}
+.var{
+  float: left;
+  font-family: Inter, "Segoe UI", 黑体;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 20px;
+  padding-bottom: 3px;
+}
+.const{
+  float: left;
+  font-size: 13px;
+  text-align: center;
+  line-height: 20px;
+}
+.reminder{
+  font-family: Inter, "Segoe UI", 黑体;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.sure-btn{
+  width: 50px;
+  height: 25px;
+  font-size: 12px;
+  font-family: Inter, "Segoe UI";
+  float: right;
+  background-color: #383838;
+  cursor: pointer;
+  color: white;
+  border-radius:3px ;
+  padding-left: 15px;
+  padding-top: 4px;
+}
+.after-sure{
+  width: 50px;
+  height: 25px;
+  font-size: 12px;
+  font-family: Inter, "Segoe UI";
+  float: right;
+  cursor: default;
+  color: #383838;
+  padding-left: 15px;
+  padding-top: 4px;
 }
 </style>
