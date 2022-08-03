@@ -1,4 +1,5 @@
 <template>
+
   <div class="main">
     <div class="title">
       <div class="team">
@@ -150,12 +151,15 @@
         </div>
     </div>
   </div>
+
 </template>
 
 
 <script>
+
 export default {
   name: "TeamManage",
+  components: {},
   methods:{
     searchjump(){
 
@@ -256,6 +260,7 @@ export default {
 
 <style scoped>
 .main{
+
   box-sizing: border-box;
   display: flex;
   position: absolute;

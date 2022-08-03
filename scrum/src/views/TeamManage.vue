@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <HeadSide></HeadSide>
   <div class="main">
     <div class="title">
       <div class="team">
@@ -250,12 +252,18 @@
         </div>
     </div>
   </div>
+  </div>
 </template>
 
 
 <script>
+import HeadSide from "@/components/HeadSide";
+
 export default {
   name: "TeamManage",
+  components: {
+    HeadSide,
+  },
   methods:{
     searchjump(){
 
@@ -356,13 +364,13 @@ export default {
 
 <style scoped>
 .main{
-  box-sizing: border-box;
-  display: flex;
   position: absolute;
   flex-direction: column;
-  width: 88%;
-  height: auto;
-  margin-left: 150px;
+  width: 83%;
+  min-width: calc(1520px*83%);
+  top:50px;
+  left: 259px;
+  background-color: #42b983;
 }
 .title{
   display: flex;
