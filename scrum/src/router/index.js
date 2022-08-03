@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import LoginView from "@/views/LoginView";
-import HomeView from '../views/HomeView.vue'
+//import HomeView from '../views/HomeView.vue'
 
 Vue.use(VueRouter)
 
@@ -32,7 +32,6 @@ const routes = [
     component: () => import( '../views/HomeView.vue')
   },
 
-  },
   {
     path: '/TeamManage',
     name: 'TeamManage',
