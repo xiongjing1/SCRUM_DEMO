@@ -1,13 +1,6 @@
 <template>
   <div id="app">
     <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <router-link to="/TeamManage">TeamManage</router-link> |
-      <router-link to="/ProjectManage">ProjectManage</router-link> |
-      <router-link to="/TrashManage">TrashManage</router-link> |
-      <router-link to="/documentManage">documentManage</router-link> |
-      <router-link to="/designManage">designManage</router-link>
     </nav>
     <router-view/>
   </div>
@@ -35,3 +28,13 @@ nav a.router-link-exact-active {
   color: #42b983;
 }
 </style>
+<script>
+
+
+
+
+
+export default {
+  components: {}
+}
+</script>

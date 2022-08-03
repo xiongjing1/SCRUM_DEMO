@@ -1,14 +1,19 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import LoginView from "@/views/LoginView";
+//import HomeView from '../views/HomeView.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'login',
+    component: LoginView,
+    meta:{
+      title:'login',
+      requireAuth:true,
+    }
   },
   {
     path: '/about',
@@ -18,6 +23,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
+  {
+    path: '/user',
+    name: 'user',
+    meta:{
+      title:'home',
+    },
+    component: () => import( '../views/TeamManage.vue')
+  },
+
   {
     path: '/TeamManage',
     name: 'TeamManage',
@@ -56,6 +70,14 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/designManage')
+  },
+  {
+    path: '/ProjectTrash',
+    name: 'ProjectTrash',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/ProjectTrash')
   },
 ]
 

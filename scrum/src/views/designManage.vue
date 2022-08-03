@@ -1,81 +1,87 @@
 <template>
-  <div class="main">
-    <div class="title">
-      <div class="team">
-        <div class="TeamPhoto">
-          <el-avatar style="height: 70px;width:70px;background-color:cornflowerblue;padding-top: 15px"> X </el-avatar>
-        </div>
-        <div class="TeamName">
-          Yigaa's Team
-        </div>
-      </div>
-      <div class="buttons">
-        <div class="manage-project" v-on:click="JumpToProjectManage()">
-          项目管理
-        </div>
-        <div class="list-members" v-on:click="JumpToTeamManage()">
-          成员列表
-        </div>
-        <div class="more">
-            <el-dropdown trigger="click">
+  <div class="web">
+    <div class="head">
+      <HeadSide></HeadSide>
+    </div>
+    <div class="whole">
+      <LeftSide></LeftSide>
+      <div class="main">
+        <div class="title">
+          <div class="team">
+            <div class="TeamPhoto">
+              <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
+            </div>
+            <div class="TeamName">
+              Yigaa's Team
+            </div>
+          </div>
+          <div class="buttons">
+            <div class="manage-project" v-on:click="JumpToProjectManage()">
+              项目管理
+            </div>
+            <div class="list-members" v-on:click="JumpToTeamManage()">
+              成员列表
+            </div>
+            <div class="more">
+              <el-dropdown trigger="click">
               <span class="el-dropdown-link">
                 更多<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
-              <div class="dropdown">
-                <el-dropdown-menu slot="dropdown" class="more-menu" >
-                  <el-dropdown-item @click.native.prevent="rename=true;">团队重命名</el-dropdown-item>
-                  <el-dropdown-item @click.native.prevent="removeTeam=true;">删除团队</el-dropdown-item>
-                  <el-dropdown-item @click.native.prevent="changeIcon=true;">团队图标更换</el-dropdown-item>
-                </el-dropdown-menu>
-              </div>
-              <el-dialog
-                  title="提示"
-                  :visible.sync="removeTeam"
-                  width="30%"
-                  center
-                  append-to-body>
-                <span>确认要删除团队吗？</span>
-                <span slot="footer" class="dialog-footer">
+                <div class="dropdown">
+                  <el-dropdown-menu slot="dropdown" class="more-menu" >
+                    <el-dropdown-item @click.native.prevent="rename=true;">团队重命名</el-dropdown-item>
+                    <el-dropdown-item @click.native.prevent="removeTeam=true;">删除团队</el-dropdown-item>
+                    <el-dropdown-item @click.native.prevent="changeIcon=true;">团队图标更换</el-dropdown-item>
+                  </el-dropdown-menu>
+                </div>
+                <el-dialog
+                    title="提示"
+                    :visible.sync="removeTeam"
+                    width="30%"
+                    center
+                    append-to-body>
+                  <span>确认要删除团队吗？</span>
+                  <span slot="footer" class="dialog-footer">
                               <el-button @click="removeTeam = false" >取 消</el-button>
                               <el-button type="primary" @click="removeTeam = false;" class="el-buttons">确 定</el-button>
                         </span>
-              </el-dialog>
-              <el-dialog title="Rename" :visible.sync="rename" width="350px">
-                <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
-                <div slot="footer" class="rename-footer">
-                  <el-button @click="rename = false">取 消</el-button>
-                  <el-button @click="rename = false" class="el-buttons">确 定</el-button>
-                </div>
-              </el-dialog>
-              <el-dialog title="重新上传图标" :visible.sync="changeIcon" width="400px">
-                <el-upload
-                    class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload">
-                  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload>
-                <div slot="footer" class="photo-footer">
-                  <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
-                  <el-button @click="changeIcon = false" class="yes-buttons">确 定</el-button>
-                </div>
-              </el-dialog>
-            </el-dropdown>
+                </el-dialog>
+                <el-dialog title="Rename" :visible.sync="rename" width="350px">
+                  <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
+                  <div slot="footer" class="rename-footer">
+                    <el-button @click="rename = false">取 消</el-button>
+                    <el-button @click="rename = false" class="el-buttons">确 定</el-button>
+                  </div>
+                </el-dialog>
+                <el-dialog title="重新上传图标" :visible.sync="changeIcon" width="400px">
+                  <el-upload
+                      class="avatar-uploader"
+                      action="https://jsonplaceholder.typicode.com/posts/"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :before-upload="beforeAvatarUpload">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
+                  <div slot="footer" class="photo-footer">
+                    <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
+                    <el-button @click="changeIcon = false" class="yes-buttons">确 定</el-button>
+                  </div>
+                </el-dialog>
+              </el-dropdown>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <el-divider></el-divider>
-    <div class="content">
-        <div class="left-side">
-          <div class="members-top-side">
+        <el-divider></el-divider>
+        <div class="content">
+          <div class="left-side">
+            <div class="members-top-side">
               <div class="project-name">
                 Project's Name
               </div>
-          </div>
-          <div class="members-second-side">
-            <div class="choose-box">
+            </div>
+            <div class="members-second-side">
+              <div class="choose-box">
                 <div class="design-box" v-on:click="JumpTodesignManage()">
                   <div class="design-content">
                     <img src="../assets/design-set.png" class="design-img">
@@ -86,96 +92,110 @@
                   <img src="../assets/line.png" class="line-img">
                 </div>
                 <div class="document-box" v-on:click="JumpTodocumentManage()">
-                    <img src="../assets/document.png" class="document-img">
-                    <div class="document-title">
-                      document
-                    </div>
-              </div>
-                <div class="trash-box" v-on:click="JumpToTrashManage()">
-                    <img src="../assets/trash.png" class="trash-img">
-                    <div class="trash-title">
-                      trash
-                    </div>
+                  <img src="../assets/document.png" class="document-img">
+                  <div class="document-title">
+                    document
+                  </div>
                 </div>
+                <div class="trash-box" v-on:click="JumpToTrashManage()">
+                  <img src="../assets/trash.png" class="trash-img">
+                  <div class="trash-title">
+                    trash
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="members-main">
-            <div class="UML">
-              <div class="uml-design">
+            <div class="members-main">
+              <div class="UML">
+                <div class="uml-design">
                   <img src="../assets/uml.png" class="uml-img">
+                </div>
+                <div class="uml-name">
+                  绘制UML
+                </div>
               </div>
-              <div class="uml-name">
-                绘制UML
-              </div>
-            </div>
-            <div class="draft">
-              <div class="draft-design">
-                <img src="../assets/draft.png" class="draft-img">
-              </div>
-              <div class="draft-title">
-                原型设计
+              <div class="draft">
+                <div class="draft-design">
+                  <img src="../assets/draft.png" class="draft-img">
+                </div>
+                <div class="draft-title">
+                  原型设计
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="right-side">
-          <div class="team-summary">
-            <div class="summary-title">项目简介</div>
-            <div class="edit-summary" @click="editSummary = true">
-              edit
-            </div>
-            <el-dialog title="Rename" :visible.sync="editSummary" width="350px">
+          <div class="right-side">
+            <div class="team-summary">
+              <div class="summary-title">Project Profile</div>
+              <div class="edit-summary" @click="editSummary = true">
+                edit
+              </div>
+              <el-dialog title="Rename" :visible.sync="editSummary" width="350px">
               <textarea
                   placeholder="请输入简介内容"
                   v-model="Summarycontent"
                   class="summary-content"
                   name="comment">
               </textarea>
-              <div slot="footer" class="rename-footer">
-                <el-button @click="editSummary = false">取 消</el-button>
-                <el-button @click="editSummary = false" class="el-buttons">确 定</el-button>
-              </div>
-            </el-dialog>
-          </div>
+                <div slot="footer" class="rename-footer">
+                  <el-button @click="editSummary = false">取 消</el-button>
+                  <el-button @click="editSummary = false" class="el-buttons">确 定</el-button>
+                </div>
+              </el-dialog>
+            </div>
 
-          <div class="team-content">
-            简介内容
-          </div>
-          <el-divider></el-divider>
-          <div class="team-leader">
-            <div class="leader-name">
-              The Project
+            <div class="team-content">
+              简介内容
             </div>
-            <div class="leader-nickname">
-              <img src="../assets/user.png" class="leader-img-size">
-              <div class="nickname">创建用户</div>
-              <div class="name-info">徐亦佳</div>
+            <el-divider></el-divider>
+            <div class="team-leader">
+              <div class="leader-name">
+                The Project
+              </div>
+              <div class="leader-nickname">
+                <img src="../assets/user.png" class="leader-img-size">
+                <div class="nickname">创建用户</div>
+                <div class="name-info">徐亦佳</div>
+              </div>
+              <div class="leader-email">
+                <img src="../assets/time.png" class="leader-img-size">
+                <div class="email">创建时间</div>
+                <div class="email-info">2022-8-3 14：22</div>
+              </div>
+              <div class="leader-active">
+                <img src="../assets/document.png" class="leader-img-size">
+                <div class="active">文档数目</div>
+                <div class="active-info">5</div>
+              </div>
             </div>
-            <div class="leader-email">
-              <img src="../assets/time.png" class="leader-img-size">
-              <div class="email">创建时间</div>
-              <div class="email-info">2022-8-3 14：22</div>
+            <el-divider></el-divider>
+            <div class="lately-operation">
+              <div class="lately-operation-title">
+                Recent operations
+              </div>
             </div>
-            <div class="leader-active">
-              <img src="../assets/document.png" class="leader-img-size">
-              <div class="active">文档数目</div>
-              <div class="active-info">5</div>
-            </div>
-          </div>
-          <el-divider></el-divider>
-          <el-divider></el-divider>
-          <div class="lately-operation">
-            近期操作
           </div>
         </div>
+      </div>
     </div>
   </div>
+
 </template>
 
 
 <script>
+import LeftSide from "@/components/LeftSide";
+import HeadSide from "@/components/HeadSide";
+
 export default {
   name: "TeamManage",
+  components: {
+    LeftSide,
+    HeadSide,
+  },
+  mounted() {
+    document.body.style.backgroundColor="#FFFFFF";
+  },
   methods:{
     JumpToProjectManage(){
       this.$router.push('/ProjectManage');
@@ -286,13 +306,14 @@ export default {
 
 <style scoped>
 .main{
-  box-sizing: border-box;
-  display: flex;
   position: absolute;
   flex-direction: column;
-  width: 88%;
-  height: auto;
-  margin-left: 150px;
+  width: 83%;
+  overflow: hidden;
+  min-width: calc(1520px*81%);
+  top:50px;
+  left: 230px;
+  height: 800px;
 }
 .title{
   display: flex;
@@ -302,7 +323,6 @@ export default {
   margin-right: 50px;
   width: 100%;
   height: 80px;
-
 }
 .team{
   display: flex;
@@ -357,7 +377,7 @@ export default {
   height: 100%;
   padding-top: 10px;
   padding-left: 0px;
-  margin-left: -10px;
+  margin-left: -16.5px;
 }
 .document-content{
   display: flex;
@@ -382,7 +402,7 @@ export default {
   width: 30%;
   height: 30px;
   padding-top: 10px;
-  padding-left: 30px;
+  padding-left: 24px;
 }
 .trash-content{
   display: flex;
@@ -418,52 +438,53 @@ export default {
   flex-direction: row;
 }
 .left-side{
-  display: flex;
-  height: 500px;
+  height: 600px;
   width: 75%;
-  flex-direction: column;
+  margin-top: -190px;
 }
 .right-side{
-  display: flex;
+  float: right;
   width:25%;
-  height: 500px;
-  flex-direction: column;
+  border-left: 1px solid #EAECF0;
 }
 .TeamPhoto{
-  display: flex;
   padding-top: 10px;
   width: 70px;
   height: 70px;
-
 }
 .TeamName{
   padding-top: 20px;
-  padding-left: 10px;
   width: 300px;
-  font-size: 35px;
+  margin-top: 10px;
+  margin-left: 30px;
+  font-size: 30px;
   font-family: "Berlin Sans FB Demi";
 }
 .manage-project{
   width: 80px;
-  height: 37px;
+  height: 28px;
   border: 2px solid;
-  border-radius: 5px;
+  border-radius: 3px;
   outline-color: #2c3e50;
   cursor: pointer;
-  padding-top:15px;
-  margin-left: 20px;
+  padding-top:12px;
+  margin-left:-30px;
+  margin-top: 10px;
+  font-size: 14px;
 }
 .manage-project:hover{
   color: rgba(23,43,72,0.45);
 }
 .list-members{
   width: 80px;
-  height: 37px;
+  height: 28px;
   border: 2px solid;
-  border-radius: 5px;
+  border-radius: 3px;
   outline-color: #2c3e50;
   cursor: pointer;
-  padding-top:15px;
+  padding-top:12px;
+  margin-top: 10px;
+  font-size: 14px;
   margin-left: 15px;
 }
 .list-members:hover{
@@ -471,14 +492,17 @@ export default {
 }
 .more{
   width: 80px;
-  height: 37px;
+  height: 28px;
   border: 2px solid;
-  border-radius: 5px;
+  border-radius: 3px;
   outline-color: #2c3e50;
   cursor: pointer;
-  padding-top:15px;
+  padding-top:12px;
+  margin-top: 10px;
+  font-size: 14px;
   margin-left: 15px;
   color: #2c3e50;
+  letter-spacing: 3px;
 }
 .more:hover{
   color: rgba(23,43,72,0.45);
@@ -516,6 +540,7 @@ export default {
   display: flex;
   height: 50px;
   width: 100%;
+  margin-top: 60px;
 }
 .project-name{
   display: flex;
@@ -537,7 +562,7 @@ export default {
   width: 100%;
   height:auto;
   align-items: center;
-  margin-top:30px ;
+  margin-top:10px ;
   padding-bottom: 30px;
 }
 .UML{
@@ -545,7 +570,7 @@ export default {
   flex-direction: column;
   width: 38%;
   height: 500px;
-  margin-left: 75px;
+  margin-left: 40px;
   border-radius: 20px;
   border: 1px solid #d9d9d9;
   box-shadow: 0 0 3px 3px rgba(23, 43, 72, 0.45);
@@ -580,7 +605,7 @@ export default {
   flex-direction: column;
   width: 38%;
   height: 500px;
-  margin-left: 30px;
+  margin-left: 45px;
   border-radius: 20px;
   border: 1px solid #d9d9d9;
   box-shadow: 0 0 3px 3px rgba(23, 43, 72, 0.45);
@@ -668,19 +693,26 @@ export default {
 }
 .summary-title{
   display: flex;
+  font-size: 19px;
   width: 65%;
+  font-family: Inter, "Segoe UI", 黑体;
 }
 .team-content{
-  display: flex;
   padding-top: 10px;
   padding-left: 15px;
+  font-family: Inter, sans-serif, 黑体;
+  font-size: 13px;
+  line-height: 20px;
   width: 100%;
   height: 130px;
+  text-align: left;
+  word-wrap: break-word;
+  white-space: pre-line;
 }
 .team-leader{
   display: flex;
   width: 100%;
-  height:250px;
+  height:220px;
   flex-direction: column;
   align-content: center;
 }
@@ -688,17 +720,21 @@ export default {
   display: flex;
   margin-left: 15px;
   padding-top: 10px;
-  font-family: "Berlin Sans FB Demi";
-  font-size: 20px;
+  font-family: Inter, "Segoe UI", 黑体;
+  font-size: 19px;
 }
 .leader-nickname{
-  display: flex;
+  font-family: Inter, "Segoe UI", 黑体;
+  font-size: 18px;
   flex-direction: row;
 }
 .nickname{
   display: flex;
   padding-top: 15px;
   padding-left: 8px;
+  float: left;
+  margin-top: 8px;
+  margin-left: 3px;
   font-size: 15px;
 
 }
@@ -706,34 +742,43 @@ export default {
   display: flex;
   padding-top: 15px;
   padding-left: 15px;
+  margin-top: 8px;
+  margin-left: 3px;
   font-size: 15px;
 }
 .leader-active{
   display: flex;
   flex-direction: row;
+  font-family: Inter, "Segoe UI", 黑体;
 }
 .active{
   display: flex;
   padding-top: 15px;
   padding-left: 8px;
   font-size: 15px;
-
+  margin-top: 12px;
+  margin-left: 3px;
 }
 .active-info{
   display: flex;
-  padding-top: 18px;
+  padding-top: 15px;
   padding-left: 15px;
   font-size: 15px;
+  margin-top: 12px;
+  margin-left: 3px;
 }
 .leader-email{
   display: flex;
   flex-direction: row;
+  font-family: Inter, "Segoe UI", 黑体;
 }
 .email{
   display: flex;
   padding-top: 15px;
   padding-left: 8px;
   font-size: 15px;
+  margin-top: 10px;
+  margin-left: 3px;
 
 }
 .email-info{
@@ -741,32 +786,46 @@ export default {
   padding-top: 15px;
   padding-left: 15px;
   font-size: 15px;
+  margin-top: 10px;
+  margin-left: 3px;
 }
 .leader-img-size{
-  display: flex;
+  float: left;
   padding-left: 10px;
   padding-top: 10px;
-  width: 30px;
-  height: 30px;
+  margin-left: 5px;
+  margin-top: 15px;
+  width: 25px;
+  height: 25px;
 }
 .lately-operation{
-  display: flex;
   width: 100%;
+  height: 150px;
+}
+.lately-operation-title{
+  font-size: 19px;
+  width:160px;
+  margin-left: 10px;
+  font-family: Inter, "Segoe UI", 黑体;
   height: 250px;
 }
 .edit-summary{
   display: flex;
-  padding-left: 9px;
+  padding-left: 13px;
   margin-left: 5px;
   width: 12%;
-  font-size: 18px;
+  height: 22px;
+  padding-top: 3px;
+  font-size: 13px;
   border: 2px solid;
   border-radius: 5px;
   cursor: pointer;
+  background-color: #383838;
+  color: #FFFFFF;
   font-family: "Berlin Sans FB Demi";
 }
 .edit-summary:hover{
-  color: rgba(23,43,72,0.45);
+  color: #E9E9E9;
 }
 .members-operation{
   display: flex;
