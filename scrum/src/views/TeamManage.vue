@@ -1,12 +1,13 @@
 <template>
   <div>
     <HeadSide></HeadSide>
-    <LeftSide></LeftSide>
+    <div class="whole">
+      <LeftSide></LeftSide>
   <div class="main">
     <div class="title">
       <div class="team">
         <div class="TeamPhoto">
-          <el-avatar style="height: 70px;width:70px;background-color:cornflowerblue;padding-top: 15px"> X </el-avatar>
+          <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
         </div>
         <div class="TeamName">
           Yigaa's Team
@@ -203,7 +204,7 @@
         </div>
         <div class="right-side">
           <div class="team-summary">
-            <div class="summary-title">简介</div>
+            <div class="summary-title">Profile</div>
             <div class="edit-summary" @click="editSummary = true">
               edit
             </div>
@@ -248,11 +249,13 @@
           <el-divider></el-divider>
           <el-divider></el-divider>
           <div class="lately-operation">
-            近期操作
+            <div class="lately-operation-title">
+              Recent operations</div>
           </div>
         </div>
     </div>
   </div>
+    </div>
   </div>
 </template>
 
@@ -266,6 +269,9 @@ export default {
   components: {
     LeftSide,
     HeadSide,
+  },
+  mounted() {
+    document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
     searchjump(){
@@ -366,14 +372,17 @@ export default {
 </script>
 
 <style scoped>
+.whole{
+}
 .main{
   position: absolute;
   flex-direction: column;
   width: 83%;
-  min-width: calc(1520px*83%);
+  overflow: hidden;
+  min-width: calc(1520px*81%);
   top:50px;
-  left: 259px;
-  background-color: #42b983;
+  left: 230px;
+
 }
 .title{
   display: flex;
@@ -412,19 +421,19 @@ export default {
   flex-direction: row;
 }
 .left-side{
-  display: flex;
-  height: 500px;
+  height: 600px;
   width: 75%;
-  flex-direction: column;
+
+  margin-top: -190px;
 }
 .right-side{
-  display: flex;
+  float: right;
   width:25%;
-  height: 500px;
-  flex-direction: column;
+  border-left: 1px solid #EAECF0;
+
 }
 .TeamPhoto{
-  display: flex;
+
   padding-top: 10px;
   width: 70px;
   height: 70px;
@@ -432,32 +441,37 @@ export default {
 }
 .TeamName{
   padding-top: 20px;
-  padding-left: 10px;
   width: 300px;
-  font-size: 35px;
+  margin-top: 10px;
+  margin-left: 30px;
+  font-size: 30px;
   font-family: "Berlin Sans FB Demi";
 }
 .manage-project{
   width: 80px;
-  height: 37px;
+  height: 28px;
   border: 2px solid;
-  border-radius: 5px;
+  border-radius: 3px;
   outline-color: #2c3e50;
   cursor: pointer;
-  padding-top:15px;
-  margin-left: 20px;
+  padding-top:12px;
+  margin-left:-30px;
+  margin-top: 10px;
+  font-size: 14px;
 }
 .manage-project:hover{
   color: rgba(23,43,72,0.45);
 }
 .list-members{
   width: 80px;
-  height: 37px;
+  height: 28px;
   border: 2px solid;
-  border-radius: 5px;
+  border-radius: 3px;
   outline-color: #2c3e50;
   cursor: pointer;
-  padding-top:15px;
+  padding-top:12px;
+  margin-top: 10px;
+  font-size: 14px;
   margin-left: 15px;
 }
 .list-members:hover{
@@ -465,14 +479,17 @@ export default {
 }
 .more{
   width: 80px;
-  height: 37px;
+  height: 28px;
   border: 2px solid;
-  border-radius: 5px;
+  border-radius: 3px;
   outline-color: #2c3e50;
   cursor: pointer;
-  padding-top:15px;
+  padding-top:12px;
+  margin-top: 10px;
+  font-size: 14px;
   margin-left: 15px;
   color: #2c3e50;
+  letter-spacing: 3px;
 }
 .more:hover{
   color: rgba(23,43,72,0.45);
@@ -507,12 +524,13 @@ export default {
   color: rgba(23,43,72,0.65);
 }
 .members-top-side{
-  display: flex;
   height: 50px;
   width: 100%;
+  margin-top: 50px;
 }
 .members-second-side{
   display: flex;
+
   height: 70px;
   width: 100%;
 }
@@ -521,6 +539,7 @@ export default {
   flex-direction: column;
   width: 100%;
   height:auto;
+
 }
 .table-leader{
   display: flex;
@@ -539,25 +558,31 @@ export default {
   margin-bottom: 30px;
 }
 .members-add{
-  width: 90px;
-  height: 30px;
+  width: 94px;
+  height: 24px;
   border: 2px solid;
   border-radius: 5px;
   outline-color: #2c3e50;
   cursor: pointer;
-  padding-top:15px;
+  padding-top:8px;
   margin-left: 50px;
-  font-size: 13px;
+  font-size: 12px;
+  top:160px;
+  left: 20px;
+  color: #FFFFFF;
+  background-color: #2c3e50;
   font-family: "Berlin Sans FB Demi";
+  position: absolute;
+  float: left;
 }
 .members-add:hover{
-  color: rgba(23,43,72,0.45);
+  color: #E9E9E9;
 }
 .members-search{
-  display: flex;
-  padding-left:525px;
-  padding-top: 5px;
+  float: left;
+  margin-left: 600px;
   width: 30%;
+
   justify-content: space-between;
 }
 .members-rank{
@@ -575,19 +600,26 @@ export default {
 }
 .summary-title{
   display: flex;
+  font-size: 19px;
   width: 65%;
+  font-family: Inter, "Segoe UI", 黑体;
 }
 .team-content{
-  display: flex;
   padding-top: 10px;
   padding-left: 15px;
+  font-family: Inter, sans-serif, 黑体;
+  font-size: 13px;
+  line-height: 20px;
   width: 100%;
   height: 130px;
+  text-align: left;
+  word-wrap: break-word;
+  white-space: pre-line;
 }
 .team-leader{
   display: flex;
   width: 100%;
-  height:250px;
+  height:220px;
   flex-direction: column;
   align-content: center;
 }
@@ -595,17 +627,22 @@ export default {
   display: flex;
   margin-left: 15px;
   padding-top: 10px;
-  font-family: "Berlin Sans FB Demi";
-  font-size: 20px;
+  font-family: Inter, "Segoe UI", 黑体;
+  font-size: 19px;
 }
 .leader-nickname{
-  display: flex;
+  font-family: Inter, "Segoe UI", 黑体;
+  font-size: 18px;
+
   flex-direction: row;
 }
 .nickname{
   display: flex;
   padding-top: 15px;
   padding-left: 8px;
+  float: left;
+  margin-top: 8px;
+  margin-left: 3px;
   font-size: 15px;
 
 }
@@ -613,34 +650,43 @@ export default {
   display: flex;
   padding-top: 15px;
   padding-left: 15px;
+  margin-top: 8px;
+  margin-left: 3px;
   font-size: 15px;
 }
 .leader-active{
   display: flex;
   flex-direction: row;
+  font-family: Inter, "Segoe UI", 黑体;
 }
 .active{
   display: flex;
   padding-top: 15px;
   padding-left: 8px;
   font-size: 15px;
-
+  margin-top: 12px;
+  margin-left: 3px;
 }
 .active-info{
   display: flex;
   padding-top: 15px;
   padding-left: 15px;
   font-size: 15px;
+  margin-top: 12px;
+  margin-left: 3px;
 }
 .leader-email{
   display: flex;
   flex-direction: row;
+  font-family: Inter, "Segoe UI", 黑体;
 }
 .email{
   display: flex;
   padding-top: 15px;
   padding-left: 8px;
   font-size: 15px;
+  margin-top: 10px;
+  margin-left: 3px;
 
 }
 .email-info{
@@ -648,32 +694,46 @@ export default {
   padding-top: 15px;
   padding-left: 15px;
   font-size: 15px;
+  margin-top: 10px;
+  margin-left: 3px;
 }
 .leader-img-size{
-  display: flex;
+  float: left;
   padding-left: 10px;
   padding-top: 10px;
-  width: 30px;
-  height: 30px;
+  margin-left: 5px;
+  margin-top: 15px;
+  width: 25px;
+  height: 25px;
 }
 .lately-operation{
-  display: flex;
   width: 100%;
+  height: 150px;
+}
+.lately-operation-title{
+  font-size: 19px;
+  width:160px;
+  margin-left: 10px;
+  font-family: Inter, "Segoe UI", 黑体;
   height: 250px;
 }
 .edit-summary{
   display: flex;
-  padding-left: 9px;
+  padding-left: 13px;
   margin-left: 5px;
   width: 12%;
-  font-size: 18px;
+  height: 22px;
+  padding-top: 3px;
+  font-size: 13px;
   border: 2px solid;
   border-radius: 5px;
   cursor: pointer;
+  background-color: #383838;
+  color: #FFFFFF;
   font-family: "Berlin Sans FB Demi";
 }
 .edit-summary:hover{
-  color: rgba(23,43,72,0.45);
+ color: #E9E9E9;
 }
 .members-operation{
   display: flex;

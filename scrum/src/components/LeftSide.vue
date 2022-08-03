@@ -53,7 +53,7 @@ export default {
   position: absolute;
   top: 50px;
   left: 0;
-  border-right: 1px solid rgba(0, 0, 0, 0.3);
+  border-right: 1px solid rgba(192, 198, 210, 0.88);
 }
 
 .team-inform {
