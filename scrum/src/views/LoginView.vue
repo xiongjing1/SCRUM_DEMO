@@ -52,7 +52,15 @@
 export default {
   name: "LoginView",
   mounted() {
+    console.log("das2da")
     document.body.style.backgroundColor="#FCF7F7";
+    let storage = window.localStorage;
+    this.if_login=storage.getItem('iflogin');
+    console.log(this.if_login);
+    if(this.if_login==1){
+      console.log("dsa");
+      this.$router.push('/user');
+    }
     this.slideLineLeft();
   },
   data () {
@@ -72,6 +80,7 @@ export default {
       reset_code:'',
       reset_password:'',
       fault_code:0,
+      if_login:0
     }
   },
   methods: {
@@ -102,12 +111,14 @@ export default {
     login_0(){
       let storage = window.localStorage;
       storage.setItem('email',this.login_email);
+      storage.setItem('iflogin',1);
       this.$router.push('/user');
     },
     register_0(){
       let storage = window.localStorage;
       storage.setItem('email',this.register_email);
       storage.setItem('nickname','user');
+      storage.setItem('iflogin',1);
       this.$router.push('/user');
     },
     reset_0(){

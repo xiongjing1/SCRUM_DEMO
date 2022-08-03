@@ -8,7 +8,11 @@ const routes = [
   {
     path: '/',
     name: 'login',
-    component: LoginView
+    component: LoginView,
+    meta:{
+      title:'login',
+      requireAuth:true,
+    }
   },
   {
     path: '/about',
@@ -21,6 +25,9 @@ const routes = [
   {
     path: '/user',
     name: 'user',
+    meta:{
+      title:'home',
+    },
     component: () => import( '../views/HomeView.vue')
   },
 

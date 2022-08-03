@@ -21,3 +21,4 @@ export default {
   directives: {infiniteScroll},
   data(){}
 }
+

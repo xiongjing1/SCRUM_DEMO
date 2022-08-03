@@ -145,6 +145,8 @@ export default {
   },
   methods:{
     quit(){
+      let storage = window.localStorage;
+      storage.setItem('iflogin',0);
       this.$router.push('/');
     },
       loadMore(){
@@ -186,6 +188,7 @@ export default {
 <style scoped>
 .headside{
   width: 100%;
+  min-width: 1520px;
   height: 50px;
   background-color: #2C2C2C;
 }
