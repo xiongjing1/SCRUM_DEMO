@@ -1,6 +1,7 @@
 <template>
   <div>
     <HeadSide></HeadSide>
+    <LeftSide></LeftSide>
   <div class="main">
     <div class="title">
       <div class="team">
@@ -258,10 +259,12 @@
 
 <script>
 import HeadSide from "@/components/HeadSide";
+import LeftSide from "@/components/LeftSide";
 
 export default {
   name: "TeamManage",
   components: {
+    LeftSide,
     HeadSide,
   },
   methods:{
