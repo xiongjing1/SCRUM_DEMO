@@ -29,7 +29,7 @@ const routes = [
     meta:{
       title:'home',
     },
-    component: () => import( '../views/HomeView.vue')
+    component: () => import( '../views/TeamManage.vue')
   },
 
   {
