@@ -10,10 +10,10 @@
         </div>
       </div>
       <div class="buttons">
-        <div class="manage-project">
+        <div class="manage-project" v-on:click="JumpToProjectManage()">
           项目管理
         </div>
-        <div class="list-members">
+        <div class="list-members" v-on:click="JumpToTeamManage()">
           成员列表
         </div>
         <div class="more">
@@ -77,26 +77,68 @@
               <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
             </div>
           </div>
-          <div class="project-main">
-            <div class="project">
-              项目条数
-              <div class="project-mode">
-                <div class="project-name">
-                  Project's Name
-                </div>
-                <div class="project-img">
-                  <img src="../assets/project.png" class="img-size">
+          <div class="project-total">
+            <div class="project-main">
+              <div class="project" v-for="(item,index) in projectList" :key="index" >
+                <div class="project-mode">
+                  <div class="project-info" v-on:click="JumpTodesignManage()">
+                    <div class="project-name">
+                      {{item.projectName}}
+                    </div>
+                    <div class="project-leader">
+                      <img src="../assets/build.png" class="project-build-img">
+                      <div class="project-leader-title">项目创建者</div>
+                      <div class="project-leader-name">{{item.leaderName}}</div>
+                    </div>
+                    <div class="project-lately-edit">
+                      <img src="../assets/edittime.png" class="project-edittime-img">
+                      <div class="project-lately-edit-title">最近编辑</div>
+                      <div class="project-lately-edit-time">{{item.latelyTime}}</div>
+                    </div>
+                  </div>
+                  <div class="project-img" v-on:click="JumpTodesignManage()">
+                    <img src="../assets/project.png" class="img-size">
+                  </div>
+                  <div class="project-operation">
+                    <div class="project-operation-rename">
+                      <img src="../assets/rename.png" class="project-rename-img" @click="item.rename = true">
+                      <el-dialog title="Rename" :visible.sync="item.rename" width="350px">
+                        <el-input v-model="item.nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
+                        <div slot="footer" class="rename-footer">
+                          <el-button @click="item.rename = false">取 消</el-button>
+                          <el-button @click="item.rename = false" class="el-buttons">确 定</el-button>
+                        </div>
+                      </el-dialog>
+                    </div>
+                    <div class="project-operation-delete">
+                      <img src="../assets/delete.png" class="project-delete-img" @click="item.deleteProject = true">
+                      <el-dialog
+                          title="提示"
+                          :visible.sync="item.deleteProject"
+                          width="30%"
+                          center
+                          append-to-body>
+                        <span>确认要删除项目 {{item.projectName}} 吗？</span>
+                        <span slot="footer" class="dialog-footer">
+                              <el-button @click="item.deleteProject = false" >取 消</el-button>
+                              <el-button type="primary" @click="item.deleteProject = false;" class="el-buttons">确 定</el-button>
+                        </span>
+                      </el-dialog>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="pagination">
+              <div class="pagination">
               <el-pagination
                   background
                   layout="prev, pager, next"
                   :total="1000">
               </el-pagination>
             </div>
+            </div>
+
           </div>
+
         </div>
         <div class="right-side">
           <div class="team-summary">
@@ -177,6 +219,15 @@ export default {
         this.$message.error('上传头像图片大小不能超过 2MB!');
       }
       return isJPG && isLt2M;
+    },
+    JumpToProjectManage(){
+      this.$router.push('/ProjectManage');
+    },
+    JumpToTeamManage(){
+      this.$router.push('/TeamManage');
+    },
+    JumpTodesignManage(){
+      this.$router.push('/designManage');
     }
   },
   data(){
@@ -249,6 +300,40 @@ export default {
       imageUrl: '',
       editSummary:false,
       Summarycontent:'',
+      projectList:[
+        {
+          projectName:'Project 1',
+          leaderName:'徐亦佳',
+          latelyTime:'5分钟前',
+          deleteProject:false,
+          rename:false,
+          nameInput:'',
+        },
+        {
+          projectName:'Project 2',
+          leaderName:'徐亦佳',
+          latelyTime:'5分钟前',
+          deleteProject:false,
+          rename:false,
+          nameInput:'',
+        },
+        {
+          projectName:'Project 3',
+          leaderName:'徐亦佳',
+          latelyTime:'5分钟前',
+          deleteProject:false,
+          rename:false,
+          nameInput:'',
+        },
+        {
+          projectName:'Project 4',
+          leaderName:'徐亦佳',
+          latelyTime:'5分钟前',
+          deleteProject:false,
+          rename:false,
+          nameInput:'',
+        },
+      ],
     }
   }
 };
@@ -395,7 +480,7 @@ export default {
 .members-manage:hover{
   color: rgba(23,43,72,0.65);
 }
-.members-top-side{
+.project-top-side{
   display: flex;
   height: 50px;
   width: 100%;
@@ -424,8 +509,8 @@ export default {
   padding-left: 40px;
 }
 .pagination{
-  padding-top: 30px;
-  margin-bottom: 30px;
+  padding-top: 40px;
+  padding-bottom: 60px;
 }
 .project-add{
   width: 90px;
@@ -645,37 +730,125 @@ export default {
 .summary-content:focus{
   border-color: #2c3e50;
 }
-.project{
-  background-color: #42b983;
+.project-main{
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 500px;
+  height: 400px;
+}
+.project-total{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.project{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 150px;
   margin-top: 20px;
 }
 .project-mode{
   display: flex;
   width: 88%;
-  height: 200px;
+  height: 150px;
   margin-left: 35px;
   margin-top: 10px;
   border-radius: 30px;
-  background-color: cornflowerblue;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 0 3px 3px rgba(23, 43, 72, 0.45);
+}
+.project-info{
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  height: 100%;
+  cursor: pointer;
 }
 .project-name{
   display: flex;
-  width: 60%;
+  width: 100%;
+  height: auto;
   font-family: "Berlin Sans FB Demi";
-  font-size: 40px;
-  padding-top: 50px;
+  font-size: 38px;
+  padding-top: 13px;
   padding-left: 35px;
 }
+.project-leader{
+  display: flex;
+  flex-direction: row;
+  padding-top: 10px;
+  align-items: center;
+}
+.project-leader-name{
+  display: flex;
+  padding-left: 10px;
+  font-size: 15px;
+}
+.project-leader-title{
+  display: flex;
+  font-size: 15px;
+}
+.project-build-img{
+  display: flex;
+  width: 30px;
+  height: 30px;
+  padding-left: 30px;
+
+}
+.project-lately-edit{
+  display: flex;
+  flex-direction: row;
+  padding-top: 10px;
+  align-items: center;
+}
+.project-lately-edit-title{
+  display: flex;
+  font-size: 15px;
+  padding-left: 3px;
+}
+.project-lately-edit-time{
+  display: flex;
+  padding-left: 15px;
+  font-size: 15px;
+}
+.project-edittime-img{
+  display: flex;
+  width: 30px;
+  height: 30px;
+  padding-left: 30px;
+}
 .project-img{
-  padding-top: 44px;
+  padding-top: 5px;
+  cursor: pointer;
 }
 .img-size{
-  width: 300px;
-  height: 150px;
+  width: 280px;
+  height: 140px;
+}
+.project-operation{
+  display: flex;
+  margin-left: 70px;
+  margin-top: 50px;
+}
+.project-operation-rename{
+  display: flex;
+}
+.project-operation-delete{
+  display: flex;
+  margin-left: 30px;
+}
+.project-rename-img{
+  display: flex;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+.project-delete-img{
+  display: flex;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
 }
 </style>
 

@@ -70,137 +70,57 @@
     <div class="content">
         <div class="left-side">
           <div class="members-top-side">
-            <div class="members-add">
-              Add member
-            </div>
-            <div class="members-search">
-              <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
-            </div>
+              <div class="project-name">
+                Project's Name
+              </div>
           </div>
           <div class="members-second-side">
-            <div class="members-rank">
-              <el-select v-model="value" placeholder="全部成员" class="rank">
-                <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                </el-option>
-              </el-select>
+            <div class="choose-box">
+                <div class="design-box" v-on:click="JumpTodesignManage()">
+                  <div class="design-content">
+                    <img src="../assets/design-set.png" class="design-img">
+                    <div class="design-title">
+                      design
+                    </div>
+                  </div>
+                  <img src="../assets/line.png" class="line-img">
+                </div>
+                <div class="document-box" v-on:click="JumpTodocumentManage()">
+                    <img src="../assets/document.png" class="document-img">
+                    <div class="document-title">
+                      document
+                    </div>
+              </div>
+                <div class="trash-box" v-on:click="JumpToTrashManage()">
+                    <img src="../assets/trash.png" class="trash-img">
+                    <div class="trash-title">
+                      trash
+                    </div>
+                </div>
             </div>
           </div>
           <div class="members-main">
-            <div :class="IsManage===true?'table-leader':'table-member'">
-              <el-table
-                  :data="tableData"
-                  :header-cell-style="{'text-align':'center'}"
-                  :cell-style="{'text-align':'center'}"
-                  style="width: 100%"
-                  max-height="480">
-                <el-table-column
-                    fixed
-                    prop="name"
-                    label="姓名"
-                    width="200">
-                </el-table-column>
-                <el-table-column
-                    prop="nickname"
-                    label="昵称"
-                    width="200">
-                </el-table-column>
-                <el-table-column
-                    prop="email"
-                    label="邮箱"
-                    width="200">
-                </el-table-column>
-                <el-table-column
-                    prop="lastactive"
-                    label="上次登录"
-                    width="180">
-                </el-table-column>
-                <el-table-column
-                    prop="identity"
-                    label="身份"
-                    width="180">
-                </el-table-column>
-                <el-table-column
-                    label="操作"
-                    width="220"
-                    fixed="right"
-                    v-if="IsManage===true">
-                  <template slot-scope="scope">
-                    <div class="members-operation">
-                      <el-button
-                          @click.native.prevent="removeMember=true;currentRow=scope.row"
-                          type="text"
-                          size="small"
-                          class="move-button">
-                        移除
-                      </el-button>
-                      <el-dialog
-                          title="提示"
-                          :visible.sync="removeMember"
-                          width="30%"
-                          center
-                          append-to-body>
-                        <span>确认要删除该成员吗？</span>
-                        <span slot="footer" class="dialog-footer">
-                              <el-button @click="removeMember = false">取 消</el-button>
-                              <el-button type="primary" @click="removeMember = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
-                        </span>
-                      </el-dialog>
-                      <div class="identity-choose">
-                        <el-dropdown trigger="click" popper-class="drop">
-                      <span class="el-dropdown-link">
-                          身份设定<i class="el-icon-arrow-down el-icon--right"></i>
-                      </span>
-                          <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item @click.native.prevent="changeManager=true;currentRow=scope.row">管理员</el-dropdown-item>
-                            <el-dropdown-item @click.native.prevent="changeMember=true;currentRow=scope.row;">普通成员</el-dropdown-item>
-                          </el-dropdown-menu>
-                        </el-dropdown>
-                      </div>
-                      <el-dialog
-                          title="提示"
-                          :visible.sync="changeManager"
-                          width="30%"
-                          center
-                          append-to-body>
-                        <span>确认要设置该成员为管理员吗？</span>
-                        <span slot="footer" class="dialog-footer">
-                              <el-button @click="changeManager = false">取 消</el-button>
-                              <el-button type="primary" @click="changeManager = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
-                        </span>
-                      </el-dialog>
-                      <el-dialog
-                          title="提示"
-                          :visible.sync="changeMember"
-                          width="30%"
-                          center
-                          append-to-body>
-                        <span>确认要设置该成员为普通成员吗？</span>
-                        <span slot="footer" class="dialog-footer">
-                              <el-button @click="changeMember = false">取 消</el-button>
-                              <el-button type="primary" @click="changeMember = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
-                        </span>
-                      </el-dialog>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
+            <div class="UML">
+              <div class="uml-design">
+                  <img src="../assets/uml.png" class="uml-img">
+              </div>
+              <div class="uml-name">
+                绘制UML
+              </div>
             </div>
-            <div class="pagination">
-              <el-pagination
-                  background="true"
-                  layout="prev, pager, next"
-                  :total="1000">
-              </el-pagination>
+            <div class="draft">
+              <div class="draft-design">
+                <img src="../assets/draft.png" class="draft-img">
+              </div>
+              <div class="draft-title">
+                原型设计
+              </div>
             </div>
           </div>
         </div>
         <div class="right-side">
           <div class="team-summary">
-            <div class="summary-title">简介</div>
+            <div class="summary-title">项目简介</div>
             <div class="edit-summary" @click="editSummary = true">
               edit
             </div>
@@ -224,22 +144,22 @@
           <el-divider></el-divider>
           <div class="team-leader">
             <div class="leader-name">
-              The Leader
+              The Project
             </div>
             <div class="leader-nickname">
               <img src="../assets/user.png" class="leader-img-size">
-              <div class="nickname">姓名</div>
+              <div class="nickname">创建用户</div>
               <div class="name-info">徐亦佳</div>
             </div>
             <div class="leader-email">
-              <img src="../assets/mail.png" class="leader-img-size">
-              <div class="email">电子邮箱</div>
-              <div class="email-info">1223160472@qq.com</div>
+              <img src="../assets/time.png" class="leader-img-size">
+              <div class="email">创建时间</div>
+              <div class="email-info">2022-8-3 14：22</div>
             </div>
             <div class="leader-active">
-              <img src="../assets/login.png" class="leader-img-size">
-              <div class="active">上次登录</div>
-              <div class="active-info">5分钟前</div>
+              <img src="../assets/document.png" class="leader-img-size">
+              <div class="active">文档数目</div>
+              <div class="active-info">5</div>
             </div>
           </div>
           <el-divider></el-divider>
@@ -257,6 +177,9 @@
 export default {
   name: "TeamManage",
   methods:{
+    JumpToProjectManage(){
+      this.$router.push('/ProjectManage');
+    },
     searchjump(){
 
     },
@@ -278,12 +201,18 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
-    },
     JumpToTeamManage(){
       this.$router.push('/TeamManage');
     },
+    JumpToTrashManage() {
+      this.$router.push('/TrashManage');
+    },
+    JumpTodesignManage() {
+      this.$router.push('/designManage');
+    },
+    JumpTodocumentManage() {
+      this.$router.push('/documentManage');
+    }
   },
   data(){
     return{
@@ -299,48 +228,41 @@ export default {
         label: '普通成员'
       }],
       tableData: [{
-        name: '王小虎1',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档1',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎2',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档2',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎3',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档3',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
+      },{
+        docname: '文档4',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎4',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档5',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎5',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档6',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎6',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }, {
-        name: '王小虎7',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }],
+        docname: '文档7',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
+      },],
       value:'',
       removeMember: false,
       currentRow:'',
@@ -355,6 +277,8 @@ export default {
       imageUrl: '',
       editSummary:false,
       Summarycontent:'',
+      recover:false,
+      remove:false,
     }
   }
 };
@@ -395,11 +319,98 @@ export default {
   height: 80px;
 }
 .choose-box{
-  width:100% ;
-  height: 60px;
+    display: flex;
+    flex-direction: row;
+}
+.design-box{
   display: flex;
-  margin-bottom: -10px;
+  flex-direction: column;
+  width: 30%;
+  height: 100%;
+  padding-top: 10px;
+}
+.design-content{
+  display: flex;
   flex-direction: row;
+}
+.design-img{
+  display: flex;
+  height: 20px;
+  width: 20px;
+  padding-left: 28px;
+}
+.design-img:hover{
+  filter:;
+}
+.design-title{
+  align-items: center;
+  font-size: 15px;
+  padding-left: 5px;
+  font-family: "Arial Black";
+  cursor: pointer;
+  color: #ef8354;
+}
+.document-box{
+  display: flex;
+  flex-direction: row;
+  width: 30%;
+  height: 100%;
+  padding-top: 10px;
+  padding-left: 0px;
+  margin-left: -10px;
+}
+.document-content{
+  display: flex;
+  flex-direction: row;
+}
+.document-img{
+  display: flex;
+  height: 20px;
+  width: 20px;
+  padding-left: 28px;
+}
+.document-title{
+  align-items: center;
+  font-size: 15px;
+  padding-left: 5px;
+  font-family: "Arial Black";
+  cursor: pointer;
+}
+.trash-box{
+  display: flex;
+  flex-direction: row;
+  width: 30%;
+  height: 30px;
+  padding-top: 10px;
+  padding-left: 30px;
+}
+.trash-content{
+  display: flex;
+  flex-direction: row;
+}
+.line-img{
+  display: flex;
+  padding-top: 3px;
+  padding-left: 22px;
+  width: 80%;
+  height: 3.5px;
+}
+.trash-img{
+  display: flex;
+  height: 20px;
+  width: 20px;
+  padding-left: 28px;
+  cursor: pointer;
+}
+.trash-img:hover{
+  color: #ef8354;
+}
+.trash-title{
+  align-items: center;
+  font-size: 15px;
+  padding-left: 5px;
+  font-family: "Arial Black";
+  cursor: pointer;
 }
 .content{
   display: flex;
@@ -506,16 +517,102 @@ export default {
   height: 50px;
   width: 100%;
 }
+.project-name{
+  display: flex;
+  height:50px;
+  width: 100%;
+  padding-left: 45px;
+  font-family:"Berlin Sans FB Demi";
+  font-size: 28px;
+}
 .members-second-side{
   display: flex;
   height: 70px;
   width: 100%;
+  padding-left: 20px;
 }
 .members-main{
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
   height:auto;
+  align-items: center;
+  margin-top:30px ;
+  padding-bottom: 30px;
+}
+.UML{
+  display: flex;
+  flex-direction: column;
+  width: 38%;
+  height: 500px;
+  margin-left: 75px;
+  border-radius: 20px;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 0 3px 3px rgba(23, 43, 72, 0.45);
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.UML:hover{
+  box-shadow: 0 0 10px 10px rgba(23, 43, 72, 0.45);
+}
+.uml-design{
+  display: flex;
+  width: 70%;
+  margin-left: 0px;
+  margin-top: 90px;
+  align-self:center;
+}
+.uml-name{
+  display: flex;
+  font-family:'ruizhi' ;
+  padding-top: 30px;
+  font-size: 50px;
+  align-self:center
+}
+.uml-img{
+  display: flex;
+  width: 100%;
+  height: 90%;
+  align-self:center
+}
+.draft{
+  display: flex;
+  flex-direction: column;
+  width: 38%;
+  height: 500px;
+  margin-left: 30px;
+  border-radius: 20px;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 0 3px 3px rgba(23, 43, 72, 0.45);
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.draft:hover{
+  box-shadow: 0 0 10px 10px rgba(23, 43, 72, 0.45);
+}
+.draft-design{
+  display: flex;
+  width: 75%;
+  margin-left: 0px;
+  margin-top: 75px;
+  align-self:center;
+}
+.draft-img{
+  display: flex;
+  padding-top: 5px;
+  width: 100%;
+  align-self:center
+}
+.draft-title{
+  display: flex;
+  font-family:'ruizhi' ;
+  padding-top: 40px;
+  font-size: 50px;
+  align-self:center
+}
+.draft-name{
+  display: flex;
+  align-self:center
 }
 .table-leader{
   display: flex;
@@ -550,10 +647,11 @@ export default {
 }
 .members-search{
   display: flex;
-  padding-left:525px;
-  padding-top: 5px;
+  padding-left: 225px;
+  padding-right: 90px;
+  padding-top: 0px;
+  margin-top: -5px;
   width: 30%;
-  justify-content: space-between;
 }
 .members-rank{
   padding-top: 20px;
@@ -623,7 +721,7 @@ export default {
 }
 .active-info{
   display: flex;
-  padding-top: 15px;
+  padding-top: 18px;
   padding-left: 15px;
   font-size: 15px;
 }
@@ -683,11 +781,20 @@ export default {
 /deep/.identity-choose:hover{
   color: rgba(23,43,72,0.45);
 }
-/deep/.move-button{
+/deep/.recover-button{
   color: #2c3e50;
   font-size: 15px;
   cursor: pointer;
   padding-left: 50px;
+}
+/deep/.recover-button:hover{
+  color: rgba(23,43,72,0.45);
+}
+/deep/.move-button{
+  color: #2c3e50;
+  font-size: 15px;
+  cursor: pointer;
+  padding-left: 30px;
 }
 /deep/.move-button:hover{
   color: rgba(23,43,72,0.45);
