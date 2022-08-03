@@ -400,4 +400,5 @@ export default {
   top:340px;
   color: #F2595D;
 }
+
 </style>

@@ -17,7 +17,7 @@
     <img src="../assets/quit.png" height="20px" alt=" "  style="margin-top: 14px">
   </div>
 </div>
-    <div class="mask" v-if="begin_edit">
+    <div class="mask" v-if="begin_edit" :style="{height: this.wholeHeight}">
       <div class="personal_edit" v-if="begin_edit&&!modify_nickname">
         <div class="edit_title">Account setting</div>
         <div class="close" v-on:click="begin_edit=false">
@@ -141,6 +141,7 @@ export default {
       droping : false,
       noMore : false,
       ifNotification:false,
+      wholeHeight:'',
     }
   },
   methods:{
@@ -181,6 +182,7 @@ export default {
   mounted() {
     let storage = window.localStorage;
     this.email=storage.getItem('email');
+    this.wholeHeight=document.documentElement.scrollHeight-50+'px';
   }
 }
 </script>
@@ -272,7 +274,7 @@ export default {
 }
 .mask{
   position: absolute;
-  z-index: 10000;
+  z-index: 100000;
   left: 0;
   top:50px;
   height: calc(100% - 50px);
@@ -421,6 +423,13 @@ export default {
 .save-btn{
   margin-top: 30px;
   margin-left: 330px;
+}
+/deep/.el-input__inner {
+  background-color: rgba(255,255,255,0.45);
+  color:#2c3e50 ;
+  border-width: 1px 1px 1px 1px ;
+  border-bottom-color: #2c3e50;
+  border-radius: 0;
 }
 .notification{
   z-index: 10000;
