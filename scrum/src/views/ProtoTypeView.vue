@@ -283,31 +283,32 @@ export default {
   background-color: lightskyblue;
 }
 #materialPanel{
-  height: 650px;
+  height: 600px;
   width: 100%;
   padding: 0;
   overflow-y: scroll;
-  border: black solid 1px;
+  border: black  1px;
 }
 #right{
   width: 28%;
   height: 100%;
-  border: black solid 1px;
+  border: black 1px;
   display: inline-block;
   position: relative;
   margin: 1px;
   vertical-align: top;
 }
 #menu{
-  height: 60px;
+  height: 40px;
   border: #42b983 2px solid;
   text-align: center;
-  padding-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 #work{
   width: 50%;
   height: 600px;
-  border: black solid 1px;
+  border: black  1px;
   display: inline-block;
   position: relative;
   margin: 1px;
@@ -317,7 +318,7 @@ export default {
 #left{
   width: 19%;
   height: 100%;
-  border: black solid 1px;
+  border: black 1px;
   display: inline-block;
   position: relative;
   margin: 1px;
@@ -325,7 +326,7 @@ export default {
   padding: 0;
 }
 #list{
-  height: 600px;
+  height: 550px;
   overflow-y: scroll;
 }
 .classSelected{
