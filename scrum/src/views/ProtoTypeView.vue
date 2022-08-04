@@ -3,7 +3,7 @@
     <div id="left">
       <div style="width: 100%;height: 40px; line-height: 40px">
         <img src="../assets/PrototypeMaterial/back.png" style="height: 40px ; width: auto ;float: left" id="back" @click="BackToDesignManage">
-        项目名称</div>
+        {{this.$route.params.pid}}</div>
       <div id="menu">
         <el-button type="primary" plain id="buttonAdd" @click="dialogAddVisible = true">添加</el-button>
         <el-dropdown>
@@ -165,6 +165,12 @@ export default {
   },
   methods:{
     BackToDesignManage(){
+      this.$router.push({
+        name:'designManage',
+        params:{
+          pid:this.$route.params.pid
+        }
+      });
       this.$router.push('/designManage');
     },
     showChangeDialog(elm){

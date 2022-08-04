@@ -12,7 +12,7 @@
               <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
             </div>
             <div class="TeamName">
-              Yigaa's Team
+              {{ this.tname }}
             </div>
           </div>
           <div class="buttons">
@@ -199,7 +199,7 @@ export default {
   methods:{
     JumpToPrototype(){
       this.$router.push({
-        name:'PrototypeView',
+        name:'ProtoTypeView',
         params:{
           pid:window.localStorage.getItem('pid')
         }
@@ -273,6 +273,7 @@ export default {
   data(){
     return{
       input:'',
+      tname:window.localStorage.getItem('tname'),
       options: [{
         value: '选项1',
         label: '全部成员'
