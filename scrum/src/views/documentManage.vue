@@ -80,9 +80,22 @@
                 Project's Name
               </div>
             </div>
-            <div class="search">
-              <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
+            <div class="search-mode">
+              <div class="search">
+                <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
+              </div>
+              <div class="search-button" @click="handleSearch()">
+                search
+              </div>
+              <el-popover  trigger="click" placement="bottom-end" popper-class="moreinfo" >
+                <p><el-input v-model="input1" placeholder="请输入文件名" style="width: 400px;"></el-input></p>
+                <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew()">确认</el-button></p>
+                <div slot="reference" class="name-wrapper" >
+                  <el-button class="new-button">NEW<i class="el-icon-edit el-icon--right"></i></el-button>
+                </div>
+              </el-popover>
             </div>
+
             <div class="members-second-side">
               <div class="choose-box">
                 <div class="design-box" v-on:click="JumpTodesignManage()">
@@ -114,66 +127,51 @@
             <div class="members-main">
               <div class="table-leader">
                 <el-table
-                    :data="tableData"
+                    :data="searchData"
                     :header-cell-style="{'text-align':'center'}"
                     :cell-style="{'text-align':'center'}"
-                    style="width: 100%"
-                    max-height="480">
+                    max-height="480"
+                    style="width: 100%">
                   <el-table-column
                       fixed
-                      prop="docname"
-                      label="文件名"
+                      label="文档名"
                       width="200">
+                    <template slot-scope="scope">
+                      <span style="margin-left: 10px">{{ scope.row.name }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column
-                      prop="builder"
+                      label="所属项目"
+                      width="200">
+                    <template slot-scope="scope">
+                      <span style="margin-left: 10px">{{ scope.row.projectID }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
                       label="创建者"
                       width="200">
+                    <div  class="info" slot-scope="scope" >
+                      <el-popover class="moreinfo" trigger="hover" placement="top-start"  style="overflow-x: auto">
+                        <p>创建时间: {{ scope.row.createdDate }}</p>
+                        <p>最后修改时间: {{ scope.row.modifiedDate }}</p>
+                        <div slot="reference" class="name-wrapper" >
+                          <el-tag size="medium" effect="plain">{{ scope.row.creatorID }}</el-tag>
+                        </div>
+                      </el-popover>
+                    </div>
                   </el-table-column>
-                  <el-table-column
-                      prop="buildTime"
-                      label="创建时间"
-                      width="200">
-                  </el-table-column>
-                  <el-table-column
-                      prop="editTime"
-                      label="最近编辑"
-                      width="180">
-                  </el-table-column>
-                  <el-table-column
-                      label="操作"
-                      width="220"
-                      fixed="right"
-                  >
+                  <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
-                      <div class="members-operation">
-                        <el-button
-                            @click.native.prevent="recover=true;currentRow=scope.row"
-                            type="text"
-                            size="small"
-                            class="recover-button">
-                          编辑
-                        </el-button>
-                        <el-button
-                            @click.native.prevent="remove=true;currentRow=scope.row"
-                            type="text"
-                            size="small"
-                            class="move-button">
-                          删除
-                        </el-button>
-                        <el-dialog
-                            title="提示"
-                            :visible.sync="remove"
-                            width="30%"
-                            center
-                            append-to-body>
-                          <span>确认要删除该文档吗？</span>
-                          <span slot="footer" class="dialog-footer">
-                              <el-button @click="remove = false">取 消</el-button>
-                              <el-button type="primary" @click="remove= false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
-                        </span>
-                        </el-dialog>
-                      </div>
+                      <el-button
+                          type="text"
+                          size="small"
+                          class="recover-button"
+                          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                      <el-button
+                          type="text"
+                          size="small"
+                          class="move-button"
+                          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -248,6 +246,7 @@
 <script>
 import LeftSide from "@/components/LeftSide";
 import HeadSide from "@/components/HeadSide";
+import global from "@/api/global";
 
 export default {
   name: "TeamManage",
@@ -295,10 +294,121 @@ export default {
     JumpTodocumentManage() {
       this.$router.push('/documentManage');
     },
+    initParams(){
+      /*
+        let formData = new FormData();
+        formData.append('projectID', '');
+        formData.append('userID', '');
+        axios.post('http://43.138.21.64/doc/get/all/',formData)
+            .then(function (response) {
+              if(response.data.success){
+                this.tableData=response.data.document.results;
+              }
+              else {
+                console.log("获取失败");
+              }
+            })
+            .catch(function (error) {
+              console.log("Fail", error)
+            });
+       */
+      this.searchData=this.tableData;
+    },
+    handleSearch(){
+      var search1= this.input;
+      if(search1){
+        if(search1 === null || search1 === undefined){
+          this.searchData=this.tableData;
+        }else{
+          this.searchData=[];
+          for(let i=0;i<this.tableData.length;i++) {
+            if(this.tableData[i].name.search(search1)!==-1){
+              this.searchData.push(this.tableData[i]);
+            }
+          }
+        }
+      }
+      else{
+        this.searchData=this.tableData;
+      }
+    },
+    handleNew(){
+      var add=true;
+      for(let i=0;i<this.tableData.length;i++) {
+        if(this.tableData[i].name===this.input1){
+          add=false;
+        }
+      }
+      if(add){
+        /*
+        let formData = new FormData();
+        formData.append('userID', '');
+        formData.append('projectID', '');
+        formData.append('docName', this.input1);
+        axios.post('http://43.138.21.64/doc/add/',formData)
+            .then(function (response) {
+              if(response.data.success){
+                console.log(response.data.message);
+              }
+              else {
+                console.log(response.data.message);
+              }
+            })
+            .catch(function (error) {
+              console.log("Fail", error)
+            });
+         */
+        var data1={
+          ID: '',
+          name: this.input1,
+          creatorID: '当前用户',
+          createdDate: '',
+          modifiedDate: '',
+          content: '',
+          projectID: '当前项目',
+          isRecycled: '',
+        };
+        this.tableData.push(data1);
+        alert(this.input1+'添加成功');
+        this.input1='';
+      }
+      else{
+        alert(this.input1+'已存在，请重新输入');
+        this.input1='';
+      }
+    },
+    handleEdit(index, row) {
+      console.log(index, row);
+      global.fileid=row.ID;
+      this.$router.push({path: '/about'});
+    },
+    handleDelete(index, row) {
+      /*
+      let formData = new FormData();
+      formData.append('docID', row.ID);
+      formData.append('userID', '');
+      formData.append('docType', 3);
+      axios.post('http://43.138.21.64/doc/remove/one/',formData)
+          .then(function (response) {
+            if(response.data.success){
+              console.log(response.data.message);
+            }
+            else {
+              console.log(response.data.message);
+            }
+          })
+          .catch(function (error) {
+            console.log("Fail", error)
+          });
+       */
+      this.tableData.splice(index,1);
+      alert("已删除"+row.name);
+    }
   },
   data(){
     return{
       input:'',
+      input1:'',
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -309,42 +419,116 @@ export default {
         value: '选项3',
         label: '普通成员'
       }],
+      searchData: [],
       tableData: [{
-        docname: '文档1',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        editTime: '5分钟前',
+        ID: '1',
+        name: '文件1',
+        creatorID: '用户名1',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目1',
+        isRecycled: '',
       }, {
-        docname: '文档2',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        editTime: '5分钟前',
+        ID: '2',
+        name: '文件2',
+        creatorID: '用户名2',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目2',
+        isRecycled: '',
       }, {
-        docname: '文档3',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        editTime: '5分钟前',
+        ID: '3',
+        name: '文件3',
+        creatorID: '用户名3',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目3',
+        isRecycled: '',
+      }, {
+        ID: '4',
+        name: '文件4',
+        creatorID: '用户名4',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目4',
+        isRecycled: '',
+      }, {
+        ID: '5',
+        name: '文件5',
+        creatorID: '用户名5',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目5',
+        isRecycled: '',
+      }, {
+        ID: '6',
+        name: '文件6',
+        creatorID: '用户名6',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目6',
+        isRecycled: '',
+      }, {
+        ID: '7',
+        name: '文件7',
+        creatorID: '用户名7',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目7',
+        isRecycled: '',
+      }, {
+        ID: '8',
+        name: '文件8',
+        creatorID: '用户名8',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目8',
+        isRecycled: '',
+      }, {
+        ID: '9',
+        name: '文件9',
+        creatorID: '用户名9',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目9',
+        isRecycled: '',
       },{
-        docname: '文档4',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        editTime: '5分钟前',
+        ID: '10',
+        name: '文件10',
+        creatorID: '用户名10',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目10',
+        isRecycled: '',
       }, {
-        docname: '文档5',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        editTime: '5分钟前',
+        ID: '11',
+        name: '文件11',
+        creatorID: '用户名11',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目11',
+        isRecycled: '',
       }, {
-        docname: '文档6',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        editTime: '5分钟前',
-      }, {
-        docname: '文档7',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        editTime: '5分钟前',
-      },],
+        ID: '12',
+        name: '文件12',
+        creatorID: '用户名12',
+        createdDate: '2022-08-02 09:00',
+        modifiedDate: '2022-08-02 10:00',
+        content: '',
+        projectID: '项目12',
+        isRecycled: '',
+      }],
       value:'',
       removeMember: false,
       currentRow:'',
@@ -580,6 +764,10 @@ export default {
 .more-menu:not(.is-disabled):focus{
   background-color:rgba(23,43,72,0.45);;
 }
+/deep/.moreinfo{
+  margin-left: 300px;
+  padding-left: 300px;
+}
 .project-manage{
   padding-top: 20px;
   padding-left: 30px;
@@ -664,10 +852,65 @@ export default {
 }
 .search{
   float: left;
-  margin-left: 620px;
+  margin-left: 500px;
   margin-top: 0px;
   height: 0px;
-  width:28%;
+}
+.search-mode{
+  float: left;
+  margin-left: 0px;
+  margin-top: 0px;
+  height: 0px;
+  width:100%;
+  left: 0px;
+}
+.search-button{
+  width: 90px;
+  height: 24px;
+  border: 2px solid;
+  border-radius: 5px;
+  outline-color: #2c3e50;
+  cursor: pointer;
+  padding-top:4px;
+  padding-bottom: 4px;
+  margin-left: 50px;
+  font-size: 18px;
+  top:170px;
+  left: 650px;
+  color: #FFFFFF;
+  background-color: #2c3e50;
+  font-family: "Berlin Sans FB Demi";
+  position: absolute;
+  float: left;
+}
+.search-button:hover{
+  color: #E9E9E9;
+}
+.new-button{
+
+}
+/deep/.new-button{
+  width: 90px;
+  height: 35px;
+  border: 2px solid;
+  border-radius: 5px;
+  outline-color: #2c3e50;
+  cursor: pointer;
+  margin-left: 50px;
+  padding-top:8px;
+  padding-bottom: 8px;
+  padding-left:15px;
+  font-size: 18px;
+  top:170px;
+  left: 750px;
+  color: #FFFFFF;
+  background-color: #2c3e50;
+  font-family: "Berlin Sans FB Demi";
+  position: absolute;
+  float: left;
+}
+/deep/.new-button:hover{
+  color: #E9E9E9;
 }
 .members-rank{
   padding-top: 20px;
@@ -910,6 +1153,15 @@ export default {
 
 
 <style>
+.el-popover.moreinfo{
+  margin-top: 60px;
+}
+.moreinfo .popper__arrow {
+  margin-left: 300px;
+}
+.moreinfo .popper__arrow::after {
+  margin-left: 300px;
+}
 /deep/.el-dropdown-menu:hover {
   border: none;
   color: #666;
