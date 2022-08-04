@@ -121,9 +121,9 @@ export default {
         {id:7 , name:"饼状图" , imgURL:require('../assets/PrototypeMaterial/pieChart.png')},
         {id:8 , name:"按钮" , imgURL:require('../assets/PrototypeMaterial/button.png')},
         {id:9 , name:"便签" , imgURL:require('../assets/PrototypeMaterial/note.png')},
-        {id:10 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/picture.png')},
-        {id:11 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/map.jpg')},
-        {id:12 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/video.png')},
+        {id:10 , name:"选符号" , imgURL:require('../assets/PrototypeMaterial/select.png')},
+        {id:11 , name:"搜索框" , imgURL:require('../assets/PrototypeMaterial/search.jpg')},
+        {id:12 , name:"侧边菜单" , imgURL:require('../assets/PrototypeMaterial/menu.jpg')},
         {id:13 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/code.jpg')},
         {id:14 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/chat.png')},
         {id:15 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/switch.png')},
@@ -215,7 +215,7 @@ export default {
         const newPrototype = {name: that.addForm.name , canvasWidth: that.addForm.width , canvasHeight: that.addForm.height ,
           id:res.data.id , content: ''}
         that.prototypeData.push(newPrototype)
-        that.changeCanvas(newPrototype)
+        that.changeCanvas(newPrototype,that.prototypeData.length -1)
       })
 
     },
@@ -223,13 +223,14 @@ export default {
       console.log(this.dataArr.canvas.toJSON())
       console.log(document.getElementsByName("temp"))
       new fabric.Image.fromURL( this.materialData[index].imgURL, img => {
-        this.dataArr.canvas.add(img.scaleToWidth(40)).renderAll()
+        this.dataArr.canvas.add(img.scaleToWidth(80)).renderAll()
       }, {crossOrigin: 'anonymous'})
 
     },
     changeCanvas(elm , index){
       this.indexSelected = index
       this.idSelected = elm.id
+      console.log(this.idSelected)
       this.dataArr.canvas.clear()
       this.dataArr.canvas.setWidth(elm.canvasWidth)
       this.dataArr.canvas.setHeight(elm.canvasHeight)
@@ -254,7 +255,8 @@ export default {
     },
     init(){
       this.addForm.name = '新建原型实例'
-      Vue.set( this.dataArr , 'canvas' , new fabric.Canvas('c'))
+      Vue.set( this.dataArr , 'canvas' , new fabric.Canvas('c' , {
+        includeDefaultValues: false }))
       this.dataArr.canvas.on('object:moving', (e) => {
         // 阻止对象移动到画布外面
         let padding = 10; // 内容距离画布的空白宽度，主动设置
@@ -355,13 +357,15 @@ export default {
     },
     save(){
       const that = this
-      const  json = JSON.stringify(this.dataArr.canvas.toJSON())
+      const  json = JSON.stringify(that.dataArr.canvas.toJSON())
+      console.log(that.indexSelected)
+      console.log(json)
       let dataPost = new FormData()
       //dataPost.append("userID", 10)
       dataPost.append("userID", 10)
       dataPost.append("docID", that.idSelected)
       dataPost.append("docType", 1)
-      dataPost.append("content", json)
+      dataPost.append("content", json.substring(0,150))
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
       }
