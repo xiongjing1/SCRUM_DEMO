@@ -148,8 +148,10 @@
                 <div class="pagination">
                   <el-pagination
                       background
+                      @current-change="handleCurrentChange"
+                      :current-page.sync="currentPage"
                       layout="prev, pager, next"
-                      :total="1000">
+                      :total=total>
                   </el-pagination>
                 </div>
               </div>
@@ -246,6 +248,7 @@ export default {
             console.log(response.data.success)
           }
         })
+    this.total=this.projectList.length
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
@@ -457,40 +460,9 @@ export default {
       editSummary:false,
       Summarycontent:'',
       projectList:[
-        {
-          ID: '1',
-          project_name: 'project01',
-          creator_id: 'user01',
-          creator_date: '2022-08-02T10:34:45.667Z',
-          modified_date: null,
-          description: 'projecttest',
-          is_recycled: false,
-          teamID: 1,
-          rename:false
-        },
-        {
-          ID: '2',
-          project_name: 'project02',
-          creator_id: 'user01',
-          creator_date: '2022-08-02T10:34:45.667Z',
-          modified_date: null,
-          description: 'projecttest',
-          is_recycled: false,
-          teamID: 1,
-          rename:false
-        },
-        {
-          ID: '3',
-          project_name: 'project03',
-          creator_id: 'user01',
-          creator_date: '2022-08-02T10:34:45.667Z',
-          modified_date: null,
-          description: 'projecttest',
-          is_recycled: false,
-          teamID: 1,
-          rename:false
-        },
       ],
+      currentPage: 1,
+      total:2,
     }
   }
 };

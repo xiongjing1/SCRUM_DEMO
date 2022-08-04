@@ -301,6 +301,7 @@ export default {
 
     },
     deleteRow(row){
+      console.log()
       let param = new FormData() // 创建form对象
       param.append('is_delete_member', this.addmember)// 通过append向form对象添加数据
       param.append('a_id', row.m_id)
