@@ -2,7 +2,7 @@
   <div>
 <div class="headside">
   <img src="../assets/logo.png" height="25px" alt=" " style="position: absolute; left: 15px;top:14px" >
-  <div class="username">Hilary Hong</div>
+  <div class="username">{{ nickname }}</div>
   <div class="email">{{email}}</div>
   <div class="picture">
    <img src="../assets/avatar.jpg" alt="">
@@ -32,17 +32,17 @@
           </div>
           <div class="information">
             <div class="atitle">Nickname</div>
-            <div class="content">Hilary Hong</div>
+            <div class="content">{{ nickname }}</div>
             <div class="name-edit" v-on:click="modify_nickname=true">Change nickname</div>
             <div class="underline2"></div>
             <div class="atitle">Email</div>
-            <div class="content">lluosi1030@gmail.com</div>
+            <div class="content">{{ email }}</div>
             <div class="underline2"></div>
             <div class="atitle">Real Name</div>
-            <div class="content">洪秋訸</div>
+            <div class="content">{{ name }}</div>
             <div class="underline2"></div>
             <div class="atitle">uid</div>
-            <div class="content">130498501</div>
+            <div class="content">{{ uid }}</div>
           </div>
       </div>
       <div class="name-block" v-if="begin_edit&&modify_nickname">
@@ -51,8 +51,8 @@
           <img src="../assets/close.png" height="18px" alt=" "  style="margin-top:8px; margin-left: 2px">
         </div>
         <div class="underline"></div>
-        <el-input class="change_name" placeholder="Your new nickname here..."></el-input>
-        <el-button type="primary" class="save-btn" v-on:click="modify_nickname=false">Save it</el-button>
+        <el-input class="change_name" placeholder="Your new nickname here..." v-model="new_nickname"></el-input>
+        <el-button type="primary" class="save-btn" v-on:click="reset_nickname()">Save it</el-button>
       </div>
     </div>
     <input type="file" name="image" accept="image/*" class="real-button" v-if="begin_edit&&!modify_nickname">
@@ -115,6 +115,7 @@
 
 <script>
 import infiniteScroll from "vue-infinite-scroll";
+import axios from "axios";
 
 export default {
   name: "HeadSide",
@@ -122,8 +123,12 @@ export default {
   data(){
     return {
       email:'',
+      name:'',
+      uid:'',
+      nickname:'',
       begin_edit: false,
       modify_nickname:false,
+      new_nickname:'',
       count: 0,
       busy: false, //是否正在加载过程中
       newsList:[
@@ -149,6 +154,29 @@ export default {
       let storage = window.localStorage;
       storage.setItem('iflogin',0);
       this.$router.push('/');
+    },
+    reset_nickname(){
+      console.log("yes");
+      let param = new FormData() // 创建form对象
+      param.append('new_nickname', this.new_nickname)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+ window.localStorage.getItem('uid')+'/info', param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              let storage = window.localStorage;
+              storage.setItem('nickname',this.new_nickname);
+              this.nickname=this.new_nickname;
+              this.modify_nickname=false;
+              this.new_nickname='';
+            }else{
+              this.$message.error("发生错误");
+            }
+          })
+
     },
       loadMore(){
         // console.log(111);
@@ -182,6 +210,9 @@ export default {
   mounted() {
     let storage = window.localStorage;
     this.email=storage.getItem('email');
+    this.nickname=storage.getItem('nickname');
+    this.name=storage.getItem('name');
+    this.uid=storage.getItem('uid');
     this.wholeHeight=document.documentElement.scrollHeight-50+'px';
   }
 }
