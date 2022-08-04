@@ -189,6 +189,8 @@ export default {
 
 <style scoped>
 .headside{
+  position:absolute;
+  top:0;
   width: 100%;
   min-width: 1520px;
   height: 50px;

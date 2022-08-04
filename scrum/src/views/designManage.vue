@@ -75,83 +75,58 @@
         <el-divider></el-divider>
         <div class="content">
           <div class="left-side">
-            <div class="project-top-side">
-              <div class="project-add">
-                Add project
-              </div>
-              <div class="project-trash" v-on:click="JumpToProjectTrash()">
-                trash
-              </div>
-              <div class="project-search">
-                <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
+            <div class="members-top-side">
+              <div class="project-name">
+                Project's Name
               </div>
             </div>
-            <div class="project-total">
-              <div class="project-main">
-                <div class="project" v-for="(item,index) in projectList" :key="index" >
-                  <div class="project-mode">
-                    <div class="project-info" v-on:click="JumpTodesignManage()">
-                      <div class="project-name">
-                        {{item.projectName}}
-                      </div>
-                      <div class="project-leader">
-                        <img src="../assets/build.png" class="project-build-img">
-                        <div class="project-leader-title">项目创建者</div>
-                        <div class="project-leader-name">{{item.leaderName}}</div>
-                      </div>
-                      <div class="project-lately-edit">
-                        <img src="../assets/edittime.png" class="project-edittime-img">
-                        <div class="project-lately-edit-title">最近编辑</div>
-                        <div class="project-lately-edit-time">{{item.latelyTime}}</div>
-                      </div>
-                    </div>
-                    <div class="project-img" v-on:click="JumpTodesignManage()">
-                      <img src="../assets/project.png" class="img-size">
-                    </div>
-                    <div class="project-operation">
-                      <div class="project-operation-rename">
-                        <img src="../assets/rename.png" class="project-rename-img" @click="item.rename = true">
-                        <el-dialog title="Rename" :visible.sync="item.rename" width="350px">
-                          <el-input v-model="item.nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
-                          <div slot="footer" class="rename-footer">
-                            <el-button @click="item.rename = false">取 消</el-button>
-                            <el-button @click="item.rename = false" class="el-buttons">确 定</el-button>
-                          </div>
-                        </el-dialog>
-                      </div>
-                      <div class="project-operation-delete">
-                        <img src="../assets/delete.png" class="project-delete-img" @click="item.deleteProject = true">
-                        <el-dialog
-                            title="提示"
-                            :visible.sync="item.deleteProject"
-                            width="30%"
-                            center
-                            append-to-body>
-                          <span>确认要删除项目 {{item.projectName}} 吗？</span>
-                          <span slot="footer" class="dialog-footer">
-                              <el-button @click="item.deleteProject = false" >取 消</el-button>
-                              <el-button type="primary" @click="item.deleteProject = false;" class="el-buttons">确 定</el-button>
-                        </span>
-                        </el-dialog>
-                      </div>
+            <div class="members-second-side">
+              <div class="choose-box">
+                <div class="design-box" v-on:click="JumpTodesignManage()">
+                  <div class="design-content">
+                    <img src="../assets/design-set.png" class="design-img">
+                    <div class="design-title">
+                      design
                     </div>
                   </div>
+                  <img src="../assets/line.png" class="line-img">
                 </div>
-                <div class="pagination">
-                  <el-pagination
-                      background
-                      layout="prev, pager, next"
-                      :total="1000">
-                  </el-pagination>
+                <div class="document-box" v-on:click="JumpTodocumentManage()">
+                  <img src="../assets/document.png" class="document-img">
+                  <div class="document-title">
+                    document
+                  </div>
+                </div>
+                <div class="trash-box" v-on:click="JumpToTrashManage()">
+                  <img src="../assets/trash.png" class="trash-img">
+                  <div class="trash-title">
+                    trash
+                  </div>
                 </div>
               </div>
-
             </div>
-
+            <div class="members-main">
+              <div class="UML">
+                <div class="uml-design">
+                  <img src="../assets/uml.png" class="uml-img">
+                </div>
+                <div class="uml-name">
+                  绘制UML
+                </div>
+              </div>
+              <div class="draft">
+                <div class="draft-design">
+                  <img src="../assets/draft.png" class="draft-img">
+                </div>
+                <div class="draft-title">
+                  原型设计
+                </div>
+              </div>
+            </div>
           </div>
           <div class="right-side">
             <div class="team-summary">
-              <div class="summary-title">Profile</div>
+              <div class="summary-title">Project Profile</div>
               <div class="edit-summary" @click="editSummary = true">
                 edit
               </div>
@@ -175,22 +150,22 @@
             <el-divider></el-divider>
             <div class="team-leader">
               <div class="leader-name">
-                The Leader
+                The Project
               </div>
               <div class="leader-nickname">
                 <img src="../assets/user.png" class="leader-img-size">
-                <div class="nickname">姓名</div>
+                <div class="nickname">创建用户</div>
                 <div class="name-info">徐亦佳</div>
               </div>
               <div class="leader-email">
-                <img src="../assets/mail.png" class="leader-img-size">
-                <div class="email">电子邮箱</div>
-                <div class="email-info">1223160472@qq.com</div>
+                <img src="../assets/time.png" class="leader-img-size">
+                <div class="email">创建时间</div>
+                <div class="email-info">2022-8-3 14：22</div>
               </div>
               <div class="leader-active">
-                <img src="../assets/login.png" class="leader-img-size">
-                <div class="active">上次登录</div>
-                <div class="active-info">5分钟前</div>
+                <img src="../assets/document.png" class="leader-img-size">
+                <div class="active">文档数目</div>
+                <div class="active-info">5</div>
               </div>
             </div>
             <el-divider></el-divider>
@@ -205,13 +180,10 @@
     </div>
   </div>
 
-
-
 </template>
 
 
 <script>
-
 import LeftSide from "@/components/LeftSide";
 import HeadSide from "@/components/HeadSide";
 
@@ -225,6 +197,9 @@ export default {
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
+    JumpToProjectManage(){
+      this.$router.push('/ProjectManage');
+    },
     searchjump(){
 
     },
@@ -246,18 +221,18 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
-    },
     JumpToTeamManage(){
       this.$router.push('/TeamManage');
     },
-    JumpTodesignManage(){
+    JumpToTrashManage() {
+      this.$router.push('/TrashManage');
+    },
+    JumpTodesignManage() {
       this.$router.push('/designManage');
     },
-    JumpToProjectTrash(){
-      this.$router.push('/ProjectTrash');
-    },
+    JumpTodocumentManage() {
+      this.$router.push('/documentManage');
+    }
   },
   data(){
     return{
@@ -273,48 +248,41 @@ export default {
         label: '普通成员'
       }],
       tableData: [{
-        name: '王小虎1',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档1',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎2',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档2',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎3',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档3',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
+      },{
+        docname: '文档4',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎4',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档5',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎5',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        docname: '文档6',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
       }, {
-        name: '王小虎6',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }, {
-        name: '王小虎7',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }],
+        docname: '文档7',
+        builder:'tiger',
+        buildTime: '2022-08-03',
+        editTime: '5分钟前',
+      },],
       value:'',
       removeMember: false,
       currentRow:'',
@@ -329,33 +297,8 @@ export default {
       imageUrl: '',
       editSummary:false,
       Summarycontent:'',
-      projectList:[
-        {
-          projectName:'Project 1',
-          leaderName:'徐亦佳',
-          latelyTime:'5分钟前',
-          deleteProject:false,
-          rename:false,
-          nameInput:'',
-        },
-        {
-          projectName:'Project 2',
-          leaderName:'徐亦佳',
-          latelyTime:'5分钟前',
-          deleteProject:false,
-          rename:false,
-          nameInput:'',
-        },
-        {
-          projectName:'Project 3',
-          leaderName:'徐亦佳',
-          latelyTime:'5分钟前',
-          deleteProject:false,
-          rename:false,
-          nameInput:'',
-        },
-
-      ],
+      recover:false,
+      remove:false,
     }
   }
 };
@@ -370,6 +313,7 @@ export default {
   min-width: calc(1520px*81%);
   top:50px;
   left: 230px;
+  height: 800px;
 }
 .title{
   display: flex;
@@ -395,11 +339,98 @@ export default {
   height: 80px;
 }
 .choose-box{
-  width:100% ;
-  height: 60px;
+    display: flex;
+    flex-direction: row;
+}
+.design-box{
   display: flex;
-  margin-bottom: -10px;
+  flex-direction: column;
+  width: 30%;
+  height: 100%;
+  padding-top: 10px;
+}
+.design-content{
+  display: flex;
   flex-direction: row;
+}
+.design-img{
+  display: flex;
+  height: 20px;
+  width: 20px;
+  padding-left: 28px;
+}
+.design-img:hover{
+  filter:;
+}
+.design-title{
+  align-items: center;
+  font-size: 15px;
+  padding-left: 5px;
+  font-family: "Arial Black";
+  cursor: pointer;
+  color: #ef8354;
+}
+.document-box{
+  display: flex;
+  flex-direction: row;
+  width: 30%;
+  height: 100%;
+  padding-top: 10px;
+  padding-left: 0px;
+  margin-left: -16.5px;
+}
+.document-content{
+  display: flex;
+  flex-direction: row;
+}
+.document-img{
+  display: flex;
+  height: 20px;
+  width: 20px;
+  padding-left: 28px;
+}
+.document-title{
+  align-items: center;
+  font-size: 15px;
+  padding-left: 5px;
+  font-family: "Arial Black";
+  cursor: pointer;
+}
+.trash-box{
+  display: flex;
+  flex-direction: row;
+  width: 30%;
+  height: 30px;
+  padding-top: 10px;
+  padding-left: 24px;
+}
+.trash-content{
+  display: flex;
+  flex-direction: row;
+}
+.line-img{
+  display: flex;
+  padding-top: 3px;
+  padding-left: 22px;
+  width: 80%;
+  height: 3.5px;
+}
+.trash-img{
+  display: flex;
+  height: 20px;
+  width: 20px;
+  padding-left: 28px;
+  cursor: pointer;
+}
+.trash-img:hover{
+  color: #ef8354;
+}
+.trash-title{
+  align-items: center;
+  font-size: 15px;
+  padding-left: 5px;
+  font-family: "Arial Black";
+  cursor: pointer;
 }
 .content{
   display: flex;
@@ -505,21 +536,108 @@ export default {
 .members-manage:hover{
   color: rgba(23,43,72,0.65);
 }
-.project-top-side{
+.members-top-side{
+  display: flex;
   height: 50px;
   width: 100%;
-  margin-top: 0px;
+  margin-top: 60px;
+}
+.project-name{
+  display: flex;
+  height:50px;
+  width: 100%;
+  padding-left: 45px;
+  font-family:"Berlin Sans FB Demi";
+  font-size: 28px;
 }
 .members-second-side{
   display: flex;
   height: 70px;
   width: 100%;
+  padding-left: 20px;
 }
 .members-main{
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
   height:auto;
+  align-items: center;
+  margin-top:10px ;
+  padding-bottom: 30px;
+}
+.UML{
+  display: flex;
+  flex-direction: column;
+  width: 38%;
+  height: 500px;
+  margin-left: 40px;
+  border-radius: 20px;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 0 3px 3px rgba(23, 43, 72, 0.45);
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.UML:hover{
+  box-shadow: 0 0 10px 10px rgba(23, 43, 72, 0.45);
+}
+.uml-design{
+  display: flex;
+  width: 70%;
+  margin-left: 0px;
+  margin-top: 90px;
+  align-self:center;
+}
+.uml-name{
+  display: flex;
+  font-family:'ruizhi' ;
+  padding-top: 30px;
+  font-size: 50px;
+  align-self:center
+}
+.uml-img{
+  display: flex;
+  width: 100%;
+  height: 90%;
+  align-self:center
+}
+.draft{
+  display: flex;
+  flex-direction: column;
+  width: 38%;
+  height: 500px;
+  margin-left: 45px;
+  border-radius: 20px;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 0 3px 3px rgba(23, 43, 72, 0.45);
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.draft:hover{
+  box-shadow: 0 0 10px 10px rgba(23, 43, 72, 0.45);
+}
+.draft-design{
+  display: flex;
+  width: 75%;
+  margin-left: 0px;
+  margin-top: 75px;
+  align-self:center;
+}
+.draft-img{
+  display: flex;
+  padding-top: 5px;
+  width: 100%;
+  align-self:center
+}
+.draft-title{
+  display: flex;
+  font-family:'ruizhi' ;
+  padding-top: 40px;
+  font-size: 50px;
+  align-self:center
+}
+.draft-name{
+  display: flex;
+  align-self:center
 }
 .table-leader{
   display: flex;
@@ -534,63 +652,31 @@ export default {
   padding-left: 40px;
 }
 .pagination{
-  padding-top: 40px;
+  padding-top: 30px;
   margin-bottom: 30px;
 }
-.project-add{
-  width: 94px;
-  height: 24px;
+.members-add{
+  width: 90px;
+  height: 30px;
   border: 2px solid;
   border-radius: 5px;
   outline-color: #2c3e50;
   cursor: pointer;
-  padding-top:8px;
+  padding-top:15px;
   margin-left: 50px;
-  font-size: 12px;
-  top:130px;
-  left: -10px;
-  color: #FFFFFF;
-  background-color: #2c3e50;
+  font-size: 13px;
   font-family: "Berlin Sans FB Demi";
-  position: absolute;
-  float: left;
 }
-.project-add:hover{
-  color: #E9E9E9;
+.members-add:hover{
+  color: rgba(23,43,72,0.45);
 }
-.project-trash{
-  position: absolute;
-  width: 94px;
-  height: 24px;
-  border: 2px solid;
-  border-radius: 5px;
-  outline-color: #2c3e50;
-  cursor: pointer;
-  padding-top:8px;
-  margin-left: 50px;
-  font-size: 12px;
-  top:130px;
-  left: 120px;
-  color: #FFFFFF;
-  background-color: #2c3e50;
-  font-family: "Berlin Sans FB Demi";
-  z-index: 3;
-  float: left;
-}
-.project-trash:hover{
-  color: #E9E9E9;
-}
-.project-search{
+.members-search{
   display: flex;
-  padding-left:400px;
-  padding-top: 60px;
-  width: 20%;
-  justify-content: space-between;
-  margin-left: 50px;
-  top:65px;
-  left: 120px;
-  position: absolute;
-  float: left;
+  padding-left: 225px;
+  padding-right: 90px;
+  padding-top: 0px;
+  margin-top: -5px;
+  width: 30%;
 }
 .members-rank{
   padding-top: 20px;
@@ -635,7 +721,7 @@ export default {
   margin-left: 15px;
   padding-top: 10px;
   font-family: Inter, "Segoe UI", 黑体;
-  font-size: 20px;
+  font-size: 19px;
 }
 .leader-nickname{
   font-family: Inter, "Segoe UI", 黑体;
@@ -650,6 +736,7 @@ export default {
   margin-top: 8px;
   margin-left: 3px;
   font-size: 15px;
+
 }
 .name-info{
   display: flex;
@@ -753,11 +840,20 @@ export default {
 /deep/.identity-choose:hover{
   color: rgba(23,43,72,0.45);
 }
-/deep/.move-button{
+/deep/.recover-button{
   color: #2c3e50;
   font-size: 15px;
   cursor: pointer;
   padding-left: 50px;
+}
+/deep/.recover-button:hover{
+  color: rgba(23,43,72,0.45);
+}
+/deep/.move-button{
+  color: #2c3e50;
+  font-size: 15px;
+  cursor: pointer;
+  padding-left: 30px;
 }
 /deep/.move-button:hover{
   color: rgba(23,43,72,0.45);
@@ -820,127 +916,6 @@ export default {
 }
 .summary-content:focus{
   border-color: #2c3e50;
-}
-.project-main{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 400px;
-}
-.project-total{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding-top: 50px;
-}
-.project{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 150px;
-  margin-top: 30px;
-}
-.project-mode{
-  display: flex;
-  width: 88%;
-  height: 150px;
-  margin-left: 35px;
-  margin-top: 10px;
-  border-radius: 30px;
-  border: 1px solid #d9d9d9;
-  box-shadow: 0 0 3px 3px rgba(23, 43, 72, 0.45);
-}
-.project-info{
-  display: flex;
-  flex-direction: column;
-  width: 40%;
-  height: 100%;
-  cursor: pointer;
-}
-.project-name{
-  display: flex;
-  width: 100%;
-  height: auto;
-  font-family: "Berlin Sans FB Demi";
-  font-size: 38px;
-  padding-top: 13px;
-  padding-left: 35px;
-}
-.project-leader{
-  display: flex;
-  flex-direction: row;
-  padding-top: 10px;
-  align-items: center;
-}
-.project-leader-name{
-  display: flex;
-  padding-left: 10px;
-  font-size: 15px;
-}
-.project-leader-title{
-  display: flex;
-  font-size: 15px;
-}
-.project-build-img{
-  display: flex;
-  width: 30px;
-  height: 30px;
-  padding-left: 30px;
-
-}
-.project-lately-edit{
-  display: flex;
-  flex-direction: row;
-  padding-top: 10px;
-  align-items: center;
-}
-.project-lately-edit-title{
-  display: flex;
-  font-size: 15px;
-  padding-left: 3px;
-}
-.project-lately-edit-time{
-  display: flex;
-  padding-left: 15px;
-  font-size: 15px;
-}
-.project-edittime-img{
-  display: flex;
-  width: 30px;
-  height: 30px;
-  padding-left: 30px;
-}
-.project-img{
-  padding-top: 5px;
-  cursor: pointer;
-}
-.img-size{
-  width: 280px;
-  height: 140px;
-}
-.project-operation{
-  display: flex;
-  margin-left: 70px;
-  margin-top: 50px;
-}
-.project-operation-rename{
-  display: flex;
-}
-.project-operation-delete{
-  display: flex;
-  margin-left: 30px;
-}
-.project-rename-img{
-  display: flex;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-}
-.project-delete-img{
-  display: flex;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
 }
 </style>
 

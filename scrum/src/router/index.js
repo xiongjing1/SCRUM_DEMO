@@ -44,7 +44,38 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views//ProjectManage')
-  }
+  },
+  {
+    path: '/TrashManage',
+    name: 'TrashManage',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views//TrashManage')
+  },{
+    path: '/documentManage',
+    name: 'documentManage',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/documentManage')
+  },
+  {
+    path: '/designManage',
+    name: 'designManage',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/designManage')
+  },
+  {
+    path: '/ProjectTrash',
+    name: 'ProjectTrash',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/ProjectTrash')
+  },
 ]
 
 const router = new VueRouter({

@@ -76,15 +76,15 @@
     <div class="content">
         <div class="left-side">
           <div class="members-top-side">
-            <div class="members-add">
-              Add member
+              <div class="Trash">
+              Project Trash
             </div>
             <div class="members-search">
               <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
             </div>
           </div>
           <div class="members-main">
-            <div :class="IsManage===true?'table-leader':'table-member'">
+            <div class="table-leader">
               <el-table
                   :data="tableData"
                   :header-cell-style="{'text-align':'center'}"
@@ -93,89 +93,68 @@
                   max-height="480">
                 <el-table-column
                     fixed
-                    prop="name"
-                    label="姓名"
+                    prop="projectname"
+                    label="项目名"
                     width="200">
                 </el-table-column>
                 <el-table-column
-                    prop="nickname"
-                    label="昵称"
+                    prop="builder"
+                    label="创建用户"
                     width="200">
                 </el-table-column>
                 <el-table-column
-                    prop="email"
-                    label="邮箱"
+                    prop="buildtime"
+                    label="创建时间"
                     width="200">
                 </el-table-column>
                 <el-table-column
-                    prop="lastactive"
-                    label="上次登录"
-                    width="180">
-                </el-table-column>
-                <el-table-column
-                    prop="identity"
-                    label="身份"
+                    prop="deletetime"
+                    label="删除时间"
                     width="180">
                 </el-table-column>
                 <el-table-column
                     label="操作"
                     width="220"
                     fixed="right"
-                    v-if="IsManage===true">
+                >
                   <template slot-scope="scope">
                     <div class="members-operation">
                       <el-button
-                          @click.native.prevent="removeMember=true;currentRow=scope.row"
+                          @click.native.prevent="recover=true;currentRow=scope.row"
                           type="text"
                           size="small"
-                          class="move-button">
-                        移除
+                          class="recover-button">
+                        恢复
                       </el-button>
                       <el-dialog
                           title="提示"
-                          :visible.sync="removeMember"
+                          :visible.sync="recover"
                           width="30%"
                           center
                           append-to-body>
-                        <span>确认要删除该成员吗？</span>
+                        <span>确认要恢复该文档吗？</span>
                         <span slot="footer" class="dialog-footer">
-                              <el-button @click="removeMember = false">取 消</el-button>
-                              <el-button type="primary" @click="removeMember = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button @click="recover = false">取 消</el-button>
+                              <el-button type="primary" @click="recover = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
-                      <div class="identity-choose">
-                        <el-dropdown trigger="click" popper-class="drop">
-                      <span class="el-dropdown-link">
-                          身份设定<i class="el-icon-arrow-down el-icon--right"></i>
-                      </span>
-                          <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item @click.native.prevent="changeManager=true;currentRow=scope.row">管理员</el-dropdown-item>
-                            <el-dropdown-item @click.native.prevent="changeMember=true;currentRow=scope.row;">普通成员</el-dropdown-item>
-                          </el-dropdown-menu>
-                        </el-dropdown>
-                      </div>
+                      <el-button
+                          @click.native.prevent="remove=true;currentRow=scope.row"
+                          type="text"
+                          size="small"
+                          class="move-button">
+                        永久删除
+                      </el-button>
                       <el-dialog
                           title="提示"
-                          :visible.sync="changeManager"
+                          :visible.sync="remove"
                           width="30%"
                           center
                           append-to-body>
-                        <span>确认要设置该成员为管理员吗？</span>
+                        <span>确认要永久删除该项目吗？</span>
                         <span slot="footer" class="dialog-footer">
-                              <el-button @click="changeManager = false">取 消</el-button>
-                              <el-button type="primary" @click="changeManager = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
-                        </span>
-                      </el-dialog>
-                      <el-dialog
-                          title="提示"
-                          :visible.sync="changeMember"
-                          width="30%"
-                          center
-                          append-to-body>
-                        <span>确认要设置该成员为普通成员吗？</span>
-                        <span slot="footer" class="dialog-footer">
-                              <el-button @click="changeMember = false">取 消</el-button>
-                              <el-button type="primary" @click="changeMember = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button @click="remove = false">取 消</el-button>
+                              <el-button type="primary" @click="remove= false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                     </div>
@@ -239,8 +218,7 @@
           <el-divider></el-divider>
           <div class="lately-operation">
             <div class="lately-operation-title">
-              Recent operations
-            </div>
+              Recent operations</div>
           </div>
         </div>
     </div>
@@ -306,47 +284,40 @@ export default {
         label: '普通成员'
       }],
       tableData: [{
-        name: '王小虎1',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        projectname: 'project1',
+        buildtime:'2022-08-03',
+        builder: 'tiger',
+        deletetime: '5分钟前',
       }, {
-        name: '王小虎2',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        projectname: 'project2',
+        buildtime:'2022-08-03',
+        builder: 'tiger',
+        deletetime: '5分钟前',
       }, {
-        name: '王小虎3',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        projectname: 'project3',
+        buildtime:'2022-08-03',
+        builder: 'tiger',
+        deletetime: '5分钟前',
       }, {
-        name: '王小虎4',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        projectname: 'project4',
+        buildtime:'2022-08-03',
+        builder: 'tiger',
+        deletetime: '5分钟前',
       }, {
-        name: '王小虎5',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        projectname: 'project5',
+        buildtime:'2022-08-03',
+        builder: 'tiger',
+        deletetime: '5分钟前',
       }, {
-        name: '王小虎6',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        projectname: 'project6',
+        buildtime:'2022-08-03',
+        builder: 'tiger',
+        deletetime: '5分钟前',
       }, {
-        name: '王小虎7',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
+        projectname: 'project7',
+        buildtime:'2022-08-03',
+        builder: 'tiger',
+        deletetime: '5分钟前',
       }],
       value:'',
       removeMember: false,
@@ -362,6 +333,8 @@ export default {
       imageUrl: '',
       editSummary:false,
       Summarycontent:'',
+      remove:false,
+      recover:false,
     }
   }
 };
@@ -387,6 +360,7 @@ export default {
   margin-right: 50px;
   width: 100%;
   height: 80px;
+
 }
 .team{
   display: flex;
@@ -417,6 +391,7 @@ export default {
 .left-side{
   height: 600px;
   width: 75%;
+
   margin-top: -190px;
 }
 .right-side{
@@ -517,9 +492,18 @@ export default {
   color: rgba(23,43,72,0.65);
 }
 .members-top-side{
+  display: flex;
   height: 50px;
   width: 100%;
-  margin-top: 60px;
+  margin-top: 50px;
+}
+.Trash{
+  padding-left: 50px;
+  padding-top: 20px;
+  display: flex;
+  width: 100%;
+  font-family: "Berlin Sans FB Demi";
+  font-size: 30px;
 }
 .members-second-side{
   display: flex;
@@ -532,7 +516,7 @@ export default {
   flex-direction: column;
   width: 100%;
   height:auto;
-  padding-top: 20px;
+
 }
 .table-leader{
   display: flex;
@@ -560,8 +544,8 @@ export default {
   padding-top:8px;
   margin-left: 50px;
   font-size: 12px;
-  top:130px;
-  left: 30px;
+  top:160px;
+  left: 20px;
   color: #FFFFFF;
   background-color: #2c3e50;
   font-family: "Berlin Sans FB Demi";
@@ -573,10 +557,9 @@ export default {
 }
 .members-search{
   float: left;
-  margin-left: 600px;
+  margin-left:-400px;
+  margin-top:10px;
   width: 30%;
-  margin-top: 5px;
-  justify-content: space-between;
 }
 .members-rank{
   padding-top: 20px;
@@ -745,7 +728,7 @@ export default {
   color: #2c3e50;
   font-size: 15px;
   cursor: pointer;
-  padding-left: 50px;
+  padding-left: 30px;
 }
 /deep/.move-button:hover{
   color: rgba(23,43,72,0.45);
@@ -808,6 +791,15 @@ export default {
 }
 .summary-content:focus{
   border-color: #2c3e50;
+}
+/deep/.recover-button{
+  color: #2c3e50;
+  font-size: 15px;
+  cursor: pointer;
+  padding-left: 50px;
+}
+/deep/.recover-button:hover{
+  color: rgba(23,43,72,0.45);
 }
 </style>
 
