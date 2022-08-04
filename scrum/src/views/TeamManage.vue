@@ -275,6 +275,7 @@ export default {
     HeadSide,
   },
   mounted() {
+    console.log('teamid'+window.localStorage.getItem('tid'));
     this.$axios.get('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
       this.team=res.data.team
       this.leader=res.data.leader
