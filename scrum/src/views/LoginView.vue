@@ -35,7 +35,7 @@
       <h2 style="margin-left: 55px; margin-top: 50px">Forgot your password?</h2>
       <div class="detail">Enter the email you registered with and we'll send the vertification code to reset the password</div>
       <el-input class="register_input" v-model="reset_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址" @blur="email_blur_reset"></el-input>
-      <el-button type="email_check">send code</el-button>
+      <el-button type="email_check" v-on:click="send_code1">send code</el-button>
       <div class="email_warn0" v-if="fault_code===5">邮箱不存在</div>
       <div class="email_warn0" v-if="fault_code===6">邮箱格式错误</div>
       <el-input  class="code_input" v-model="reset_code"  placeholder="请输入验证码"></el-input>
@@ -142,16 +142,59 @@ export default {
           })
     },
     register_0(){
-      let storage = window.localStorage;
-      storage.setItem('email',this.register_email);
-      storage.setItem('nickname','user');
-      storage.setItem('iflogin',1);
-      this.$router.push('/user');
+      let param = new FormData() // 创建form对象
+      param.append('password', this.register_password)// 通过append向form对象添加数据
+      param.append('email', this.register_email)
+      param.append('code',this.register_code)
+      param.append('name',this.register_name)
+      param.append('is_code_verification',0)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/register', param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              let storage = window.localStorage;
+              storage.setItem('email',this.register_email);
+              storage.setItem('nickname','user');
+              storage.setItem('iflogin',1);
+              this.$router.push('/user');
+            }else{
+              if(response.data.errno === 1003)
+                this.$message.error("验证码错误");
+            }
+          })
+
     },
     reset_0(){
-      this.currentIndex=0;
-      this.iffind=0;
-      this.login_password='';
+      let param = new FormData() // 创建form对象
+      param.append('password', this.reset_password)// 通过append向form对象添加数据
+      param.append('email', this.reset_email)
+      param.append('code',this.reset_code)
+      param.append('is_code_verification',0)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/forgetpassword', param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.$message.success("修改成功");
+              this.currentIndex=0;
+              this.iffind=0;
+              this.login_password='';
+            }else{
+              if(response.data.errno === 1003)
+                this.$message.error("验证码错误");
+              else if(response.data.errno===1004)
+                this.$message.error("邮箱未注册");
+            }
+          })
+
+
     },
     email_blur() {
       var verify = /^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
@@ -187,9 +230,32 @@ export default {
               console.log(response.data)
               console.log("zhuce:"+response.data);
               if (response.data.errno === 1001) {
+                this.fault_code=0;
                 this.$message.success("验证码已发送");
               }else if(response.data.errno === 1002){
                 this.fault_code=1
+              }
+            })
+      }
+    },
+    send_code1(){
+      if(this.fault_code!==100){
+        console.log("send")
+        let param = new FormData() // 创建form对象
+        param.append('is_code_verification', 1)// 通过append向form对象添加数据
+        param.append('email', this.reset_email)
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        } // 添加请求头
+        axios.post('http://43.138.21.64:8080/user/forgetpassword', param,config)
+            .then(response => {
+              console.log(response.data)
+              console.log("zhuce:"+response.data);
+              if (response.data.errno === 1001) {
+                this.fault_code=0;
+                this.$message.success("验证码已发送");
+              }else if(response.data.errno === 1004){
+                this.$message.success("邮箱未注册");
               }
             })
       }
