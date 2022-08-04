@@ -1152,7 +1152,7 @@ export default {
 </style>
 
 
-<style>
+<style scoped>
 .el-popover.moreinfo{
   margin-top: 60px;
 }

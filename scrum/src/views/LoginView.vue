@@ -130,6 +130,7 @@ export default {
               storage.setItem('nickname',response.data.nickname);
               storage.setItem('headshot',response.data.headshot);
               storage.setItem('name',response.data.name);
+              storage.setItem('tid',response.data.tid);
               storage.setItem('iflogin',1);
               this.$router.push('/user');
 
@@ -165,6 +166,7 @@ export default {
               storage.setItem('email',this.register_email);
               storage.setItem('nickname','jrs');
               storage.setItem('uid',response.data.uid);
+              storage.setItem('tid',response.data.tid);
             //  storage.setItem('headshot',response.data.headshot);
               storage.setItem('name',this.register_name);
               storage.setItem('iflogin',1);

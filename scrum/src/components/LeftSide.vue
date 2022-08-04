@@ -3,11 +3,11 @@
   <div class="leftside" :style="{'height':this.wholeHeight}">
     <div class="team-inform">
       <img src="../assets/team.png" height="25px" alt=" " style="position: absolute; left: 15px;top:39px">
-      <div class="title">My Teams</div>
+      <div class="team-title">My Teams</div>
       <div class="ateam" v-for="(item,index) in teams" v-bind:key="index">
-        <div class="team-part">
+        <div class="team-part" v-on:click="teamjump" >
           <div class="teamno" :style="{'background-color':color[index%4]}"></div>
-          <div class="teamname">{{ item.name }}</div>
+          <div class="teamname" >{{ item.name }}</div>
         </div>
         <div v-for="(item2,index2) in projects" v-bind:key="index2">
           <div class="project-part" v-if="item2.teamid==item.id">
@@ -43,6 +43,17 @@ export default {
   mounted() {
    this.wholeHeight=document.documentElement.scrollHeight-50+'px';
     console.log(this.wholeHeight);
+    this.$axios.get('http://43.138.21.64:8080/user/'+ window.localStorage.getItem('uid')).then((res) => {
+      this.origin_teams=res.data.team_list;
+      this.origin_projects=res.data.project_list;
+      this.teams= this.origin_teams.map((item) => {
+        return Object.assign({}, { id: item.t_id, name: item.t_name})
+      })
+      this.projects= this.origin_projects.map((item) => {
+        return Object.assign({}, { id: item.p_id, name: item.p_name, teamid: item.p_tid})
+      })
+      console.log(this.teams)
+    });
     },
 
   data() {
@@ -51,6 +62,8 @@ export default {
       begin_create:false,
       new_team:'',
       color: ['#3D89E9', '#9449FF', '#F42BBF', '#E74A23'],
+      origin_teams:[],
+      origin_projects:[],
       teams: [
         {id: '1', name: 'Yigaaa Team'},
         {id: '2', name: 'lluosi Team'},
@@ -83,8 +96,9 @@ export default {
               this.$message.error("发生错误");
             }
           })
-
-
+    },
+    teamjump(){
+      this.$router.push('/ProjectManage');
     }
   }
 }
@@ -108,7 +122,7 @@ export default {
 
 }
 
-.title {
+.team-title {
   width: 100px;
   height: 50px;
   text-align: left;
