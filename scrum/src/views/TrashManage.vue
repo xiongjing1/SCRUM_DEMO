@@ -12,7 +12,7 @@
               <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
             </div>
             <div class="TeamName">
-              Yigaa's Team
+              {{ this.tname }}
             </div>
           </div>
           <div class="buttons">
@@ -382,6 +382,7 @@ export default {
         deleteTime: '5分钟前',
       },],
       value:'',
+      tname:window.localStorage.getItem('tname'),
       removeMember: false,
       currentRow:'',
       changeManager:false,
