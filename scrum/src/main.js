@@ -11,7 +11,7 @@ Vue.use(infiniteScroll);
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
-axios.defaults.baseURL = 'http://43.138.21.64/api'
+axios.defaults.baseURL = 'http://43.138.21.64:8080'
 Vue.use(ElementUI);
 new Vue({
   axios,

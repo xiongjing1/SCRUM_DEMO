@@ -257,6 +257,9 @@ export default {
   mounted() {
     document.body.style.backgroundColor="#FFFFFF";
   },
+  created() {
+    this.initParams();
+  },
   methods:{
     searchjump(){
 
