@@ -22,7 +22,7 @@
       <h2 style="margin-left: 55px; margin-top: 50px">Create account</h2>
       <el-input class="register_input" v-model="register_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址" @blur="email_blur"></el-input>
       <el-button type="email_check" v-on:click="send_code">send code</el-button>
-      <div class="email_warn" v-if="fault_code===1">邮箱不存在</div>
+      <div class="email_warn" v-if="fault_code===1">邮箱已注册</div>
       <div class="email_warn" v-if="fault_code===2">邮箱格式错误</div>
       <el-input  class="code_input" v-model="register_code"  placeholder="请输入验证码"></el-input>
       <el-input  class="register_input" v-model="register_name" prefix-icon="el-icon-user" placeholder="请输入真实姓名" @blur="name_blur"></el-input>
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "LoginView",
   mounted() {
@@ -109,12 +111,37 @@ export default {
       this.iffind=0
     },
     login_0(){
-      let storage = window.localStorage;
-      storage.setItem('email',this.login_email);
-      storage.setItem('iflogin',1);
-      this.$router.push('/user');
+      this.$axios({
+        method: "post",
+        url: "http://43.138.21.64:8080/user/login/",
+        data: {
+          email: this.login_email,
+          password: this.login_password,
+        }
+      }).then((res) => {
+        console.log("denglu:"+res.data);
+        if (res.data.errno === '1000') {
+          let storage = window.localStorage;
+          storage.setItem('email',this.login_email);
+          storage.setItem('iflogin',1);
+          this.$router.push('/user');
+
+        /*  if(res.data.headshot_url!==null){
+            this.avatar_url="http://49.232.100.137/api/"+res.data.headshot_url;
+            this.$store.state.avatar_url=this.avatar_url;
+            window.localStorage.setItem("avatar",JSON.stringify(this.$store.state.avatar_url));
+          } */
+        }else{
+          if(res.data.msg === '密码错误')
+          this.$message.error("密码错误");
+          else if(res.data.msg === '邮箱未注册')
+            this.$message.error("邮箱未注册");
+        }
+      })
     },
     register_0(){
+
+
       let storage = window.localStorage;
       storage.setItem('email',this.register_email);
       storage.setItem('nickname','user');
@@ -147,8 +174,27 @@ export default {
       else this.fault_code=0
     },
     send_code(){
-      if(this.fault_code!==1&&this.fault_code!==2){
+      if(this.fault_code!==2){
         console.log("send")
+        let param = new FormData() // 创建form对象
+        param.append('is_code_verification', 1)// 通过append向form对象添加数据
+        console.log("why"+param.get('u_headshot')) // FormData私有类对象，访问不到，可以通过get判断值是否传进去
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        } // 添加请求头
+        axios.post('http://49.232.100.137/api/user/register/', param,config)
+            .then(response => {
+              console.log(response.data)
+              console.log("zhuce:"+response.data);
+              if (response.data.errno === '1001') {
+                this.$message.error("验证码已发送");
+              }else if(response.data.errno === '1002'){
+                this.fault_code=1
+              }
+            })
+
+
+
       }
     },
 

@@ -10,10 +10,7 @@ const routes = [
     path: '/',
     name: 'login',
     component: LoginView,
-    meta:{
-      title:'login',
-      requireAuth:true,
-    }
+
   },
   {
     path: '/about',
@@ -90,6 +87,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
+  mode:"hash",
   routes
 })
 
