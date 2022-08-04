@@ -76,9 +76,16 @@
         <div class="content">
           <div class="left-side">
             <div class="project-top-side">
-              <div class="project-add">
+              <div class="project-add" v-on:click="addProject = true">
                 Add project
               </div>
+              <el-dialog title="Add New Project" :visible.sync="addProject" width="350px">
+                <el-input v-model="Projectnameinput" placeholder="Please input the name" class="project-input"></el-input>
+                <div slot="footer" class="rename-footer">
+                  <el-button @click="addProject = false">取 消</el-button>
+                  <el-button @click="addProject = false" class="el-buttons">确 定</el-button>
+                </div>
+              </el-dialog>
               <div class="project-trash" v-on:click="JumpToProjectTrash()">
                 trash
               </div>
@@ -262,6 +269,8 @@ export default {
   data(){
     return{
       input:'',
+      addProject:false,
+      Projectnameinput:'',
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -791,6 +800,9 @@ export default {
 }
 .rename-input{
   width: 120px;
+}
+.project-input{
+  width: 200px;
 }
 .rename-footer{
   margin-right: 75px;
