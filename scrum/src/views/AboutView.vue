@@ -42,6 +42,7 @@ export default {
   mounted() {
     this.contentEditor = new Vditor('vditor', {
       height: 710,
+      width: 1535,
       placeholder: '开始编辑文本...',
       theme: 'classic',
       counter: {
@@ -179,5 +180,7 @@ export default {
 <style scoped>
 .edit{
   text-align: left;
+  position: absolute;
+  top: 0;
 }
 </style>
