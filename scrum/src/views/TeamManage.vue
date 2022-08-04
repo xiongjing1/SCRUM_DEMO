@@ -275,7 +275,8 @@ export default {
     HeadSide,
   },
   mounted() {
-    this.$axios.get('http://43.138.21.64:8080/user/10/team/3').then((res) => {
+    console.log('teamid'+window.localStorage.getItem('tid'));
+    this.$axios.get('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
       this.team=res.data.team
       this.leader=res.data.leader
       this.member_list=res.data.member_list
@@ -300,13 +301,14 @@ export default {
 
     },
     deleteRow(row){
+      console.log()
       let param = new FormData() // 创建form对象
       param.append('is_delete_member', this.addmember)// 通过append向form对象添加数据
       param.append('a_id', row.m_id)
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -327,7 +329,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -348,7 +350,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -377,10 +379,20 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     sendInvite(){
       console.log(this.inviteEmail)
@@ -390,7 +402,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);

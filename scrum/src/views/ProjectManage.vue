@@ -12,7 +12,7 @@
               <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
             </div>
             <div class="TeamName">
-              Yigaa's Team
+              {{this.tname}}
             </div>
           </div>
           <div class="buttons">
@@ -84,7 +84,7 @@
                 <el-input v-model="Projectdescriptioninput" placeholder="Please input the description" class="project-input"></el-input>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="addProject = false">取 消</el-button>
-                  <el-button class="el-buttons" @click="addProject = false ; createProject();" >确 定</el-button>
+                  <el-button class="el-buttons" @click="addProject = false ; createProject();update();" >确 定</el-button>
                 </div>
               </el-dialog>
               <div class="project-trash" v-on:click="JumpToProjectTrash()">
@@ -96,9 +96,9 @@
             </div>
             <div class="project-total">
               <div class="project-main">
-                <div class="project" v-for="(item,index) in projectList" :key="index" >
+                <div class="project" v-for="(item,index) in currentPageData" :key="index" >
                   <div class="project-mode">
-                    <div class="project-info" v-on:click="JumpTodesignManage()">
+                    <div class="project-info" v-on:click="JumpTodesignManage(item.ID)">
                       <div class="project-name">
                         {{item.project_name}}
                       </div>
@@ -145,16 +145,17 @@
                     </div>
                   </div>
                 </div>
-                <div class="pagination">
-                  <el-pagination
-                      background
-                      @current-change="handleCurrentChange"
-                      layout="prev, pager, next"
-                      :total="1000">
-                  </el-pagination>
-                </div>
               </div>
-
+              <div class="pagination">
+                <el-pagination
+                    background
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage"
+                    :page-size="this.pageSize"
+                    layout="prev, pager, next"
+                    :total=total>
+                </el-pagination>
+              </div>
             </div>
 
           </div>
@@ -234,7 +235,7 @@ export default {
   },
   mounted() {
     let param = new FormData() // 创建form对象
-    param.append('searchID', 3)// 通过append向form对象添加数据
+    param.append('searchID', window.localStorage.getItem('tid'))// 通过append向form对象添加数据
     param.append('searchType', 2)
     let config = {
       headers: {'Content-Type': 'multipart/form-data'}
@@ -246,7 +247,11 @@ export default {
           }else{
             console.log(response.data.success)
           }
+          this.total=this.projectList.length
+          this.load();
+          console.log(this.currentPage)
         })
+    this.tname=window.localStorage.getItem('tname')
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
@@ -256,8 +261,8 @@ export default {
     },
     createProject(){
       let formData = new FormData();
-      formData.append('userID', 10);
-      formData.append('teamID', 3);
+      formData.append('userID', window.localStorage.getItem('uid'));
+      formData.append('teamID', window.localStorage.getItem('tid'));
       formData.append('projectName', this.Projectnameinput);
       formData.append('description', this.Projectdescriptioninput);
       let config = {
@@ -287,7 +292,7 @@ export default {
     },
     deleteProject(index){
       let formData = new FormData();
-      formData.append('userID', 10);
+      formData.append('userID',  window.localStorage.getItem('uid'));
       formData.append('projectID', this.projectList[index].ID);
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
@@ -308,7 +313,7 @@ export default {
     },
     renameProject(index){
       let formData = new FormData();
-      formData.append('userID', 10);
+      formData.append('userID',  window.localStorage.getItem('uid'));
       formData.append('projectID', this.projectList[index].ID);
       formData.append('newName', this.nameInput);
       let config = {
@@ -347,16 +352,57 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
-    JumpTodesignManage(){
-      this.$router.push('/designManage');
+    JumpTodesignManage(pid){
+      let storage = window.localStorage;
+      storage.setItem('pid',pid);
+      this.$router.push({
+        name:'designManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpToProjectTrash(){
-      this.$router.push('/ProjectTrash');
+      this.$router.push({
+        name:'ProjectTrash',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
+    },
+    handleCurrentChange(val){
+      this.currentPage = val
+      this.getList()
+    },
+    getList(){
+      if(this.currentPage===1){
+        console.log('fen')
+        this.currentPageData = this.projectList.slice(1, 4);
+      }else{
+        let begin = (this.currentPage - 1) * this.pageSize;
+        let end = this.currentPage * this.pageSize;
+        this.currentPageData = this.projectList.slice(begin, end);
+      }
+    },
+    load () {
+      setTimeout(() => {
+        this.getList()
+      }, 50)
     },
   },
   data(){
@@ -368,6 +414,7 @@ export default {
       renamed:false,
       deletedProject:false,
       current:'',
+      pageSize:3,
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -436,40 +483,11 @@ export default {
       editSummary:false,
       Summarycontent:'',
       projectList:[
-        {
-          ID: '1',
-          project_name: 'project01',
-          creator_id: 'user01',
-          creator_date: '2022-08-02T10:34:45.667Z',
-          modified_date: null,
-          description: 'projecttest',
-          is_recycled: false,
-          teamID: 1,
-          rename:false
-        },
-        {
-          ID: '2',
-          project_name: 'project02',
-          creator_id: 'user01',
-          creator_date: '2022-08-02T10:34:45.667Z',
-          modified_date: null,
-          description: 'projecttest',
-          is_recycled: false,
-          teamID: 1,
-          rename:false
-        },
-        {
-          ID: '3',
-          project_name: 'project03',
-          creator_id: 'user01',
-          creator_date: '2022-08-02T10:34:45.667Z',
-          modified_date: null,
-          description: 'projecttest',
-          is_recycled: false,
-          teamID: 1,
-          rename:false
-        },
       ],
+      tname:'',
+      currentPage: 1,
+      total:2,
+      currentPageData:[],
     }
   }
 };
@@ -611,7 +629,8 @@ export default {
 }
 
 .pagination{
-  padding-top: 40px;
+  margin-right: 60px;
+  padding-top: 140px;
   margin-bottom: 30px;
 }
 .project-add{
@@ -889,9 +908,10 @@ color: azure;
  height: 400px;
 }
 .project-total{
- width: 100%;
+  width: 100%;
  float: left;
- margin-top: 50px;
+  height: 600px;
+ margin-top: 60px;
 }
 .project{
  width: 100%;

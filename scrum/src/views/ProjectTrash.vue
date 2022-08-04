@@ -243,7 +243,7 @@ export default {
   mounted() {
     document.body.style.backgroundColor="#FFFFFF";
     let param = new FormData() // 创建form对象
-    param.append('teamID', 3)// 通过append向form对象添加数据
+    param.append('teamID',  window.localStorage.getItem('tid'))// 通过append向form对象添加数据
     let config = {
       headers: {'Content-Type': 'multipart/form-data'}
     } // 添加请求头
@@ -287,15 +287,25 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     RecoverProject(row){
       let param = new FormData() // 创建form对象
       param.append('projectID', row.ID)// 通过append向form对象添加数据
-      param.append('userID', 10)
+      param.append('userID',  window.localStorage.getItem('uid'))
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头

@@ -12,7 +12,7 @@
               <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
             </div>
             <div class="TeamName">
-              Yigaa's Team
+              {{ this.tname }}
             </div>
           </div>
           <div class="buttons">
@@ -198,13 +198,23 @@ export default {
   },
   methods:{
     JumpToPrototype(){
-      this.$router.push('/PrototypeView');
+      this.$router.push({
+        name:'PrototypeView',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     jumpDrawio(){
       window.open('https://www.draw.io/', '_blank');
     },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     searchjump(){
 
@@ -228,21 +238,42 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTrashManage() {
-      this.$router.push('/TrashManage');
+      this.$router.push({
+        name:'TrashManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpTodesignManage() {
-      this.$router.push('/designManage');
+      this.$router.push({
+        name:'designManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpTodocumentManage() {
-      this.$router.push('/documentManage');
+      this.$router.push({
+        name:'documentManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     }
   },
   data(){
     return{
       input:'',
+      tname:window.localStorage.getItem('tname'),
       options: [{
         value: '选项1',
         label: '全部成员'

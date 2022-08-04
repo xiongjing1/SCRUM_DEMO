@@ -61,7 +61,7 @@ export default {
     console.log(this.if_login);
     if(this.if_login==1){
       console.log("dsa");
-      this.$router.push('/user');
+      this.$router.push('/user/'+storage.getItem('uid'));
     }
     this.slideLineLeft();
   },
@@ -132,7 +132,7 @@ export default {
               storage.setItem('name',response.data.name);
               storage.setItem('tid',response.data.tid);
               storage.setItem('iflogin',1);
-              this.$router.push('/user');
+              this.$router.push('/user/'+window.localStorage.getItem('uid'));
 
               /*  if(res.data.headshot_url!==null){
                   this.avatar_url="http://49.232.100.137/api/"+res.data.headshot_url;
@@ -170,7 +170,7 @@ export default {
             //  storage.setItem('headshot',response.data.headshot);
               storage.setItem('name',this.register_name);
               storage.setItem('iflogin',1);
-              this.$router.push('/user');
+              this.$router.push('/user/'+window.localStorage.getItem('uid'));
             }else{
               if(response.data.errno === 1003)
                 this.$message.error("验证码错误");
@@ -180,7 +180,7 @@ export default {
     },
     reset_0(){
       let param = new FormData() // 创建form对象
-      param.append('password', this.reset_password)// 通过append向form对象添加数据
+      param.append('new_password', this.reset_password)// 通过append向form对象添加数据
       param.append('email', this.reset_email)
       param.append('code',this.reset_code)
       param.append('is_code_verification',0)

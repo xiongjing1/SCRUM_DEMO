@@ -5,12 +5,12 @@
       <img src="../assets/team.png" height="25px" alt=" " style="position: absolute; left: 15px;top:39px">
       <div class="team-title">My Teams</div>
       <div class="ateam" v-for="(item,index) in teams" v-bind:key="index">
-        <div class="team-part" v-on:click="teamjump" >
+        <div class="team-part" v-on:click="teamjump(item.id,item.name)" >
           <div class="teamno" :style="{'background-color':color[index%4]}"></div>
           <div class="teamname" >{{ item.name }}</div>
         </div>
         <div v-for="(item2,index2) in projects" v-bind:key="index2">
-          <div class="project-part" v-if="item2.teamid==item.id">
+          <div class="project-part" v-if="item2.teamid==item.id"  v-on:click="projectjump(item2.id,item2.name,item.name)">
             <div class="projectname">{{ item2.name }}</div>
           </div>
         </div>
@@ -97,9 +97,17 @@ export default {
             }
           })
     },
-    teamjump(){
-      this.$router.push('/ProjectManage');
-    }
+    teamjump(id,tname){
+      window.localStorage.setItem('tid',id);
+      window.localStorage.setItem('tname',tname);
+      this.$router.push('/TeamManage/'+id);
+    },
+    projectjump(id,name,tname){
+      window.localStorage.setItem('pid',id);
+      window.localStorage.setItem('pname',name);
+      window.localStorage.setItem('tname',tname);
+      this.$router.push('/ProjectManage/'+id);
+    },
   }
 }
 </script>
