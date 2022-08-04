@@ -340,12 +340,17 @@ export default {
       Summarycontent:'',
       projectList:[
         {
+          ID:'',
           projectName:'Project 1',
+          creator_id:'',
+          creator_date:'',
           leaderName:'徐亦佳',
           latelyTime:'5分钟前',
           deleteProject:false,
           rename:false,
           nameInput:'',
+          description:'',
+          teamID:'',
         },
         {
           projectName:'Project 2',
