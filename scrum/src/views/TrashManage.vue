@@ -325,12 +325,7 @@ export default {
         value: '选项3',
         label: '普通成员'
       }],
-      tableData: [{
-        docname: '文档1',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      }, {
+      tableData: [ {
         docname: '文档2',
         builder:'tiger',
         buildTime: '2022-08-03',

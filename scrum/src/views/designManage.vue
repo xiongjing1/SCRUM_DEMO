@@ -106,7 +106,7 @@
               </div>
             </div>
             <div class="members-main">
-              <div class="UML">
+              <div class="UML" v-on:click="jumpDrawio()">
                 <div class="uml-design">
                   <img src="../assets/uml.png" class="uml-img">
                 </div>
@@ -197,6 +197,9 @@ export default {
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
+    jumpDrawio(){
+      window.open('https://www.draw.io/', '_blank');
+    },
     JumpToProjectManage(){
       this.$router.push('/ProjectManage');
     },

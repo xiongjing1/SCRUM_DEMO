@@ -84,7 +84,7 @@
                 <el-input v-model="Projectdescriptioninput" placeholder="Please input the description" class="project-input"></el-input>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="addProject = false">取 消</el-button>
-                  <el-button class="el-buttons" @click="addProject = false ; createProject()" >确 定</el-button>
+                  <el-button class="el-buttons" @click="addProject = false ; createProject();" >确 定</el-button>
                 </div>
               </el-dialog>
               <div class="project-trash" v-on:click="JumpToProjectTrash()">
@@ -100,17 +100,17 @@
                   <div class="project-mode">
                     <div class="project-info" v-on:click="JumpTodesignManage()">
                       <div class="project-name">
-                        {{item.projectName}}
+                        {{item.project_name}}
                       </div>
                       <div class="project-leader">
                         <img src="../assets/build.png" class="project-build-img">
                         <div class="project-leader-title">项目创建者</div>
-                        <div class="project-leader-name">{{item.leaderName}}</div>
+                        <div class="project-leader-name">{{item.creator_id}}</div>
                       </div>
                       <div class="project-lately-edit">
                         <img src="../assets/edittime.png" class="project-edittime-img">
                         <div class="project-lately-edit-title">最近编辑</div>
-                        <div class="project-lately-edit-time">{{item.latelyTime}}</div>
+                        <div class="project-lately-edit-time">{{item.modified_date}}</div>
                       </div>
                     </div>
                     <div class="project-img" v-on:click="JumpTodesignManage()">
@@ -118,27 +118,27 @@
                     </div>
                     <div class="project-operation">
                       <div class="project-operation-rename">
-                        <img src="../assets/rename.png" class="project-rename-img" @click="item.rename = true">
-                        <el-dialog title="Rename" :visible.sync="item.rename" width="350px">
-                          <el-input v-model="item.nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
+                        <img src="../assets/rename.png" class="project-rename-img" @click="renamed = true;currentRow=index">
+                        <el-dialog title="Rename" :visible.sync="renamed" width="350px">
+                          <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                           <div slot="footer" class="rename-footer">
-                            <el-button @click="item.rename = false">取 消</el-button>
-                            <el-button @click="item.rename = false;renameProject(index)" class="el-buttons">确 定</el-button>
+                            <el-button @click="renamed = false">取 消</el-button>
+                            <el-button @click="renamed = false;renameProject(currentRow);update();" class="el-buttons">确 定</el-button>
                           </div>
                         </el-dialog>
                       </div>
                       <div class="project-operation-delete">
-                        <img src="../assets/delete.png" class="project-delete-img" @click="item.deleteProject = true">
+                        <img src="../assets/delete.png" class="project-delete-img" @click="deletedProject = true;currentRow=index;current=item">
                         <el-dialog
                             title="提示"
-                            :visible.sync="item.deleteProject"
+                            :visible.sync="deletedProject"
                             width="30%"
                             center
                             append-to-body>
-                          <span>确认要删除项目 {{item.projectName}} 吗？</span>
+                          <span>确认要删除项目 {{current.project_name}} 吗？</span>
                           <span slot="footer" class="dialog-footer">
-                              <el-button @click="item.deleteProject = false" >取 消</el-button>
-                              <el-button type="primary" @click="item.deleteProject = false;deleteProject()" class="el-buttons">确 定</el-button>
+                              <el-button @click="deletedProject = false" >取 消</el-button>
+                              <el-button type="primary" @click="deletedProject = false;deleteProject(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                         </el-dialog>
                       </div>
@@ -226,14 +226,33 @@ import axios from "axios";
 
 export default {
   name: "TeamManage",
+  inject:['reload'],
   components: {
     LeftSide,
     HeadSide,
   },
   mounted() {
+    let param = new FormData() // 创建form对象
+    param.append('searchID', 3)// 通过append向form对象添加数据
+    param.append('searchType', 2)
+    let config = {
+      headers: {'Content-Type': 'multipart/form-data'}
+    } // 添加请求头
+    axios.post('http://43.138.21.64:8080/project/view/all', param,config)
+        .then(response => {
+          if(response.data.success===true){
+            this.projectList=response.data.message
+          }else{
+            console.log(response.data.success)
+          }
+        })
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
+    update(){
+      this.reload()
+      console.log('刷新页面')
+    },
     createProject(){
       let formData = new FormData();
       formData.append('userID', 10);
@@ -268,7 +287,7 @@ export default {
     deleteProject(index){
       let formData = new FormData();
       formData.append('userID', 10);
-      formData.append('projectID', this.projectList[index].projectId);
+      formData.append('projectID', this.projectList[index].ID);
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       };
@@ -289,8 +308,8 @@ export default {
     renameProject(index){
       let formData = new FormData();
       formData.append('userID', 10);
-      formData.append('projectID', this.projectList[index].projectId);
-      formData.append('newName', this.projectList[index].nameInput);
+      formData.append('projectID', this.projectList[index].ID);
+      formData.append('newName', this.nameInput);
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       };
@@ -345,6 +364,9 @@ export default {
       addProject:false,
       Projectnameinput:'',
       Projectdescriptioninput: '',
+      renamed:false,
+      deletedProject:false,
+      current:'',
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -414,31 +436,37 @@ export default {
       Summarycontent:'',
       projectList:[
         {
-          projectId: '',
-          projectName:'Project 1',
-          leaderName:'徐亦佳',
-          latelyTime:'5分钟前',
-          deleteProject:false,
-          rename:false,
-          nameInput:'',
+          ID: '1',
+          project_name: 'project01',
+          creator_id: 'user01',
+          creator_date: '2022-08-02T10:34:45.667Z',
+          modified_date: null,
+          description: 'projecttest',
+          is_recycled: false,
+          teamID: 1,
+          rename:false
         },
         {
-          projectId: '',
-          projectName:'Project 2',
-          leaderName:'徐亦佳',
-          latelyTime:'5分钟前',
-          deleteProject:false,
-          rename:false,
-          nameInput:'',
+          ID: '2',
+          project_name: 'project02',
+          creator_id: 'user01',
+          creator_date: '2022-08-02T10:34:45.667Z',
+          modified_date: null,
+          description: 'projecttest',
+          is_recycled: false,
+          teamID: 1,
+          rename:false
         },
         {
-          projectId: '',
-          projectName:'Project 3',
-          leaderName:'徐亦佳',
-          latelyTime:'5分钟前',
-          deleteProject:false,
-          rename:false,
-          nameInput:'',
+          ID: '3',
+          project_name: 'project03',
+          creator_id: 'user01',
+          creator_date: '2022-08-02T10:34:45.667Z',
+          modified_date: null,
+          description: 'projecttest',
+          is_recycled: false,
+          teamID: 1,
+          rename:false
         },
       ],
     }

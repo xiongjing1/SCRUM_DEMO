@@ -93,23 +93,23 @@
                   max-height="480">
                 <el-table-column
                     fixed
-                    prop="projectname"
+                    prop="name"
                     label="项目名"
                     width="200">
                 </el-table-column>
                 <el-table-column
-                    prop="builder"
-                    label="创建用户"
+                    prop="ID"
+                    label="项目ID"
                     width="200">
                 </el-table-column>
                 <el-table-column
-                    prop="buildtime"
+                    prop="created_date"
                     label="创建时间"
                     width="200">
                 </el-table-column>
                 <el-table-column
-                    prop="deletetime"
-                    label="删除时间"
+                    prop="modified_date"
+                    label="最后编辑"
                     width="180">
                 </el-table-column>
                 <el-table-column
@@ -132,10 +132,10 @@
                           width="30%"
                           center
                           append-to-body>
-                        <span>确认要恢复该文档吗？</span>
+                        <span>确认要恢复文档 {{currentRow.name}} 吗？</span>
                         <span slot="footer" class="dialog-footer">
                               <el-button @click="recover = false">取 消</el-button>
-                              <el-button type="primary" @click="recover = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="recover = false;" @click.native.prevent="RecoverProject(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                       <el-button
@@ -151,10 +151,10 @@
                           width="30%"
                           center
                           append-to-body>
-                        <span>确认要永久删除该项目吗？</span>
+                        <span>确认要永久删除项目 {{currentRow.name}} 吗？</span>
                         <span slot="footer" class="dialog-footer">
                               <el-button @click="remove = false">取 消</el-button>
-                              <el-button type="primary" @click="remove= false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="remove= false;" @click.native.prevent="deleteRow(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                     </div>
@@ -231,17 +231,40 @@
 <script>
 import HeadSide from "@/components/HeadSide";
 import LeftSide from "@/components/LeftSide";
+import axios from "axios";
 
 export default {
   name: "TeamManage",
+  inject:['reload'],
   components: {
     LeftSide,
     HeadSide,
   },
   mounted() {
     document.body.style.backgroundColor="#FFFFFF";
+    let param = new FormData() // 创建form对象
+    param.append('teamID', 3)// 通过append向form对象添加数据
+    let config = {
+      headers: {'Content-Type': 'multipart/form-data'}
+    } // 添加请求头
+    axios.post('http://43.138.21.64:8080/recyclebin/get', param,config)
+        .then(response => {
+          console.log(response.data.success)
+          if(response.data.success===true){
+            this.data=response.data.data
+            console.log(response.data.data)
+          }else{
+            console.log("没有相关结果")
+          }
+          this.tableData=this.data.result
+        })
+
   },
   methods:{
+    update(){
+      this.reload()
+      console.log('刷新页面')
+    },
     searchjump(){
 
     },
@@ -269,6 +292,23 @@ export default {
     JumpToTeamManage(){
       this.$router.push('/TeamManage');
     },
+    RecoverProject(row){
+      let param = new FormData() // 创建form对象
+      param.append('projectID', row.ID)// 通过append向form对象添加数据
+      param.append('userID', 10)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/recyclebin/get', param,config)
+          .then(response => {
+            console.log(response.data.success)
+            if(response.data.success===true){
+              this.$message.success("恢复成功")
+            }else{
+              this.$message.error("恢复失败")
+            }
+          })
+    }
   },
   data(){
     return{
@@ -284,42 +324,13 @@ export default {
         label: '普通成员'
       }],
       tableData: [{
-        projectname: 'project1',
-        buildtime:'2022-08-03',
-        builder: 'tiger',
-        deletetime: '5分钟前',
-      }, {
-        projectname: 'project2',
-        buildtime:'2022-08-03',
-        builder: 'tiger',
-        deletetime: '5分钟前',
-      }, {
-        projectname: 'project3',
-        buildtime:'2022-08-03',
-        builder: 'tiger',
-        deletetime: '5分钟前',
-      }, {
-        projectname: 'project4',
-        buildtime:'2022-08-03',
-        builder: 'tiger',
-        deletetime: '5分钟前',
-      }, {
-        projectname: 'project5',
-        buildtime:'2022-08-03',
-        builder: 'tiger',
-        deletetime: '5分钟前',
-      }, {
-        projectname: 'project6',
-        buildtime:'2022-08-03',
-        builder: 'tiger',
-        deletetime: '5分钟前',
-      }, {
-        projectname: 'project7',
-        buildtime:'2022-08-03',
-        builder: 'tiger',
-        deletetime: '5分钟前',
+        ID: 2, //项目id
+        name: "buaa协作平台", //项目名称
+        created_date: '2021-01-07T10:35:28.269Z', //创建时间
+        modified_date: '2021-01-07T10:35:28.269Z' //最后编辑
       }],
       value:'',
+      data:'',
       removeMember: false,
       currentRow:'',
       changeManager:false,

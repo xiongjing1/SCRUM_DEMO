@@ -76,7 +76,7 @@
     <div class="content">
         <div class="left-side">
           <div class="members-top-side">
-            <div class="members-add" v-on:click="invite = true">
+            <div class="members-add" v-on:click="invite = true" v-if="IsManage===true">
               Add member
             </div>
             <el-dialog title="Invite By Email" :visible.sync="invite" width="350px">
@@ -152,7 +152,7 @@
                         <span>确认要删除该成员吗？</span>
                         <span slot="footer" class="dialog-footer">
                               <el-button @click="removeMember = false">取 消</el-button>
-                              <el-button type="primary" @click="removeMember = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="removeMember = false;" @click.native.prevent="deleteRow(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                       <div class="identity-choose">
@@ -175,7 +175,7 @@
                         <span>确认要设置该成员为管理员吗？</span>
                         <span slot="footer" class="dialog-footer">
                               <el-button @click="changeManager = false">取 消</el-button>
-                              <el-button type="primary" @click="changeManager = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="changeManager = false;" @click.native.prevent="setManager(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                       <el-dialog
@@ -187,7 +187,7 @@
                         <span>确认要设置该成员为普通成员吗？</span>
                         <span slot="footer" class="dialog-footer">
                               <el-button @click="changeMember = false">取 消</el-button>
-                              <el-button type="primary" @click="changeMember = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="changeMember = false;" @click.native.prevent="setMember(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                     </div>
@@ -269,6 +269,7 @@ import axios from "axios";
 
 export default {
   name: "TeamManage",
+  inject:['reload'],
   components: {
     LeftSide,
     HeadSide,
@@ -278,16 +279,87 @@ export default {
       this.team=res.data.team
       this.leader=res.data.leader
       this.member_list=res.data.member_list
-      console.log("res.data."+res.data.team.l_id)
+      console.log("res.data."+res.data.team.t_id)
+      console.log(res.data.is_Manager)
+      if(res.data.is_Manager===0){
+        this.IsManage=false
+      }else{
+        this.IsManage=true
+      }
     })
+
+
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
+    update(){
+      this.reload()
+      console.log('刷新页面')
+    },
     searchjump(){
 
     },
     deleteRow(row){
-      console.log(row);
+      let param = new FormData() // 创建form对象
+      param.append('is_delete_member', this.addmember)// 通过append向form对象添加数据
+      param.append('a_id', row.m_id)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.$message.success("移除成员成功！")
+            }else{
+              if(response.data.errno === 4004)
+                this.$message.error(response.data.msg);
+            }
+
+          })
+    },
+    setMember(row){
+      let param = new FormData() // 创建form对象
+      param.append('is_change_identity', this.addmember)// 通过append向form对象添加数据
+      param.append('new_identity', '普通成员')
+      param.append('a_id', row.m_id)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.$message.success("成功设置为普通成员！")
+            }else{
+              if(response.data.errno === 3003)
+                this.$message.error(response.data.msg);
+            }
+
+          })
+    },
+    setManager(row){
+      let param = new FormData() // 创建form对象
+      param.append('is_change_identity', this.addmember)// 通过append向form对象添加数据
+      param.append('new_identity', '团队管理员')
+      param.append('a_id', row.m_id)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.$message.success("成功设置为团队管理员！")
+            }else{
+              if(response.data.errno === 3003)
+                this.$message.error(response.data.msg);
+            }
+
+          })
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
@@ -323,9 +395,9 @@ export default {
             console.log(response.data)
             // console.log("denglu:"+response.data);
             if (response.data.errno === 1000) {
-              this.$message("成功发送邀请！")
+              this.$message.success("成功发送邀请！")
             }else{
-              if(response.data.errno === 1003)
+              if(response.data.errno === 3003)
                 this.$message.error(response.data.msg);
             }
 
