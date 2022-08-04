@@ -141,6 +141,7 @@ export default {
        */
     },
     submit() {
+      this.$router.push('/user');
       /*
       let formData = new FormData();
       formData.append('userID', '');

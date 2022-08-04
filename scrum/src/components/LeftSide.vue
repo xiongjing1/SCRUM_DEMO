@@ -3,11 +3,11 @@
   <div class="leftside" :style="{'height':this.wholeHeight}">
     <div class="team-inform">
       <img src="../assets/team.png" height="25px" alt=" " style="position: absolute; left: 15px;top:39px">
-      <div class="title">My Teams</div>
+      <div class="team-title">My Teams</div>
       <div class="ateam" v-for="(item,index) in teams" v-bind:key="index">
         <div class="team-part">
           <div class="teamno" :style="{'background-color':color[index%4]}"></div>
-          <div class="teamname">{{ item.name }}</div>
+          <div class="teamname" v-on:click="this.$router.push('/')" style="cursor: pointer">{{ item.name }}</div>
         </div>
         <div v-for="(item2,index2) in projects" v-bind:key="index2">
           <div class="project-part" v-if="item2.teamid==item.id">
@@ -108,7 +108,7 @@ export default {
 
 }
 
-.title {
+.team-title {
   width: 100px;
   height: 50px;
   text-align: left;
