@@ -28,14 +28,16 @@
           <img src="../assets/close.png" height="18px" alt=" "  style="margin-top:8px; margin-left: 2px">
         </div>
         <div class="underline"></div>
-        <el-input class="change_name" placeholder="Your new team name here..."></el-input>
-        <el-button type="primary" class="save-btn" v-on:click="begin_create=false">Save it</el-button>
+        <el-input class="change_name" v-model="new_team"  placeholder="Your new team name here..."></el-input>
+        <el-button type="primary" class="save-btn" v-on:click="create_sure">Save it</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "LeftSide",
   mounted() {
@@ -47,6 +49,7 @@ export default {
     return {
       wholeHeight:800,
       begin_create:false,
+      new_team:'',
       color: ['#3D89E9', '#9449FF', '#F42BBF', '#E74A23'],
       teams: [
         {id: '1', name: 'Yigaaa Team'},
@@ -59,6 +62,29 @@ export default {
         {id: '4', name: 'Sina News', teamid: '2'},
         {id: '5', name: 'KAT-TUN', teamid: '1'},
       ]
+    }
+  },
+  methods:{
+    create_sure(){
+      let param = new FormData() // 创建form对象
+      param.append('is_create_new_team',1)
+      param.append('name', this.new_team)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+ window.localStorage.getItem('uid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.teams.push({name:this.new_team,id:response.data.tid});
+              this.begin_create=false;
+            }else{
+              this.$message.error("发生错误");
+            }
+          })
+
+
     }
   }
 }

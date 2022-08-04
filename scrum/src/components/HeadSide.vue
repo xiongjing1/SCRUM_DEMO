@@ -171,6 +171,7 @@ export default {
               storage.setItem('nickname',this.new_nickname);
               this.nickname=this.new_nickname;
               this.modify_nickname=false;
+              this.new_nickname='';
             }else{
               this.$message.error("发生错误");
             }
