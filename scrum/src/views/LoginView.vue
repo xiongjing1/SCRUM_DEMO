@@ -61,7 +61,7 @@ export default {
     console.log(this.if_login);
     if(this.if_login==1){
       console.log("dsa");
-      this.$router.push('/user');
+      this.$router.push('/user/'+storage.getItem('uid'));
     }
     this.slideLineLeft();
   },

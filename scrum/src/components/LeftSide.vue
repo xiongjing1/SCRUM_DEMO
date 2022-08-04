@@ -5,7 +5,7 @@
       <img src="../assets/team.png" height="25px" alt=" " style="position: absolute; left: 15px;top:39px">
       <div class="team-title">My Teams</div>
       <div class="ateam" v-for="(item,index) in teams" v-bind:key="index">
-        <div class="team-part" v-on:click="teamjump" >
+        <div class="team-part" v-on:click="teamjump(item.id)" >
           <div class="teamno" :style="{'background-color':color[index%4]}"></div>
           <div class="teamname" >{{ item.name }}</div>
         </div>
@@ -97,8 +97,8 @@ export default {
             }
           })
     },
-    teamjump(){
-      this.$router.push('/ProjectManage');
+    teamjump(id){
+      this.$router.push('/ProjectManage/'+id);
     }
   }
 }
