@@ -99,7 +99,6 @@ export default {
     },
     teamjump(id){
       window.localStorage.setItem('tid',id);
-      window.localStorage.setItem('tname',id);
       this.$router.push('/TeamManage/'+id);
     },
     projectjump(id){
