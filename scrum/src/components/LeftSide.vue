@@ -83,6 +83,7 @@ export default {
               this.$message.error("发生错误");
             }
           })
+      this.$router.push('/PrototypeView');
 
 
     }

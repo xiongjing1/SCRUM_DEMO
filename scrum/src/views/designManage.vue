@@ -114,7 +114,7 @@
                   绘制UML
                 </div>
               </div>
-              <div class="draft">
+              <div class="draft" @click="JumpToPrototype">
                 <div class="draft-design">
                   <img src="../assets/draft.png" class="draft-img">
                 </div>
@@ -197,6 +197,9 @@ export default {
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
+    JumpToPrototype(){
+      this.$router.push('/PrototypeView');
+    },
     JumpToProjectManage(){
       this.$router.push('/ProjectManage');
     },
