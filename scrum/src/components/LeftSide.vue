@@ -7,7 +7,7 @@
       <div class="ateam" v-for="(item,index) in teams" v-bind:key="index">
         <div class="team-part" v-on:click="teamjump" >
           <div class="teamno" :style="{'background-color':color[index%4]}"></div>
-          <div class="teamname" style="cursor: pointer">{{ item.name }}</div>
+          <div class="teamname" >{{ item.name }}</div>
         </div>
         <div v-for="(item2,index2) in projects" v-bind:key="index2">
           <div class="project-part" v-if="item2.teamid==item.id">
@@ -96,7 +96,6 @@ export default {
               this.$message.error("发生错误");
             }
           })
-      this.$router.push('/PrototypeView');
     },
     teamjump(){
       this.$router.push('/ProjectManage');
