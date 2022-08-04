@@ -785,7 +785,7 @@ export default {
 .edit-summary:hover{
   color: #E9E9E9;
 }
-/*
+
 /deep/.identity-choose:hover{
  color: rgba(23,43,72,0.45);
 }
@@ -804,7 +804,7 @@ export default {
  border-width: 0 0 1px 0 ;
  border-bottom-color: #2c3e50;
  border-radius: 0;
-} */
+}
 
 .el-buttons{
  background-color: #2c3e50;
@@ -830,7 +830,7 @@ export default {
 .photo-footer{
  margin-right: 70px;
 }
-/*
+
 /deep/.el-pagination.is-background .el-pager li:not(.disabled) {
 }
 /deep/.el-pagination.is-background .el-pager li:hover {
@@ -839,7 +839,7 @@ color: #2b597d;
 /deep/.el-pagination.is-background .el-pager li:not(.disabled).active{
 background-color: #2b597d;
 color: azure;
-} */
+}
 .summary-content{
  border-radius:18px;
  margin-left: 20px;
@@ -992,7 +992,7 @@ color: azure;
  height: 32px;
  cursor: pointer;
 }
-/*
+
 /deep/.el-dropdown-menu:hover {
  border: none;
  color: #666;
@@ -1007,17 +1007,17 @@ color: azure;
  color:#2c3e50;
 }
 /deep/el-input::-moz-placeholder{   /* Mozilla Firefox 19+ */
- /*
+
   color:#2c3e50;
 }
 /deep/el-input:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
- /*
+
   color:#2c3e50;
 }
 /deep/el-input:-ms-input-placeholder{  /* Internet Explorer 10-11 */
-/*
+
 color:#2c3e50;
-} */
+}
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;

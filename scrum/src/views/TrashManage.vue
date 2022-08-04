@@ -922,7 +922,7 @@ export default {
 </style>
 
 
-<style>
+<style scoped>
 /deep/.el-dropdown-menu:hover {
   border: none;
   color: #666;
