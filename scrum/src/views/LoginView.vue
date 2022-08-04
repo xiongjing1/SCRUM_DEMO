@@ -122,9 +122,14 @@ export default {
             console.log(response.data.errno)
            // console.log("denglu:"+response.data);
             if (response.data.errno === 1000) {
+              console.log(response.data)
               console.log('yeah')
               let storage = window.localStorage;
               storage.setItem('email',this.login_email);
+              storage.setItem('uid',response.data.uid);
+              storage.setItem('nickname',response.data.nickname);
+              storage.setItem('headshot',response.data.headshot);
+              storage.setItem('name',response.data.name);
               storage.setItem('iflogin',1);
               this.$router.push('/user');
 
@@ -158,7 +163,10 @@ export default {
             if (response.data.errno === 1000) {
               let storage = window.localStorage;
               storage.setItem('email',this.register_email);
-              storage.setItem('nickname','user');
+              storage.setItem('nickname','jrs');
+              storage.setItem('uid',response.data.uid);
+            //  storage.setItem('headshot',response.data.headshot);
+              storage.setItem('name',this.register_name);
               storage.setItem('iflogin',1);
               this.$router.push('/user');
             }else{
