@@ -11,7 +11,7 @@
 import Vditor from "vditor";
 import global from "@/api/global";
 import 'vditor/dist/index.css';
-//import axios from 'axios';
+import axios from 'axios';
 
 
 export default {
@@ -141,25 +141,23 @@ export default {
        */
     },
     submit() {
-      /*
       let formData = new FormData();
       formData.append('userID', '');
       formData.append('docID', '');
       formData.append('docType', 3);
       formData.append('content', this.contentEditor.getValue());
-      axios.post('http://43.138.21.64/doc/update/',formData)
-          .then(function (response) {
-            if(response.data.success){
+       let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        };
+      axios.post('http://43.138.21.64:8080/doc/update',formData,config)
+          .then(response => {
+            if(response.status === 200){
               console.log(response.data.message);
             }
             else {
               console.log(response.data.message);
             }
           })
-          .catch(function (error) {
-            console.log("Fail", error)
-          });
-       */
       var find=false;
       for(let i=0;i<this.tableData.length;i++){
         if(global.fileid===this.tableData[i].ID){

@@ -81,9 +81,10 @@
               </div>
               <el-dialog title="Add New Project" :visible.sync="addProject" width="350px">
                 <el-input v-model="Projectnameinput" placeholder="Please input the name" class="project-input"></el-input>
+                <el-input v-model="Projectdescriptioninput" placeholder="Please input the description" class="project-input"></el-input>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="addProject = false">取 消</el-button>
-                  <el-button @click="addProject = false" class="el-buttons">确 定</el-button>
+                  <el-button class="el-buttons" @click="addProject = false ; createProject()" >确 定</el-button>
                 </div>
               </el-dialog>
               <div class="project-trash" v-on:click="JumpToProjectTrash()">
@@ -122,7 +123,7 @@
                           <el-input v-model="item.nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                           <div slot="footer" class="rename-footer">
                             <el-button @click="item.rename = false">取 消</el-button>
-                            <el-button @click="item.rename = false" class="el-buttons">确 定</el-button>
+                            <el-button @click="item.rename = false;renameProject(index)" class="el-buttons">确 定</el-button>
                           </div>
                         </el-dialog>
                       </div>
@@ -137,7 +138,7 @@
                           <span>确认要删除项目 {{item.projectName}} 吗？</span>
                           <span slot="footer" class="dialog-footer">
                               <el-button @click="item.deleteProject = false" >取 消</el-button>
-                              <el-button type="primary" @click="item.deleteProject = false;" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="item.deleteProject = false;deleteProject()" class="el-buttons">确 定</el-button>
                         </span>
                         </el-dialog>
                       </div>
@@ -221,6 +222,7 @@
 
 import LeftSide from "@/components/LeftSide";
 import HeadSide from "@/components/HeadSide";
+import axios from "axios";
 
 export default {
   name: "TeamManage",
@@ -232,6 +234,77 @@ export default {
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
+    createProject(){
+      let formData = new FormData();
+      formData.append('userID', 10);
+      formData.append('teamID', 3);
+      formData.append('projectName', this.Projectnameinput);
+      formData.append('description', this.Projectdescriptioninput);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/project/add',formData,config)
+          .then(response => {
+            if(response.status === 200){
+              console.log(response.data.message);
+            }
+            else if(response.status === 404){
+              console.log(response.data.message);
+            }
+            else{
+              console.log(response.data.message);
+            }
+          })
+      var newproject={
+        projectName:this.Projectnameinput,
+        leaderName:'徐亦佳',
+        latelyTime:'5分钟前',
+        deleteProject:false,
+        rename:false,
+        nameInput:'',
+      };
+      this.projectList.push(newproject);
+    },
+    deleteProject(index){
+      let formData = new FormData();
+      formData.append('userID', 10);
+      formData.append('projectID', this.projectList[index].projectId);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/project/remove/one',formData,config)
+          .then(response => {
+            if(response.status === 200){
+              console.log(response.data.message);
+            }
+            else if(response.status === 404){
+              console.log(response.data.message);
+            }
+            else{
+              console.log(response.data.message);
+            }
+          })
+      this.projectList.splice(index,1);
+    },
+    renameProject(index){
+      let formData = new FormData();
+      formData.append('userID', 10);
+      formData.append('projectID', this.projectList[index].projectId);
+      formData.append('newName', this.projectList[index].nameInput);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/project/rename',formData,config)
+          .then(response => {
+            if(response.status === 200){
+              console.log(response.data.message);
+            }
+            else {
+              console.log(response.data.message);
+            }
+          })
+      this.projectList[index].projectName=this.projectList[index].nameInput;
+    },
     searchjump(){
 
     },
@@ -271,6 +344,7 @@ export default {
       input:'',
       addProject:false,
       Projectnameinput:'',
+      Projectdescriptioninput: '',
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -340,6 +414,7 @@ export default {
       Summarycontent:'',
       projectList:[
         {
+          projectId: '',
           projectName:'Project 1',
           leaderName:'徐亦佳',
           latelyTime:'5分钟前',
@@ -348,6 +423,7 @@ export default {
           nameInput:'',
         },
         {
+          projectId: '',
           projectName:'Project 2',
           leaderName:'徐亦佳',
           latelyTime:'5分钟前',
@@ -356,6 +432,7 @@ export default {
           nameInput:'',
         },
         {
+          projectId: '',
           projectName:'Project 3',
           leaderName:'徐亦佳',
           latelyTime:'5分钟前',
@@ -363,7 +440,6 @@ export default {
           rename:false,
           nameInput:'',
         },
-
       ],
     }
   }
