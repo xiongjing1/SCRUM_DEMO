@@ -275,7 +275,7 @@ export default {
     HeadSide,
   },
   mounted() {
-    this.$axios.get('http://43.138.21.64:8080/user/10/team/3').then((res) => {
+    this.$axios.get('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
       this.team=res.data.team
       this.leader=res.data.leader
       this.member_list=res.data.member_list
@@ -306,7 +306,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -327,7 +327,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -348,7 +348,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -377,10 +377,20 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     sendInvite(){
       console.log(this.inviteEmail)
@@ -390,7 +400,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/10/team/3', param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);

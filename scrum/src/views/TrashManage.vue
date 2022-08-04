@@ -297,19 +297,44 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTrashManage() {
-      this.$router.push('/TrashManage');
+      this.$router.push({
+        name:'TrashManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpTodesignManage() {
-      this.$router.push('/designManage');
+      this.$router.push({
+        name:'designManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpTodocumentManage() {
-      this.$router.push('/documentManage');
+      this.$router.push({
+        name:'documentManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
   },
   data(){

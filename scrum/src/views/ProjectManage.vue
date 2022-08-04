@@ -98,7 +98,7 @@
               <div class="project-main">
                 <div class="project" v-for="(item,index) in projectList" :key="index" >
                   <div class="project-mode">
-                    <div class="project-info" v-on:click="JumpTodesignManage()">
+                    <div class="project-info" v-on:click="JumpTodesignManage(item.ID)">
                       <div class="project-name">
                         {{item.project_name}}
                       </div>
@@ -233,7 +233,7 @@ export default {
   },
   mounted() {
     let param = new FormData() // 创建form对象
-    param.append('searchID', 3)// 通过append向form对象添加数据
+    param.append('searchID', window.localStorage.getItem('tid'))// 通过append向form对象添加数据
     param.append('searchType', 2)
     let config = {
       headers: {'Content-Type': 'multipart/form-data'}
@@ -255,8 +255,8 @@ export default {
     },
     createProject(){
       let formData = new FormData();
-      formData.append('userID', 10);
-      formData.append('teamID', 3);
+      formData.append('userID', window.localStorage.getItem('uid'));
+      formData.append('teamID', window.localStorage.getItem('tid'));
       formData.append('projectName', this.Projectnameinput);
       formData.append('description', this.Projectdescriptioninput);
       let config = {
@@ -286,7 +286,7 @@ export default {
     },
     deleteProject(index){
       let formData = new FormData();
-      formData.append('userID', 10);
+      formData.append('userID',  window.localStorage.getItem('uid'));
       formData.append('projectID', this.projectList[index].ID);
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
@@ -307,7 +307,7 @@ export default {
     },
     renameProject(index){
       let formData = new FormData();
-      formData.append('userID', 10);
+      formData.append('userID',  window.localStorage.getItem('uid'));
       formData.append('projectID', this.projectList[index].ID);
       formData.append('newName', this.nameInput);
       let config = {
@@ -346,16 +346,38 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
-    JumpTodesignManage(){
-      this.$router.push('/designManage');
+    JumpTodesignManage(pid){
+      let storage = window.localStorage;
+      storage.setItem('pid',pid);
+      this.$router.push({
+        name:'designManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpToProjectTrash(){
-      this.$router.push('/ProjectTrash');
+      this.$router.push({
+        name:'ProjectTrash',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
   },
   data(){
