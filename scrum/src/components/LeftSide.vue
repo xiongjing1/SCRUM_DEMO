@@ -3,11 +3,11 @@
   <div class="leftside" :style="{'height':this.wholeHeight}">
     <div class="team-inform">
       <img src="../assets/team.png" height="25px" alt=" " style="position: absolute; left: 15px;top:39px">
-      <div class="title">My Teams</div>
+      <div class="team-title">My Teams</div>
       <div class="ateam" v-for="(item,index) in teams" v-bind:key="index">
-        <div class="team-part">
+        <div class="team-part" v-on:click="teamjump" >
           <div class="teamno" :style="{'background-color':color[index%4]}"></div>
-          <div class="teamname">{{ item.name }}</div>
+          <div class="teamname" >{{ item.name }}</div>
         </div>
         <div v-for="(item2,index2) in projects" v-bind:key="index2">
           <div class="project-part" v-if="item2.teamid==item.id">
@@ -28,26 +28,42 @@
           <img src="../assets/close.png" height="18px" alt=" "  style="margin-top:8px; margin-left: 2px">
         </div>
         <div class="underline"></div>
-        <el-input class="change_name" placeholder="Your new team name here..."></el-input>
-        <el-button type="primary" class="save-btn" v-on:click="begin_create=false">Save it</el-button>
+        <el-input class="change_name" v-model="new_team"  placeholder="Your new team name here..."></el-input>
+        <el-button type="primary" class="save-btn" v-on:click="create_sure">Save it</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "LeftSide",
   mounted() {
    this.wholeHeight=document.documentElement.scrollHeight-50+'px';
     console.log(this.wholeHeight);
+    this.$axios.get('http://43.138.21.64:8080/user/'+ window.localStorage.getItem('uid')).then((res) => {
+      this.origin_teams=res.data.team_list;
+      this.origin_projects=res.data.project_list;
+      this.teams= this.origin_teams.map((item) => {
+        return Object.assign({}, { id: item.t_id, name: item.t_name})
+      })
+      this.projects= this.origin_projects.map((item) => {
+        return Object.assign({}, { id: item.p_id, name: item.p_name, teamid: item.p_tid})
+      })
+      console.log(this.teams)
+    });
     },
 
   data() {
     return {
       wholeHeight:800,
       begin_create:false,
+      new_team:'',
       color: ['#3D89E9', '#9449FF', '#F42BBF', '#E74A23'],
+      origin_teams:[],
+      origin_projects:[],
       teams: [
         {id: '1', name: 'Yigaaa Team'},
         {id: '2', name: 'lluosi Team'},
@@ -59,6 +75,30 @@ export default {
         {id: '4', name: 'Sina News', teamid: '2'},
         {id: '5', name: 'KAT-TUN', teamid: '1'},
       ]
+    }
+  },
+  methods:{
+    create_sure(){
+      let param = new FormData() // 创建form对象
+      param.append('is_create_new_team',1)
+      param.append('name', this.new_team)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+ window.localStorage.getItem('uid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.teams.push({name:this.new_team,id:response.data.tid});
+              this.begin_create=false;
+            }else{
+              this.$message.error("发生错误");
+            }
+          })
+    },
+    teamjump(){
+      this.$router.push('/ProjectManage');
     }
   }
 }
@@ -82,7 +122,7 @@ export default {
 
 }
 
-.title {
+.team-title {
   width: 100px;
   height: 50px;
   text-align: left;

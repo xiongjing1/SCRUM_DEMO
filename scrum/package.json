@@ -11,6 +11,7 @@
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "element-ui": "^2.15.9",
+    "fabric": "3.2",
     "vditor": "^3.8.15",
     "vue": "^2.6.14",
     "vue-infinite-scroll": "^2.0.2",

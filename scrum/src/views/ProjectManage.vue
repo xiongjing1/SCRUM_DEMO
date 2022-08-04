@@ -3,7 +3,7 @@
     <div class="head">
       <HeadSide></HeadSide>
     </div>
-    <div class="whole">
+    <div >
       <LeftSide></LeftSide>
       <div class="main">
         <div class="title">
@@ -76,9 +76,17 @@
         <div class="content">
           <div class="left-side">
             <div class="project-top-side">
-              <div class="project-add">
+              <div class="project-add" v-on:click="addProject = true">
                 Add project
               </div>
+              <el-dialog title="Add New Project" :visible.sync="addProject" width="350px">
+                <el-input v-model="Projectnameinput" placeholder="Please input the name" class="project-input"></el-input>
+                <el-input v-model="Projectdescriptioninput" placeholder="Please input the description" class="project-input"></el-input>
+                <div slot="footer" class="rename-footer">
+                  <el-button @click="addProject = false">取 消</el-button>
+                  <el-button class="el-buttons" @click="addProject = false ; createProject();" >确 定</el-button>
+                </div>
+              </el-dialog>
               <div class="project-trash" v-on:click="JumpToProjectTrash()">
                 trash
               </div>
@@ -92,17 +100,17 @@
                   <div class="project-mode">
                     <div class="project-info" v-on:click="JumpTodesignManage()">
                       <div class="project-name">
-                        {{item.projectName}}
+                        {{item.project_name}}
                       </div>
                       <div class="project-leader">
                         <img src="../assets/build.png" class="project-build-img">
                         <div class="project-leader-title">项目创建者</div>
-                        <div class="project-leader-name">{{item.leaderName}}</div>
+                        <div class="project-leader-name">{{item.creator_id}}</div>
                       </div>
                       <div class="project-lately-edit">
                         <img src="../assets/edittime.png" class="project-edittime-img">
                         <div class="project-lately-edit-title">最近编辑</div>
-                        <div class="project-lately-edit-time">{{item.latelyTime}}</div>
+                        <div class="project-lately-edit-time">{{item.modified_date}}</div>
                       </div>
                     </div>
                     <div class="project-img" v-on:click="JumpTodesignManage()">
@@ -110,27 +118,27 @@
                     </div>
                     <div class="project-operation">
                       <div class="project-operation-rename">
-                        <img src="../assets/rename.png" class="project-rename-img" @click="item.rename = true">
-                        <el-dialog title="Rename" :visible.sync="item.rename" width="350px">
-                          <el-input v-model="item.nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
+                        <img src="../assets/rename.png" class="project-rename-img" @click="renamed = true;currentRow=index">
+                        <el-dialog title="Rename" :visible.sync="renamed" width="350px">
+                          <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                           <div slot="footer" class="rename-footer">
-                            <el-button @click="item.rename = false">取 消</el-button>
-                            <el-button @click="item.rename = false" class="el-buttons">确 定</el-button>
+                            <el-button @click="renamed = false">取 消</el-button>
+                            <el-button @click="renamed = false;renameProject(currentRow);update();" class="el-buttons">确 定</el-button>
                           </div>
                         </el-dialog>
                       </div>
                       <div class="project-operation-delete">
-                        <img src="../assets/delete.png" class="project-delete-img" @click="item.deleteProject = true">
+                        <img src="../assets/delete.png" class="project-delete-img" @click="deletedProject = true;currentRow=index;current=item">
                         <el-dialog
                             title="提示"
-                            :visible.sync="item.deleteProject"
+                            :visible.sync="deletedProject"
                             width="30%"
                             center
                             append-to-body>
-                          <span>确认要删除项目 {{item.projectName}} 吗？</span>
+                          <span>确认要删除项目 {{current.project_name}} 吗？</span>
                           <span slot="footer" class="dialog-footer">
-                              <el-button @click="item.deleteProject = false" >取 消</el-button>
-                              <el-button type="primary" @click="item.deleteProject = false;" class="el-buttons">确 定</el-button>
+                              <el-button @click="deletedProject = false" >取 消</el-button>
+                              <el-button type="primary" @click="deletedProject = false;deleteProject(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                         </el-dialog>
                       </div>
@@ -214,17 +222,108 @@
 
 import LeftSide from "@/components/LeftSide";
 import HeadSide from "@/components/HeadSide";
+import axios from "axios";
 
 export default {
   name: "TeamManage",
+  inject:['reload'],
   components: {
     LeftSide,
     HeadSide,
   },
   mounted() {
+    let param = new FormData() // 创建form对象
+    param.append('searchID', 3)// 通过append向form对象添加数据
+    param.append('searchType', 2)
+    let config = {
+      headers: {'Content-Type': 'multipart/form-data'}
+    } // 添加请求头
+    axios.post('http://43.138.21.64:8080/project/view/all', param,config)
+        .then(response => {
+          if(response.data.success===true){
+            this.projectList=response.data.message
+          }else{
+            console.log(response.data.success)
+          }
+        })
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
+    update(){
+      this.reload()
+      console.log('刷新页面')
+    },
+    createProject(){
+      let formData = new FormData();
+      formData.append('userID', 10);
+      formData.append('teamID', 3);
+      formData.append('projectName', this.Projectnameinput);
+      formData.append('description', this.Projectdescriptioninput);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/project/add',formData,config)
+          .then(response => {
+            if(response.status === 200){
+              console.log(response.data.message);
+            }
+            else if(response.status === 404){
+              console.log(response.data.message);
+            }
+            else{
+              console.log(response.data.message);
+            }
+          })
+      var newproject={
+        projectName:this.Projectnameinput,
+        leaderName:'徐亦佳',
+        latelyTime:'5分钟前',
+        deleteProject:false,
+        rename:false,
+        nameInput:'',
+      };
+      this.projectList.push(newproject);
+    },
+    deleteProject(index){
+      let formData = new FormData();
+      formData.append('userID', 10);
+      formData.append('projectID', this.projectList[index].ID);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/project/remove/one',formData,config)
+          .then(response => {
+            if(response.status === 200){
+              console.log(response.data.message);
+            }
+            else if(response.status === 404){
+              console.log(response.data.message);
+            }
+            else{
+              console.log(response.data.message);
+            }
+          })
+      this.projectList.splice(index,1);
+    },
+    renameProject(index){
+      let formData = new FormData();
+      formData.append('userID', 10);
+      formData.append('projectID', this.projectList[index].ID);
+      formData.append('newName', this.nameInput);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/project/rename',formData,config)
+          .then(response => {
+            if(response.status === 200){
+              console.log(response.data.message);
+            }
+            else {
+              console.log(response.data.message);
+            }
+          })
+      this.projectList[index].projectName=this.projectList[index].nameInput;
+    },
     searchjump(){
 
     },
@@ -262,6 +361,12 @@ export default {
   data(){
     return{
       input:'',
+      addProject:false,
+      Projectnameinput:'',
+      Projectdescriptioninput: '',
+      renamed:false,
+      deletedProject:false,
+      current:'',
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -331,30 +436,38 @@ export default {
       Summarycontent:'',
       projectList:[
         {
-          projectName:'Project 1',
-          leaderName:'徐亦佳',
-          latelyTime:'5分钟前',
-          deleteProject:false,
-          rename:false,
-          nameInput:'',
+          ID: '1',
+          project_name: 'project01',
+          creator_id: 'user01',
+          creator_date: '2022-08-02T10:34:45.667Z',
+          modified_date: null,
+          description: 'projecttest',
+          is_recycled: false,
+          teamID: 1,
+          rename:false
         },
         {
-          projectName:'Project 2',
-          leaderName:'徐亦佳',
-          latelyTime:'5分钟前',
-          deleteProject:false,
-          rename:false,
-          nameInput:'',
+          ID: '2',
+          project_name: 'project02',
+          creator_id: 'user01',
+          creator_date: '2022-08-02T10:34:45.667Z',
+          modified_date: null,
+          description: 'projecttest',
+          is_recycled: false,
+          teamID: 1,
+          rename:false
         },
         {
-          projectName:'Project 3',
-          leaderName:'徐亦佳',
-          latelyTime:'5分钟前',
-          deleteProject:false,
-          rename:false,
-          nameInput:'',
+          ID: '3',
+          project_name: 'project03',
+          creator_id: 'user01',
+          creator_date: '2022-08-02T10:34:45.667Z',
+          modified_date: null,
+          description: 'projecttest',
+          is_recycled: false,
+          teamID: 1,
+          rename:false
         },
-
       ],
     }
   }
@@ -364,52 +477,42 @@ export default {
 <style scoped>
 .main{
   position: absolute;
-  flex-direction: column;
-  width: 83%;
+  width: 84%;
   overflow: hidden;
   min-width: calc(1520px*81%);
   top:50px;
   left: 230px;
 }
 .title{
-  display: flex;
+
   align-items: center;
   justify-content: space-between;
-  padding-top: -700px;
   margin-right: 50px;
   width: 100%;
   height: 80px;
 }
 .team{
-  display: flex;
-  flex-direction: row;
+  float: left;
   width: 300px;
   height: 80px;
 }
 .buttons{
-  display: flex;
-  margin-left: 10px;
-  padding-top: 30px;
-  padding-left:700px;
-  width: 350px;
-  height: 80px;
-}
-.choose-box{
-  width:100% ;
+
+  float: left;
+  margin-left:681px;
+  margin-top: 14px;
+  width: 290px;
   height: 60px;
-  display: flex;
-  margin-bottom: -10px;
-  flex-direction: row;
 }
+
 .content{
-  display: flex;
-  align-items: center;
-  flex-direction: row;
+
 }
 .left-side{
   height: 600px;
-  width: 75%;
-  margin-top: -190px;
+  float: left;
+  width: 74%;
+  margin-top: -70px;
 }
 .right-side{
   float: right;
@@ -417,6 +520,7 @@ export default {
   border-left: 1px solid #EAECF0;
 }
 .TeamPhoto{
+  float: left;
   padding-top: 10px;
   width: 70px;
   height: 70px;
@@ -424,6 +528,8 @@ export default {
 .TeamName{
   padding-top: 20px;
   width: 300px;
+  height: 70px;
+
   margin-top: 10px;
   margin-left: 30px;
   font-size: 30px;
@@ -437,7 +543,7 @@ export default {
   outline-color: #2c3e50;
   cursor: pointer;
   padding-top:12px;
-  margin-left:-30px;
+  float: left;
   margin-top: 10px;
   font-size: 14px;
 }
@@ -453,6 +559,7 @@ export default {
   cursor: pointer;
   padding-top:12px;
   margin-top: 10px;
+  float: left;
   font-size: 14px;
   margin-left: 15px;
 }
@@ -472,6 +579,7 @@ export default {
   margin-left: 15px;
   color: #2c3e50;
   letter-spacing: 3px;
+  float: left;
 }
 .more:hover{
   color: rgba(23,43,72,0.45);
@@ -489,50 +597,18 @@ export default {
 .more-menu:not(.is-disabled):focus{
   background-color:rgba(23,43,72,0.45);;
 }
-.project-manage{
-  padding-top: 20px;
-  padding-left: 30px;
-  cursor: pointer;
-}
-.project-manage:hover{
-  color: rgba(23,43,72,0.65);
-}
-.members-manage{
-  padding-top: 20px;
-  padding-left: 30px;
-  cursor: pointer;
-}
-.members-manage:hover{
-  color: rgba(23,43,72,0.65);
-}
+
 .project-top-side{
   height: 50px;
   width: 100%;
   margin-top: 0px;
 }
 .members-second-side{
-  display: flex;
+
   height: 70px;
   width: 100%;
 }
-.members-main{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height:auto;
-}
-.table-leader{
-  display: flex;
-  width: 90%;
-  padding-top: 10px;
-  padding-left: 40px;
-}
-.table-member{
-  display: flex;
-  width: 90%;
-  padding-top: 10px;
-  padding-left: 40px;
-}
+
 .pagination{
   padding-top: 40px;
   margin-bottom: 30px;
@@ -581,7 +657,7 @@ export default {
   color: #E9E9E9;
 }
 .project-search{
-  display: flex;
+
   padding-left:400px;
   padding-top: 60px;
   width: 20%;
@@ -592,10 +668,7 @@ export default {
   position: absolute;
   float: left;
 }
-.members-rank{
-  padding-top: 20px;
-  padding-left: 775px;
-}
+
 .team-summary{
   display: flex;
   padding-left:15px ;
@@ -740,234 +813,238 @@ export default {
 .edit-summary:hover{
   color: #E9E9E9;
 }
-.members-operation{
-  display: flex;
-  flex-direction: row;
-}
-.identity-choose{
-  display: flex;
-  padding-left: 10px;
-  padding-top: 7px;
-  cursor: pointer;
-}
+
 /deep/.identity-choose:hover{
-  color: rgba(23,43,72,0.45);
+ color: rgba(23,43,72,0.45);
 }
 /deep/.move-button{
-  color: #2c3e50;
-  font-size: 15px;
-  cursor: pointer;
-  padding-left: 50px;
+ color: #2c3e50;
+ font-size: 15px;
+ cursor: pointer;
+ padding-left: 50px;
 }
 /deep/.move-button:hover{
-  color: rgba(23,43,72,0.45);
+ color: rgba(23,43,72,0.45);
 }
 /deep/.el-input__inner {
-  background-color: rgba(255,255,255,0.45);
-  color:#2c3e50 ;
-  border-width: 0 0 1px 0 ;
-  border-bottom-color: #2c3e50;
-  border-radius: 0;
+ background-color: rgba(255,255,255,0.45);
+ color:#2c3e50 ;
+ border-width: 0 0 1px 0 ;
+ border-bottom-color: #2c3e50;
+ border-radius: 0;
 }
 
-.el-select-dropdown__item {
-  color: #2c3e50;
-}
-/deep/ .el-dropdown-menu__item:not(.is-disabled):focus {
-  color: rgba(23,43,72,0.45);
-  color: #2c3e50;
-}
 .el-buttons{
-  background-color: #2c3e50;
-  color: azure;
+ background-color: #2c3e50;
+ color: azure;
 }
 .cancel-buttons{
-  margin-right: 30px;
+ margin-right: 30px;
 }
 .yes-buttons{
-  margin-left: 30px;
-  background-color: #2c3e50;
-  color: azure;
+ margin-left: 30px;
+ background-color: #2c3e50;
+ color: azure;
 }
 .rename-input{
-  width: 120px;
+ width: 120px;
+}
+.project-input{
+  width: 200px;
 }
 .rename-footer{
-  margin-right: 75px;
+ margin-right: 75px;
 }
 .photo-footer{
-  margin-right: 70px;
+ margin-right: 70px;
 }
+
 /deep/.el-pagination.is-background .el-pager li:not(.disabled) {
 }
 /deep/.el-pagination.is-background .el-pager li:hover {
-  color: #2b597d;
+color: #2b597d;
 }
 /deep/.el-pagination.is-background .el-pager li:not(.disabled).active{
-  background-color: #2b597d;
-  color: azure;
+background-color: #2b597d;
+color: azure;
 }
 .summary-content{
-  border-radius:18px;
-  margin-left: 20px;
-  width: 200px;
-  height: 56px;
-  resize: none;
-  margin-right: 16px;
-  padding: 8px 18px;
-  border: none;
-  background-color: rgba(241,250,238,0.05);
+ border-radius:18px;
+ margin-left: 20px;
+ width: 200px;
+ height: 56px;
+ resize: none;
+ margin-right: 16px;
+ padding: 8px 18px;
+ border: none;
+ background-color: rgba(241,250,238,0.05);
 }
 .summary-content:focus{
-  border-color: #2c3e50;
+ border-color: #2c3e50;
 }
 .project-main{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 400px;
+
+ width: 100%;
+ height: 400px;
 }
 .project-total{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding-top: 50px;
+ width: 100%;
+ float: left;
+ margin-top: 50px;
 }
 .project{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 150px;
-  margin-top: 30px;
+ width: 100%;
+ height: 150px;
+ margin-top: 30px;
 }
 .project-mode{
-  display: flex;
-  width: 88%;
-  height: 150px;
-  margin-left: 35px;
-  margin-top: 10px;
-  border-radius: 30px;
-  border: 1px solid #d9d9d9;
-  box-shadow: 0 0 3px 3px rgba(23, 43, 72, 0.45);
+
+ width: 88%;
+ height: 150px;
+ margin-left: 35px;
+ margin-top: 10px;
+ border-radius: 30px;
+ border: 1px solid #d9d9d9;
+ box-shadow: 0 0 2px 2px rgba(23, 43, 72, 0.45);
 }
 .project-info{
-  display: flex;
-  flex-direction: column;
-  width: 40%;
-  height: 100%;
-  cursor: pointer;
+ padding-left: 30px;
+ float: left;
+ width: 40%;
+ height: 100%;
+ cursor: pointer;
 }
 .project-name{
-  display: flex;
-  width: 100%;
-  height: auto;
-  font-family: "Berlin Sans FB Demi";
-  font-size: 38px;
-  padding-top: 13px;
-  padding-left: 35px;
+
+ width: calc(100% - 35px);
+ text-align: left;
+ font-family: "Berlin Sans FB Demi";
+ font-size: 26px;
+ padding-top: 13px;
+ padding-left: 35px;
 }
 .project-leader{
-  display: flex;
-  flex-direction: row;
-  padding-top: 10px;
-  align-items: center;
+
+ height: 35px;
+ margin-top: 10px;
+
 }
 .project-leader-name{
-  display: flex;
-  padding-left: 10px;
-  font-size: 15px;
+
+ float: left;
+ text-align: left;
+ width: 200px;
+ margin-left: 31px;
+ font-size: 13px;
 }
 .project-leader-title{
-  display: flex;
-  font-size: 15px;
+
+ float: left;
+ text-align: left;
+ width: 200px;
+ margin-left: 25px;
+ font-size: 13px;
+
 }
 .project-build-img{
-  display: flex;
-  width: 30px;
-  height: 30px;
-  padding-left: 30px;
+ float: left;
+ margin-left: 31px;
+ width: 25px;
+ height: 25px;
+ margin-top: 5px;
 
 }
 .project-lately-edit{
-  display: flex;
-  flex-direction: row;
-  padding-top: 10px;
-  align-items: center;
+
+ height:35px;
+ align-items: center;
+ margin-top: 10px;
 }
 .project-lately-edit-title{
-  display: flex;
-  font-size: 15px;
-  padding-left: 3px;
+ float: left;
+ text-align: left;
+ width: 200px;
+ margin-left: 25px;
+ font-size: 13px;
+
 }
 .project-lately-edit-time{
-  display: flex;
-  padding-left: 15px;
-  font-size: 15px;
+ float: left;
+ width: 60px;
+ margin-left: 28px;
+ margin-top: 2px;
+ font-size: 13px;
+ text-align: left;
 }
 .project-edittime-img{
-  display: flex;
-  width: 30px;
-  height: 30px;
-  padding-left: 30px;
+ float: left;
+ margin-left: 31px;
+ width: 25px;
+ height: 25px;
+ margin-top: 5px;
 }
 .project-img{
-  padding-top: 5px;
-  cursor: pointer;
+ float: left;
+ height: 100%;
+ width: 280px;
+ margin-left: -10px;
+ cursor: pointer;
 }
 .img-size{
-  width: 280px;
-  height: 140px;
+ width: 220px;
+ margin-top: 30px;
 }
 .project-operation{
-  display: flex;
-  margin-left: 70px;
-  margin-top: 50px;
+
+ float: right;
+ margin-left: 70px;
+ margin-top: 50px;
 }
 .project-operation-rename{
-  display: flex;
+ margin-right: 40px;
+ margin-top: -20px;
 }
 .project-operation-delete{
-  display: flex;
-  margin-left: 30px;
+ margin-top: 20px;
+ margin-right: 40px;
 }
 .project-rename-img{
-  display: flex;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
+
+ width: 32px;
+ height: 32px;
+ cursor: pointer;
 }
 .project-delete-img{
-  display: flex;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
+
+ width: 32px;
+ height: 32px;
+ cursor: pointer;
 }
-</style>
 
-
-<style>
 /deep/.el-dropdown-menu:hover {
-  border: none;
-  color: #666;
-  border-radius: 0;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+ border: none;
+ color: #666;
+ border-radius: 0;
+ padding: 0;
+ margin: 0;
+
+ align-items: center;
+ justify-content: center;
 }
-/deep/input::-webkit-input-placeholder{
+/deep/el-input::-webkit-input-placeholder{
+ color:#2c3e50;
+}
+/deep/el-input::-moz-placeholder{   /* Mozilla Firefox 19+ */
+
   color:#2c3e50;
 }
-/deep/input::-moz-placeholder{   /* Mozilla Firefox 19+ */
+/deep/el-input:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
+
   color:#2c3e50;
 }
-/deep/input:-moz-placeholder{    /* Mozilla Firefox 4 to 18 */
-  color:#2c3e50;
-}
-/deep/input:-ms-input-placeholder{  /* Internet Explorer 10-11 */
-  color:#2c3e50;
+/deep/el-input:-ms-input-placeholder{  /* Internet Explorer 10-11 */
+
+color:#2c3e50;
 }
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
@@ -993,3 +1070,4 @@ export default {
   display: block;
 }
 </style>
+

@@ -247,6 +247,7 @@
 import LeftSide from "@/components/LeftSide";
 import HeadSide from "@/components/HeadSide";
 import global from "@/api/global";
+import axios from "axios";
 
 export default {
   name: "TeamManage",
@@ -298,23 +299,22 @@ export default {
       this.$router.push('/documentManage');
     },
     initParams(){
-      /*
-        let formData = new FormData();
-        formData.append('projectID', '');
-        formData.append('userID', '');
-        axios.post('http://43.138.21.64/doc/get/all/',formData)
-            .then(function (response) {
-              if(response.data.success){
-                this.tableData=response.data.document.results;
-              }
-              else {
-                console.log("获取失败");
-              }
-            })
-            .catch(function (error) {
-              console.log("Fail", error)
-            });
-       */
+      let formData = new FormData();
+      formData.append('projectID', '');
+      formData.append('userID', '');
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/doc/get/all',formData,config)
+          .then(response => {
+            if(response.status === 200){
+              this.tableData=response.data.document.results;
+              console.log(response.data.message);
+            }
+            else {
+              console.log(response.data.message);
+            }
+          })
       this.searchData=this.tableData;
     },
     handleSearch(){
@@ -343,24 +343,23 @@ export default {
         }
       }
       if(add){
-        /*
         let formData = new FormData();
         formData.append('userID', '');
         formData.append('projectID', '');
         formData.append('docName', this.input1);
-        axios.post('http://43.138.21.64/doc/add/',formData)
-            .then(function (response) {
-              if(response.data.success){
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        };
+        axios.post('http://43.138.21.64:8080/doc/add',formData,config)
+            .then(response => {
+              if(response.status === 200){
                 console.log(response.data.message);
               }
               else {
                 console.log(response.data.message);
               }
             })
-            .catch(function (error) {
-              console.log("Fail", error)
-            });
-         */
+
         var data1={
           ID: '',
           name: this.input1,
@@ -386,24 +385,22 @@ export default {
       this.$router.push({path: '/about'});
     },
     handleDelete(index, row) {
-      /*
       let formData = new FormData();
       formData.append('docID', row.ID);
       formData.append('userID', '');
       formData.append('docType', 3);
-      axios.post('http://43.138.21.64/doc/remove/one/',formData)
-          .then(function (response) {
-            if(response.data.success){
+      let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        };
+      axios.post('http://http://43.138.21.64:8080/doc/remove/one',formData,config)
+          .then(response => {
+            if(response.status === 200){
               console.log(response.data.message);
             }
             else {
               console.log(response.data.message);
             }
           })
-          .catch(function (error) {
-            console.log("Fail", error)
-          });
-       */
       this.tableData.splice(index,1);
       alert("已删除"+row.name);
     }
@@ -1155,7 +1152,7 @@ export default {
 </style>
 
 
-<style>
+<style scoped>
 .el-popover.moreinfo{
   margin-top: 60px;
 }
