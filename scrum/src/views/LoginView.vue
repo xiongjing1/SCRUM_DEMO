@@ -180,7 +180,7 @@ export default {
     },
     reset_0(){
       let param = new FormData() // 创建form对象
-      param.append('password', this.reset_password)// 通过append向form对象添加数据
+      param.append('new_password', this.reset_password)// 通过append向form对象添加数据
       param.append('email', this.reset_email)
       param.append('code',this.reset_code)
       param.append('is_code_verification',0)
