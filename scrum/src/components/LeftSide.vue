@@ -10,7 +10,7 @@
           <div class="teamname" >{{ item.name }}</div>
         </div>
         <div v-for="(item2,index2) in projects" v-bind:key="index2">
-          <div class="project-part" v-if="item2.teamid==item.id">
+          <div class="project-part" v-if="item2.teamid==item.id"  v-on:click="projectjump(item2.id)">
             <div class="projectname">{{ item2.name }}</div>
           </div>
         </div>
@@ -98,8 +98,11 @@ export default {
           })
     },
     teamjump(id){
+      this.$router.push('/TeamManage/'+id);
+    },
+    projectjump(id){
       this.$router.push('/ProjectManage/'+id);
-    }
+    },
   }
 }
 </script>
