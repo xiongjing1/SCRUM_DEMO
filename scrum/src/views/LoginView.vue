@@ -111,37 +111,37 @@ export default {
       this.iffind=0
     },
     login_0(){
-      this.$axios({
-        method: "post",
-        url: "http://43.138.21.64:8080/user/login/",
-        data: {
-          email: this.login_email,
-          password: this.login_password,
-        }
-      }).then((res) => {
-        console.log("denglu:"+res.data);
-        if (res.data.errno === '1000') {
-          let storage = window.localStorage;
-          storage.setItem('email',this.login_email);
-          storage.setItem('iflogin',1);
-          this.$router.push('/user');
+      let param = new FormData() // 创建form对象
+      param.append('password', this.login_password)// 通过append向form对象添加数据
+      param.append('email', this.login_email)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/login', param,config)
+          .then(response => {
+            console.log(response.data.errno)
+           // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              console.log('yeah')
+              let storage = window.localStorage;
+              storage.setItem('email',this.login_email);
+              storage.setItem('iflogin',1);
+              this.$router.push('/user');
 
-        /*  if(res.data.headshot_url!==null){
-            this.avatar_url="http://49.232.100.137/api/"+res.data.headshot_url;
-            this.$store.state.avatar_url=this.avatar_url;
-            window.localStorage.setItem("avatar",JSON.stringify(this.$store.state.avatar_url));
-          } */
-        }else{
-          if(res.data.msg === '密码错误')
-          this.$message.error("密码错误");
-          else if(res.data.msg === '邮箱未注册')
-            this.$message.error("邮箱未注册");
-        }
-      })
+              /*  if(res.data.headshot_url!==null){
+                  this.avatar_url="http://49.232.100.137/api/"+res.data.headshot_url;
+                  this.$store.state.avatar_url=this.avatar_url;
+                  window.localStorage.setItem("avatar",JSON.stringify(this.$store.state.avatar_url));
+                } */
+            }else{
+              if(response .data.msg === '密码错误')
+                this.$message.error("密码错误");
+              else if(response .data.msg === '邮箱未注册')
+                this.$message.error("邮箱未注册");
+            }
+          })
     },
     register_0(){
-
-
       let storage = window.localStorage;
       storage.setItem('email',this.register_email);
       storage.setItem('nickname','user');
@@ -178,23 +178,20 @@ export default {
         console.log("send")
         let param = new FormData() // 创建form对象
         param.append('is_code_verification', 1)// 通过append向form对象添加数据
-        console.log("why"+param.get('u_headshot')) // FormData私有类对象，访问不到，可以通过get判断值是否传进去
+        param.append('email', this.register_email)
         let config = {
           headers: {'Content-Type': 'multipart/form-data'}
         } // 添加请求头
-        axios.post('http://49.232.100.137/api/user/register/', param,config)
+        axios.post('http://43.138.21.64:8080/user/register', param,config)
             .then(response => {
               console.log(response.data)
               console.log("zhuce:"+response.data);
-              if (response.data.errno === '1001') {
-                this.$message.error("验证码已发送");
-              }else if(response.data.errno === '1002'){
+              if (response.data.errno === 1001) {
+                this.$message.success("验证码已发送");
+              }else if(response.data.errno === 1002){
                 this.fault_code=1
               }
             })
-
-
-
       }
     },
 
