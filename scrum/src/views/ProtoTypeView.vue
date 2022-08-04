@@ -25,7 +25,7 @@
             <i class="el-icon-delete-solid" @click.stop="deletePrototype(el.id)"></i>
           </li>
         </ul>
-        <el-empty description="还没有创建原型实例" v-show="prototypeData.length===0" :image-size="200"></el-empty>
+        <el-empty description="还没有创建原型实例" v-show=" prototypeData.length === 0" :image-size="200"></el-empty>
       </div>
 
     </div>
@@ -154,9 +154,7 @@ export default {
         {id:40 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/location.png')},
         {id:41 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/histogram.png')},
       ],
-      prototypeData:[
-        {id:3 , name:"prototype4" , content:"" , canvasWidth:400 , canvasHeight:400}
-      ],
+      prototypeData: [{id: 0, name:"" , content:"" , canvasWidth:0 , canvasHeight:0}],
       canvasWidth:400,
       canvasHeight:400,
       dataArr:{},
@@ -176,7 +174,7 @@ export default {
     changePrototypeSize(){
       const that = this
       let dataPost = new FormData()
-      dataPost.append('prototypeID',0)
+      dataPost.append('prototypeID',that.idSelected)
       dataPost.append('width' , that.changeForm.width)
       dataPost.append('height',that.changeForm.height)
       let config ={
@@ -184,8 +182,10 @@ export default {
       }
       axios.post("http://43.138.21.64:8080/prototype/canvas/resize",dataPost , config).then( res => {
         console.log(res.data)
-        if( res.status === 200){
+        if( res.status  === 200){
+          console.log(that.indexSelected)
           const prototypeContent = that.prototypeData[that.indexSelected]
+          console.log(prototypeContent)
           prototypeContent.canvasWidth = that.changeForm.width
           prototypeContent.canvasHight = that.changeForm.height
           this.prototypeData.splice(that.indexSelected , 1 , prototypeContent)
@@ -201,19 +201,19 @@ export default {
     addPrototype(){
       const that = this
       let dataPost = new FormData()
-      dataPost.append("userID", 2)
-      dataPost.append("projectID", 2)
+      dataPost.append("userID", 10)
+      dataPost.append("projectID", 4)
       dataPost.append("prototypeName",that.addForm.name)
       dataPost.append("canvas_Width", that.addForm.width.toString())
       dataPost.append("canvas_Height" , that.addForm.height.toString())
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
       }
-      axios.post("http://43.138.21.64:8080/prototype/add",dataPost , config).then( res => {
+      axios.post("http://43.138.21.64:8080/prototype/add", dataPost , config).then( res => {
         console.log(res)
         that.dialogAddVisible = false
         const newPrototype = {name: that.addForm.name , canvasWidth: that.addForm.width , canvasHeight: that.addForm.height ,
-          id:res.id , content: ''}
+          id:res.data.id , content: ''}
         that.prototypeData.push(newPrototype)
         that.changeCanvas(newPrototype)
       })
@@ -280,31 +280,43 @@ export default {
         }
       });
       let dataPost = new FormData()
-      dataPost.append("userID", 10)
-      dataPost.append("projectID", 3)
+      //dataPost.append("userID", 10)
+      dataPost.append("projectID", 4)
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
       }
       const that = this
-      axios.post('http://43.138.21.64:8080/doc/get/all', dataPost , config).then( res => {
+      axios.post('http://43.138.21.64:8080/prototype/get', dataPost , config).then( res => {
         console.log(res)
         if(res.status === 200){
-          that.prototypeData = res.data
+          console.log(res.data.message.prototype)
+          that.prototypeData = res.data.message.prototype.results
         }
       })
+      //axios.post('http://43.138.21.64:8080/doc/get/all', dataPost , config).then( res => {
+       // console.log(res)
+      //  if(res.status === 200){
+      //    console.log(res.data.message.prototype)
+      //    that.prototypeData = res.data.message.prototype.results
+      //  }
+      //})
     },
     deletePrototype(index){
       const that = this
-      axios.post("http://43.138.21.64:8080/doc/remove/one",{
-        "docID":that.prototypeData[index].id,
-        "userID":window.localStorage.getItem('uid'),
-        "docType":1,
-      }).then( res => {
+      let dataPost = new FormData()
+      //dataPost.append("userID", 10)
+      dataPost.append("docID", index)
+      dataPost.append("userID", 10)
+      dataPost.append("docType", 1)
+      let config ={
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post("http://43.138.21.64:8080/doc/remove/one",dataPost,config).then( res => {
         console.log(res)
         that.prototypeData = that.prototypeData.filter(ele =>{
           return ele.id !== index
         })
-        console.log(that.prototypeData.length)
+        console.log(that.prototypeData)
         that.idSelected = -1
       })
 
@@ -344,12 +356,16 @@ export default {
     save(){
       const that = this
       const  json = JSON.stringify(this.dataArr.canvas.toJSON())
-      axios.post("http://43.138.21.64:8080/doc/update",{
-        "userID":window.localStorage.getItem('uid'),
-        "docID":that.prototypeData[that.indexSelected].id,
-        "docType":1,
-        "content":json,
-      }).then( res => {
+      let dataPost = new FormData()
+      //dataPost.append("userID", 10)
+      dataPost.append("userID", 10)
+      dataPost.append("docID", that.idSelected)
+      dataPost.append("docType", 1)
+      dataPost.append("content", json)
+      let config ={
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post("http://43.138.21.64:8080/doc/update",dataPost , config).then( res => {
         console.log(res)
         const prototypeContent = that.prototypeData[that.indexSelected]
         prototypeContent.content = json
