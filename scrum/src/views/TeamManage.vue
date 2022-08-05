@@ -43,14 +43,14 @@
                 <span>确认要删除团队吗？</span>
                 <span slot="footer" class="dialog-footer">
                               <el-button @click="removeTeam = false" >取 消</el-button>
-                              <el-button type="primary" @click="removeTeam = false;DelteTeam();" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="removeTeam = false;DelteTeam();update();" class="el-buttons">确 定</el-button>
                         </span>
               </el-dialog>
               <el-dialog title="Rename" :visible.sync="rename" width="350px">
                 <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="rename = false">取 消</el-button>
-                  <el-button @click="rename = false;RenameProject();" class="el-buttons">确 定</el-button>
+                  <el-button @click="rename = false;RenameProject();update();" class="el-buttons">确 定</el-button>
                 </div>
               </el-dialog>
               <el-dialog title="重新上传图标" :visible.sync="changeIcon" width="400px">
@@ -294,6 +294,7 @@ export default {
       this.total=this.member_list.length
       this.load();
       console.log(this.currentPage)
+      window.localStorage.setItem('tintro',this.team.t_introduction);
     })
     document.body.style.backgroundColor="#FFFFFF";
   },
@@ -497,7 +498,7 @@ export default {
     getList(){
       if(this.currentPage===1){
         console.log('fen')
-        this.currentPageData = this.member_list.slice(1, 7);
+        this.currentPageData = this.member_list.slice(0, 6);
       }else{
         let begin = (this.currentPage - 1) * this.pageSize;
         let end = this.currentPage * this.pageSize;
@@ -691,7 +692,7 @@ export default {
   margin-top: 10px;
   margin-left: -60px;
   font-size: 30px;
-  font-family: "ruizhi";
+  font-family: "Berlin Sans FB Demi";
 }
 .manage-project{
   width: 80px;

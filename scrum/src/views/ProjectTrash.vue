@@ -43,14 +43,14 @@
                 <span>确认要删除团队吗？</span>
                 <span slot="footer" class="dialog-footer">
                               <el-button @click="removeTeam = false" >取 消</el-button>
-                              <el-button type="primary" @click="removeTeam = false;" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="removeTeam = false;DelteTeam();update()" class="el-buttons">确 定</el-button>
                         </span>
               </el-dialog>
               <el-dialog title="Rename" :visible.sync="rename" width="350px">
                 <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="rename = false">取 消</el-button>
-                  <el-button @click="rename = false" class="el-buttons">确 定</el-button>
+                  <el-button @click="rename = false;RenameProject();Edit();" class="el-buttons">确 定</el-button>
                 </div>
               </el-dialog>
               <el-dialog title="重新上传图标" :visible.sync="changeIcon" width="400px">
@@ -190,13 +190,13 @@
               </textarea>
               <div slot="footer" class="rename-footer">
                 <el-button @click="editSummary = false">取 消</el-button>
-                <el-button @click="editSummary = false" class="el-buttons">确 定</el-button>
+                <el-button @click="editSummary = false;Edit();update();" class="el-buttons">确 定</el-button>
               </div>
             </el-dialog>
           </div>
 
           <div class="team-content">
-            简介内容
+            {{this.tintro}}
           </div>
           <el-divider></el-divider>
           <div class="team-leader">
@@ -261,7 +261,8 @@ export default {
             console.log("没有相关结果")
           }
           this.tableData=this.data.result
-          this.total=this.tableData.length
+          this.total=this.data.totalResults
+          console.log("total"+this.total)
           this.load();
           this.tname=window.localStorage.getItem('tname')
         })
@@ -312,14 +313,13 @@ export default {
     RecoverProject(row){
       let param = new FormData() // 创建form对象
       param.append('projectID', row.ID)// 通过append向form对象添加数据
-      param.append('userID',  window.localStorage.getItem('uid'))
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/recyclebin/get', param,config)
+      axios.post('http://43.138.21.64:8080/recyclebin/project/restore', param,config)
           .then(response => {
-            console.log(response.data.success)
-            if(response.data.success===true){
+            console.log("recover"+response.data.success)
+            if(response.data.success){
               this.$message.success("恢复成功")
             }else{
               this.$message.error("恢复失败")
@@ -333,7 +333,8 @@ export default {
     getList(){
       if(this.currentPage===1){
         console.log('fen')
-        this.currentPageData = this.tableData.slice(1, 4);
+        this.currentPageData = this.tableData.slice(0, 6);
+        console.log(this.currentPageData)
       }else{
         let begin = (this.currentPage - 1) * this.pageSize;
         let end = this.currentPage * this.pageSize;
@@ -344,6 +345,69 @@ export default {
       setTimeout(() => {
         this.getList()
       }, 50)
+    },
+    Edit(){
+      console.log(this.inviteEmail)
+      let param = new FormData() // 创建form对象
+      param.append('is_rewrite_introduction', this.addmember)// 通过append向form对象添加数据
+      param.append('new_introduction', this.Summarycontent)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 5000) {
+              this.$message.success(response.data.msg)
+            }else {
+              this.$message.error("编辑简介失败！");
+            }
+          })
+    },
+    DelteTeam(){
+      let param = new FormData() // 创建form对象
+      param.append('is_delete_team', this.addmember)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 6000) {
+              this.$message.success(response.data.msg)
+              window.localStorage.setItem('tid',response.data.default_tid);
+              this.$router.push({
+                name:'TeamManage',
+                params:{
+                  tid:response.data.default_tid
+                }
+              });
+            }else{
+              this.$message.error(response.data.msg);
+            }
+          })
+    },
+    RenameProject(){
+      window.localStorage.setItem('tname',this.nameInput);
+      let param = new FormData() // 创建form对象
+      param.append('is_rename_team', this.addmember)
+      param.append('new_name', this.nameInput)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 7000) {
+              this.$message.success(response.data.msg)
+              this.update();
+            }else{
+              this.$message.error(response.data.msg);
+            }
+          })
     },
   },
   data(){
@@ -387,6 +451,7 @@ export default {
       total:2,
       currentPageData:[],
       pageSize:6,
+      tintro:window.localStorage.getItem('tintro'),
     }
   }
 };
