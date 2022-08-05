@@ -2,12 +2,24 @@
   <div>
   <div id="diva">
     <HeadSide></HeadSide>
-    <div id="left">
-      <div style="width: 100%;height: 40px; line-height: 40px">
-        <img src="../assets/PrototypeMaterial/back.png" style="height: 40px ; width: auto ;float: left" id="back" @click="BackToDesignManage">
-        项目名称</div>
-      <div id="menu">
-        <el-button type="primary" plain id="buttonAdd" @click="dialogAddVisible = true">添加</el-button>
+    <div class="plusElement">
+      <img src="../assets/PrototypeMaterial/aspicture.png" height="25px"   v-on:click="asPicture=!asPicture" class="backlogo"  alt="">
+      <img src="../assets/PrototypeMaterial/delete.png" height="25px"   v-on:click="deleteEle" class="backlogo"  alt="">
+      <img src="../assets/PrototypeMaterial/clear.png" height="23px"   v-on:click="clear" class="backlogo"  alt="">
+      <img src="../assets/PrototypeMaterial/save.png" height="23px"   v-on:click="save" class="backlogo"  alt="">
+    </div>
+    <div class="show-picture" v-if="asPicture">
+      <div class="picture-btn" @click="allTo(0)">jpg格式</div>
+      <div class="picture-btn" @click="allTo(1)">png格式</div>
+    </div>
+    <div id="left" :style="{height: this.wholeHeight}">
+      <div class="title">
+        <img src="../assets/PrototypeMaterial/back.png" height="25px" class="backlogo" @click="BackToDesignManage" alt="">
+        <div style="width:200px;height: 40px; color: #FFFFFF; font-size: 16px; letter-spacing: 2px;margin-top: 13px">项目名称</div>
+      </div>
+      <div id="menu" >
+        <el-button  id="buttonAdd" @click="dialogAddVisible = true" icon="el-icon-plus">添加页面</el-button>
+        <!--
         <el-dropdown>
           <el-button type="primary" v-show="prototypeData.length !== 0" style="background-color: #F2595D">导出图片
             <i class="el-icon-arrow-down el-icon--right"></i>
@@ -17,9 +29,10 @@
             <el-dropdown-item @click.native.prevent="allTo(1)">png格式</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        -->
       </div>
       <div id="list">
-        <ul style="padding: 0; width: 98%; margin: 0">
+        <ul style="padding: 0; width: 100%; margin: 0">
           <li v-for="(el,index) in prototypeData" :class="{classSelected:idSelected===el.id}"
               :key="el.id" class="prototypeList"  @click="changeCanvas(el,index)">{{el.name}}
             <i class="el-icon-edit" style="padding: 5px" @click.stop="showChangeDialog(el)"></i>
@@ -39,11 +52,6 @@
     <div id="right" >
       <div id="materialPanel" v-show="idSelected !== -1">
         <div v-for="ele in materialData" :key="ele.id" class="material" @click="addMaterial(ele.id)">{{ele.name}}</div>
-      </div>
-      <div id="workPanel" v-show="idSelected !== -1">
-        <el-button round @click="deleteEle">清除选中</el-button>
-        <el-button round @click="clear">清空页面</el-button>
-        <el-button round @click="save">保存修改</el-button>
       </div>
     </div>
     <el-dialog title="设置原型属性" :visible.sync="dialogAddVisible">
@@ -104,6 +112,7 @@ export default {
         width:150,
         height:150,
       },
+      asPicture:false,
       formLabelWidth: '80px',
       dialogAddVisible: false,
       dialogChangeVisible:false,
@@ -164,7 +173,8 @@ export default {
       canvasWidth:400,
       canvasHeight:400,
       dataArr:{},
-      pictureData:[]
+      pictureData:[],
+      wholeHeight:0,
     }
 
   },
@@ -314,7 +324,9 @@ export default {
     }
   },
   mounted() {
-    document.body.style.backgroundColor="#404446";
+    document.body.style.backgroundColor="#4A4E50";
+    this.wholeHeight=document.documentElement.scrollHeight-50+'px';
+    console.log(this.wholeHeight);
     this.init()
   },
 }
@@ -325,7 +337,17 @@ export default {
   display: none; /* Chrome Safari */
 }
 #buttonAdd{
-  margin-right: 20px;
+  width: 100%;
+  height:40px;
+  float: left;
+  margin-top: -20px;
+  background-color: #333333;
+  color: #FFFFFF;
+  border-radius: 0;
+  border-color: transparent;
+}
+#buttonAdd:hover{
+  background-color:#fe686c;
 }
 #workPanel{
   height: 20%;
@@ -336,30 +358,31 @@ export default {
 }
 .material{
   width: 100px;
-  height: 70px;
-  line-height: 70px;
-  border: black solid 1px;
+  height: 50px;
+  line-height: 50px;
+  border: whitesmoke solid 1px;
   display: inline-block;
   text-align: center;
+  color: #FFFFFF;
 }
 .material:hover{
   background-color: lightskyblue;
 }
 #materialPanel{
-  height: 650px;
+  height: 100%;
   width: 100%;
   padding: 0;
   overflow-y: scroll;
   border: black  1px;
 }
 #right{
-  width: 28%;
+  width: 21%;
   height: 100%;
-  border: black  1px;
   display: inline-block;
-  position: relative;
-  margin: 1px;
+  float: right;
+  margin-top: -10px;
   vertical-align: top;
+  background-color: #404446;
 }
 #menu{
   height: 60px;
@@ -368,12 +391,14 @@ export default {
   padding-top: 20px;
 }
 #work{
-  width: 50%;
+  width: 58%;
+
   height: 700px;
   border: black  1px;
   display: inline-block;
-  position: relative;
-  margin: 1px;
+  position: absolute;
+  left: 21%;
+  top:50px;
   overflow: scroll;
 
   /*实现垂直居中*/
@@ -383,17 +408,19 @@ export default {
 
 }
 #left{
-  width: 19%;
-  height: 100%;
+  background-color: #404446;
+  width: 21%;
+
   border: black  1px;
-  display: inline-block;
-  position: relative;
-  margin: 1px;
-  vertical-align: top;
-  padding: 0;
+  position: absolute;
+  left:0;
+  top:50px;
+
+
 }
 #list{
-  height: 600px;
+  height: 100%;
+  margin-top: -40px;
   overflow-y: scroll;
 }
 .classSelected{
@@ -406,8 +433,11 @@ export default {
   list-style: none;
   line-height:50px;
   height: 50px;
-  border: black solid 2px;
+  border-bottom: black solid 1px;
   width: 100%;
+  color: #FFFFFF;
+  background-color: #383838;
+  font-family: Inter, "Segoe UI", 黑体;
 }
 .prototypeList:hover{
   background-color: #F79B9D;
@@ -417,7 +447,7 @@ export default {
 }
 canvas{
   background-color: #fff;
-  border: 5px solid #000;
+  border: transparent;
   top: 50%;
   left: 50%;
 
@@ -430,5 +460,50 @@ canvas{
 }
 #back :hover{
   background-color: grey;
+}
+.title{
+  background-color: #2C2C2C;
+  border-top: 1px solid rgba(236,236,236,0.4);
+  height: 50px;
+  width: 100%;
+}
+.backlogo{
+  margin-top: 12px;
+  margin-left: 30px;
+  float: left;
+  width: 25px;
+  height:25px;
+}
+.plusElement{
+  position: absolute;
+  top:0;
+  left: 350px;
+  height: 50px;
+  width: 500px;
+}
+.show-picture{
+
+  z-index: 10000;
+  width:130px;
+  height: 100px;
+  left:338px;
+  top:54px;
+  position: absolute;
+  background-color: white;
+  border: none;
+  overflow: auto;
+  border-radius: 1%;
+  box-shadow: 0px 0px 9px rgba(0,0,0,0.2);
+}
+.picture-btn{
+  width: 100%;
+  height: 36px;
+  padding-top: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: Inter, "Segoe UI", 黑体;
+}
+.picture-btn:hover{
+  background-color: rgba(200,200,200,0.8);
 }
 </style>
