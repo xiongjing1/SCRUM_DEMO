@@ -198,6 +198,7 @@ export default {
   },
   methods:{
     JumpToPrototype(){
+      console.log(window.localStorage.getItem('pid'))
       this.$router.push({
         name:'ProtoTypeView',
         params:{
