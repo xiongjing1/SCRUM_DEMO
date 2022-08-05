@@ -275,19 +275,20 @@ export default {
     axios.post('http://43.138.21.64:8080/doc/get/all',formData,config)
         .then(response => {
           if(response.status === 200){
+            console.log("ok");
             that.tableData = response.data.message.document.results || [];
+            console.log( that.tableData)
+            that.tableData[3].isRecycled=false;
+            for(let i=0;i<that.tableData.length;i++){
+              if(!that.tableData[i].isRecycled){
+                that.searchData.push(that.tableData[i]);
+              }
+            }
           }
           else {
             console.log('失败');
           }
         })
-
-
-    for(let i=0;i<that.tableData.length;i++){
-      if(!that.tableData[i].isRecycled){
-        that.searchData.push(that.tableData[i]);
-      }
-    }
   },
 
   methods:{
