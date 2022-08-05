@@ -365,7 +365,7 @@ export default {
       dataPost.append("userID", 10)
       dataPost.append("docID", that.idSelected)
       dataPost.append("docType", 1)
-      dataPost.append("content", json.substring(0,150))
+      dataPost.append("content", json.substring(0,50))
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
       }
