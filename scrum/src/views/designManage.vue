@@ -198,6 +198,13 @@ export default {
   mounted() {
     document.body.style.backgroundColor="#FFFFFF";
   },
+  watch:{
+    $route(to,from){
+      console.log(from.path);//从哪来
+      console.log(to.path);//到哪去
+      this.reload()
+    }
+  },
   methods:{
     JumpToPrototype(){
       console.log(window.localStorage.getItem('pid'))
