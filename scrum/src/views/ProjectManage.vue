@@ -243,11 +243,19 @@ export default {
     axios.post('http://43.138.21.64:8080/project/view/all', param,config)
         .then(response => {
           if(response.data.success===true){
-            this.projectList=response.data.message
+            this.total=0
+            this.allprojectList=response.data.message
+            this.alltotal=this.allprojectList.length
+            for(var i=0;i<this.alltotal;i++){
+              if(this.allprojectList[i].is_recycled===false){
+                this.projectList.push(this.allprojectList[i])
+                this.total=this.total+1
+              }
+            }
           }else{
             console.log(response.data.success)
           }
-          this.total=this.projectList.length
+
           this.load();
           console.log(this.currentPage)
         })
@@ -445,6 +453,7 @@ export default {
       deletedProject:false,
       current:'',
       pageSize:3,
+      alltotal:'',
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -518,6 +527,7 @@ export default {
       currentPage: 1,
       total:2,
       currentPageData:[],
+      allprojectList:[],
     }
   }
 };

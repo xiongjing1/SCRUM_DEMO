@@ -86,11 +86,12 @@
           <div class="members-main">
             <div class="table-leader">
               <el-table
-                  :data="tableData"
+                  :data="currentPageData"
                   :header-cell-style="{'text-align':'center'}"
                   :cell-style="{'text-align':'center'}"
                   style="width: 100%"
-                  max-height="480">
+                  max-height="600"
+                  height="500px">
                 <el-table-column
                     fixed
                     prop="name"
@@ -164,9 +165,12 @@
             </div>
             <div class="pagination">
               <el-pagination
-                  background="true"
+                  background
+                  @current-change="handleCurrentChange"
+                  :current-page.sync="currentPage"
+                  :page-size="this.pageSize"
                   layout="prev, pager, next"
-                  :total="1000">
+                  :total=total>
               </el-pagination>
             </div>
           </div>
@@ -257,6 +261,8 @@ export default {
             console.log("没有相关结果")
           }
           this.tableData=this.data.result
+          this.total=this.tableData.length
+          this.load();
           this.tname=window.localStorage.getItem('tname')
         })
 
@@ -319,7 +325,26 @@ export default {
               this.$message.error("恢复失败")
             }
           })
-    }
+    },
+    handleCurrentChange(val){
+      this.currentPage = val
+      this.getList()
+    },
+    getList(){
+      if(this.currentPage===1){
+        console.log('fen')
+        this.currentPageData = this.tableData.slice(1, 4);
+      }else{
+        let begin = (this.currentPage - 1) * this.pageSize;
+        let end = this.currentPage * this.pageSize;
+        this.currentPageData = this.tableData.slice(begin, end);
+      }
+    },
+    load () {
+      setTimeout(() => {
+        this.getList()
+      }, 50)
+    },
   },
   data(){
     return{
@@ -358,6 +383,10 @@ export default {
       remove:false,
       recover:false,
       tname:'',
+      currentPage: 1,
+      total:2,
+      currentPageData:[],
+      pageSize:6,
     }
   }
 };
