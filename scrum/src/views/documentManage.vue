@@ -422,7 +422,7 @@ export default {
 
 
         this.input1='';
-        this.$router.go(0);
+      //  this.$router.go(0);
       }
       else{
         alert(this.input1+'已存在，请重新输入');
