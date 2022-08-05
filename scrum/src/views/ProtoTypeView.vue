@@ -222,9 +222,21 @@ export default {
     addMaterial(index){
       console.log(this.dataArr.canvas.toJSON())
       console.log(document.getElementsByName("temp"))
-      new fabric.Image.fromURL( this.materialData[index].imgURL, img => {
-        this.dataArr.canvas.add(img.scaleToWidth(80)).renderAll()
-      }, {crossOrigin: 'anonymous'})
+      if(index !== 41){
+        new fabric.Image.fromURL( this.materialData[index].imgURL, img => {
+          this.dataArr.canvas.add(img.scaleToWidth(80)).renderAll()
+        }, {crossOrigin: 'anonymous'})
+      }
+      else {
+        const rect2 = new fabric.Rect({
+          top: 0, // 距离容器顶部 30px
+          left: 0, // 距离容器左侧 30px
+          width: 50, // 宽 100px
+          height: 40, // 高 60px
+          fill: 'red', // 填充 红色
+        })
+        this.dataArr.canvas.add(rect2)
+      }
 
     },
     changeCanvas(elm , index){
@@ -282,26 +294,26 @@ export default {
         }
       });
       let dataPost = new FormData()
-      //dataPost.append("userID", 10)
+      dataPost.append("userID", 10)
       dataPost.append("projectID", 4)
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
       }
       const that = this
-      axios.post('http://43.138.21.64:8080/prototype/get', dataPost , config).then( res => {
+      //axios.post('http://43.138.21.64:8080/prototype/get', dataPost , config).then( res => {
+      //  console.log(res)
+      //  if(res.status === 200){
+      //    console.log(res.data.message.prototype)
+      //    that.prototypeData = res.data.message.prototype.results
+      //  }
+      //})
+      axios.post('http://43.138.21.64:8080/doc/get/all', dataPost , config).then( res => {
         console.log(res)
         if(res.status === 200){
           console.log(res.data.message.prototype)
           that.prototypeData = res.data.message.prototype.results
         }
       })
-      //axios.post('http://43.138.21.64:8080/doc/get/all', dataPost , config).then( res => {
-       // console.log(res)
-      //  if(res.status === 200){
-      //    console.log(res.data.message.prototype)
-      //    that.prototypeData = res.data.message.prototype.results
-      //  }
-      //})
     },
     deletePrototype(index){
       const that = this
@@ -365,7 +377,7 @@ export default {
       dataPost.append("userID", 10)
       dataPost.append("docID", that.idSelected)
       dataPost.append("docType", 1)
-      dataPost.append("content", json.substring(0,50))
+      dataPost.append("content", json)
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
       }
