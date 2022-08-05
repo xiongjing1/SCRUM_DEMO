@@ -12,7 +12,7 @@
           <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
         </div>
         <div class="TeamName">
-          Yigaa's Team
+          {{ this.tname }}
         </div>
       </div>
       <div class="buttons">
@@ -247,7 +247,7 @@ export default {
     let config = {
       headers: {'Content-Type': 'multipart/form-data'}
     } // 添加请求头
-    axios.post('http://43.138.21.64:8080/recyclebin/get', param,config)
+    axios.post('http://43.138.21.64:8080/recyclebin/project', param,config)
         .then(response => {
           console.log(response.data.success)
           if(response.data.success===true){
@@ -257,6 +257,7 @@ export default {
             console.log("没有相关结果")
           }
           this.tableData=this.data.result
+          this.tname=window.localStorage.getItem('tname')
         })
 
   },
@@ -356,6 +357,7 @@ export default {
       Summarycontent:'',
       remove:false,
       recover:false,
+      tname:'',
     }
   }
 };

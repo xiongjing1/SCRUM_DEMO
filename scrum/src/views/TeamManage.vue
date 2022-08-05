@@ -43,14 +43,14 @@
                 <span>确认要删除团队吗？</span>
                 <span slot="footer" class="dialog-footer">
                               <el-button @click="removeTeam = false" >取 消</el-button>
-                              <el-button type="primary" @click="removeTeam = false;" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="removeTeam = false;DelteTeam();" class="el-buttons">确 定</el-button>
                         </span>
               </el-dialog>
               <el-dialog title="Rename" :visible.sync="rename" width="350px">
                 <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="rename = false">取 消</el-button>
-                  <el-button @click="rename = false" class="el-buttons">确 定</el-button>
+                  <el-button @click="rename = false;RenameProject();" class="el-buttons">确 定</el-button>
                 </div>
               </el-dialog>
               <el-dialog title="重新上传图标" :visible.sync="changeIcon" width="400px">
@@ -93,11 +93,12 @@
           <div class="members-main">
             <div :class="IsManage===true?'table-leader':'table-member'">
               <el-table
-                  :data="member_list"
+                  :data="currentPageData"
                   :header-cell-style="{'text-align':'center'}"
                   :cell-style="{'text-align':'center'}"
                   style="width: 100%"
-                  max-height="480">
+                  max-height="600"
+                  height="500px">
                 <el-table-column
                     fixed
                     prop="m_name"
@@ -197,9 +198,12 @@
             </div>
             <div class="pagination">
               <el-pagination
-                  background="true"
+                  background
+                  @current-change="handleCurrentChange"
+                  :current-page.sync="currentPage"
+                  :page-size="this.pageSize"
                   layout="prev, pager, next"
-                  :total="1000">
+                  :total=total>
               </el-pagination>
             </div>
           </div>
@@ -219,7 +223,7 @@
               </textarea>
               <div slot="footer" class="rename-footer">
                 <el-button @click="editSummary = false">取 消</el-button>
-                <el-button @click="editSummary = false" class="el-buttons">确 定</el-button>
+                <el-button @click="editSummary = false" class="el-buttons" v-on:click="Edit();update();">确 定</el-button>
               </div>
             </el-dialog>
           </div>
@@ -276,7 +280,7 @@ export default {
   },
   mounted() {
     console.log('teamid'+window.localStorage.getItem('tid'));
-    this.$axios.get('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
+    this.$axios.get('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
       this.team=res.data.team
       this.leader=res.data.leader
       this.member_list=res.data.member_list
@@ -287,9 +291,10 @@ export default {
       }else{
         this.IsManage=true
       }
+      this.total=this.member_list.length
+      this.load();
+      console.log(this.currentPage)
     })
-
-
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
@@ -308,7 +313,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -329,7 +334,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -350,7 +355,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -402,7 +407,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -412,10 +417,91 @@ export default {
               if(response.data.errno === 3003)
                 this.$message.error(response.data.msg);
             }
-
           })
       this.inviteEmail=''
-    }
+    },
+    Edit(){
+      console.log(this.inviteEmail)
+      let param = new FormData() // 创建form对象
+      param.append('is_rewrite_introduction', this.addmember)// 通过append向form对象添加数据
+      param.append('new_introduction', this.Summarycontent)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 5000) {
+              this.$message.success(response.data.msg)
+            }else {
+              this.$message.error("编辑简介失败！");
+            }
+          })
+    },
+    DelteTeam(){
+      let param = new FormData() // 创建form对象
+      param.append('is_delete_team', this.addmember)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 6000) {
+              this.$message.success(response.data.msg)
+              window.localStorage.setItem('tid',response.data.default_tid);
+              this.$router.push({
+                name:'TeamManage',
+                params:{
+                  tid:response.data.default_tid
+                }
+              });
+            }else{
+                this.$message.error(response.data.msg);
+            }
+          })
+    },
+    RenameProject(){
+      window.localStorage.setItem('tname',this.nameInput);
+      let param = new FormData() // 创建form对象
+      param.append('is_rename_team', this.addmember)
+      param.append('new_name', this.nameInput)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 7000) {
+              this.$message.success(response.data.msg)
+              this.update();
+            }else{
+              this.$message.error(response.data.msg);
+            }
+          })
+    },
+    handleCurrentChange(val){
+      this.currentPage = val
+      this.getList()
+    },
+    getList(){
+      if(this.currentPage===1){
+        console.log('fen')
+        this.currentPageData = this.member_list.slice(1, 7);
+      }else{
+        let begin = (this.currentPage - 1) * this.pageSize;
+        let end = this.currentPage * this.pageSize;
+        this.currentPageData = this.member_list.slice(begin, end);
+      }
+    },
+    load () {
+      setTimeout(() => {
+        this.getList()
+      }, 50)
+    },
   },
   data(){
     return{
@@ -517,7 +603,11 @@ export default {
           m_membership: '团队管理员',
           m_nickname:''
         }
-      ]
+      ],
+      currentPage: 1,
+      total:2,
+      currentPageData:[],
+      pageSize:6,
     }
   }
 };
