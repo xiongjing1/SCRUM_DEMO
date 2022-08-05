@@ -880,225 +880,225 @@ export default {
 }
 
 /deep/.identity-choose:hover{
- color: rgba(23,43,72,0.45);
+  color: rgba(23,43,72,0.45);
 }
 /deep/.move-button{
- color: #2c3e50;
- font-size: 15px;
- cursor: pointer;
- padding-left: 50px;
+  color: #2c3e50;
+  font-size: 15px;
+  cursor: pointer;
+  padding-left: 50px;
 }
 /deep/.move-button:hover{
- color: rgba(23,43,72,0.45);
+  color: rgba(23,43,72,0.45);
 }
 /deep/.el-input__inner {
- background-color: rgba(255,255,255,0.45);
- color:#2c3e50 ;
- border-width: 0 0 1px 0 ;
- border-bottom-color: #2c3e50;
- border-radius: 0;
+  background-color: rgba(255,255,255,0.45);
+  color:#2c3e50 ;
+  border-width: 0 0 1px 0 ;
+  border-bottom-color: #2c3e50;
+  border-radius: 0;
 }
 
 .el-buttons{
- background-color: #2c3e50;
- color: azure;
+  background-color: #2c3e50;
+  color: azure;
 }
 .cancel-buttons{
- margin-right: 30px;
+  margin-right: 30px;
 }
 .yes-buttons{
- margin-left: 30px;
- background-color: #2c3e50;
- color: azure;
+  margin-left: 30px;
+  background-color: #2c3e50;
+  color: azure;
 }
 .rename-input{
- width: 120px;
+  width: 120px;
 }
 .project-input{
   width: 200px;
 }
 .rename-footer{
- margin-right: 75px;
+  margin-right: 75px;
 }
 .photo-footer{
- margin-right: 70px;
+  margin-right: 70px;
 }
 
 /deep/.el-pagination.is-background .el-pager li:not(.disabled) {
 }
 /deep/.el-pagination.is-background .el-pager li:hover {
-color: #2b597d;
+  color: #2b597d;
 }
 /deep/.el-pagination.is-background .el-pager li:not(.disabled).active{
-background-color: #2b597d;
-color: azure;
+  background-color: #2b597d;
+  color: azure;
 }
 .summary-content{
- border-radius:18px;
- margin-left: 20px;
- width: 200px;
- height: 56px;
- resize: none;
- margin-right: 16px;
- padding: 8px 18px;
- border: none;
- background-color: rgba(241,250,238,0.05);
+  border-radius:18px;
+  margin-left: 20px;
+  width: 200px;
+  height: 56px;
+  resize: none;
+  margin-right: 16px;
+  padding: 8px 18px;
+  border: none;
+  background-color: rgba(241,250,238,0.05);
 }
 .summary-content:focus{
- border-color: #2c3e50;
+  border-color: #2c3e50;
 }
 .project-main{
 
- width: 100%;
- height: 400px;
+  width: 100%;
+  height: 400px;
 }
 .project-total{
   width: 100%;
- float: left;
+  float: left;
   height: 600px;
- margin-top: 60px;
+  margin-top: 60px;
 }
 .project{
- width: 100%;
- height: 150px;
- margin-top: 30px;
+  width: 100%;
+  height: 150px;
+  margin-top: 30px;
 }
 .project-mode{
 
- width: 88%;
- height: 150px;
- margin-left: 35px;
- margin-top: 10px;
- border-radius: 30px;
- border: 1px solid #d9d9d9;
- box-shadow: 0 0 2px 2px rgba(23, 43, 72, 0.45);
+  width: 88%;
+  height: 150px;
+  margin-left: 35px;
+  margin-top: 10px;
+  border-radius: 30px;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 0 2px 2px rgba(23, 43, 72, 0.45);
 }
 .project-info{
- padding-left: 30px;
- float: left;
- width: 40%;
- height: 100%;
- cursor: pointer;
+  padding-left: 30px;
+  float: left;
+  width: 40%;
+  height: 100%;
+  cursor: pointer;
 }
 .project-name{
 
- width: calc(100% - 35px);
- text-align: left;
- font-family: "Berlin Sans FB Demi";
- font-size: 26px;
- padding-top: 13px;
- padding-left: 35px;
+  width: calc(100% - 35px);
+  text-align: left;
+  font-family: "Berlin Sans FB Demi";
+  font-size: 26px;
+  padding-top: 13px;
+  padding-left: 35px;
 }
 .project-leader{
 
- height: 35px;
- margin-top: 10px;
+  height: 35px;
+  margin-top: 10px;
 
 }
 .project-leader-name{
 
- float: left;
- text-align: left;
- width: 200px;
- margin-left: 31px;
- font-size: 13px;
+  float: left;
+  text-align: left;
+  width: 200px;
+  margin-left: 31px;
+  font-size: 13px;
 }
 .project-leader-title{
 
- float: left;
- text-align: left;
- width: 200px;
- margin-left: 25px;
- font-size: 13px;
+  float: left;
+  text-align: left;
+  width: 200px;
+  margin-left: 25px;
+  font-size: 13px;
 
 }
 .project-build-img{
- float: left;
- margin-left: 31px;
- width: 25px;
- height: 25px;
- margin-top: 5px;
+  float: left;
+  margin-left: 31px;
+  width: 25px;
+  height: 25px;
+  margin-top: 5px;
 
 }
 .project-lately-edit{
 
- height:35px;
- align-items: center;
- margin-top: 10px;
+  height:35px;
+  align-items: center;
+  margin-top: 10px;
 }
 .project-lately-edit-title{
- float: left;
- text-align: left;
- width: 200px;
- margin-left: 25px;
- font-size: 13px;
+  float: left;
+  text-align: left;
+  width: 200px;
+  margin-left: 25px;
+  font-size: 13px;
 
 }
 .project-lately-edit-time{
- float: left;
- width: 60px;
- margin-left: 28px;
- margin-top: 2px;
- font-size: 13px;
- text-align: left;
+  float: left;
+  width: 60px;
+  margin-left: 28px;
+  margin-top: 2px;
+  font-size: 13px;
+  text-align: left;
 }
 .project-edittime-img{
- float: left;
- margin-left: 31px;
- width: 25px;
- height: 25px;
- margin-top: 5px;
+  float: left;
+  margin-left: 31px;
+  width: 25px;
+  height: 25px;
+  margin-top: 5px;
 }
 .project-img{
- float: left;
- height: 100%;
- width: 280px;
- margin-left: -10px;
- cursor: pointer;
+  float: left;
+  height: 100%;
+  width: 280px;
+  margin-left: -10px;
+  cursor: pointer;
 }
 .img-size{
- width: 220px;
- margin-top: 30px;
+  width: 220px;
+  margin-top: 30px;
 }
 .project-operation{
 
- float: right;
- margin-left: 70px;
- margin-top: 50px;
+  float: right;
+  margin-left: 70px;
+  margin-top: 50px;
 }
 .project-operation-rename{
- margin-right: 40px;
- margin-top: -20px;
+  margin-right: 40px;
+  margin-top: -20px;
 }
 .project-operation-delete{
- margin-top: 20px;
- margin-right: 40px;
+  margin-top: 20px;
+  margin-right: 40px;
 }
 .project-rename-img{
 
- width: 32px;
- height: 32px;
- cursor: pointer;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
 }
 .project-delete-img{
 
- width: 32px;
- height: 32px;
- cursor: pointer;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
 }
 
 /deep/.el-dropdown-menu:hover {
- border: none;
- color: #666;
- border-radius: 0;
- padding: 0;
- margin: 0;
+  border: none;
+  color: #666;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
 
- align-items: center;
- justify-content: center;
+  align-items: center;
+  justify-content: center;
 }
 /deep/el-input::-webkit-input-placeholder{
- color:#2c3e50;
+  color:#2c3e50;
 }
 /deep/el-input::-moz-placeholder{   /* Mozilla Firefox 19+ */
 
@@ -1110,7 +1110,7 @@ color: azure;
 }
 /deep/el-input:-ms-input-placeholder{  /* Internet Explorer 10-11 */
 
-color:#2c3e50;
+  color:#2c3e50;
 }
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
@@ -1136,4 +1136,3 @@ color:#2c3e50;
   display: block;
 }
 </style>
-

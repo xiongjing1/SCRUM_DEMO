@@ -1,3 +1,4 @@
 export default {
-    fileid: '0',
+    fileid: '',
+    filecontent: '',
 };

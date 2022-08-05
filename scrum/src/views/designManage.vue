@@ -377,8 +377,8 @@ export default {
   height: 80px;
 }
 .choose-box{
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 .design-box{
   display: flex;

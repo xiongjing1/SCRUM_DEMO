@@ -18,25 +18,6 @@ export default {
   data() {
     return {
       contentEditor: {},
-      tableData: [{
-        ID: '1',
-        name: '文件1',
-        creatorID: '用户名1',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '## hello',
-        projectID: '项目1',
-        isRecycled: '',
-      },{
-        ID: '2',
-        name: '文件2',
-        creatorID: '用户名2',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '## hello world',
-        projectID: '项目2',
-        isRecycled: '',
-      }],
     }
   },
   mounted() {
@@ -108,42 +89,18 @@ export default {
           ],
         }],
       after:()=>{
-        for(let i=0;i<this.tableData.length;i++){
-          if(global.fileid===this.tableData[i].ID){
-            this.contentEditor.setValue(this.tableData[i].content);
-            break;
-          }
-        }
+        this.contentEditor.setValue(global.filecontent);
       }
     });
   },
   created() {
-    this.initParams();
+
   },
   methods: {
-    initParams(){
-      /*
-        let formData = new FormData();
-        formData.append('projectID', '');
-        formData.append('userID', '');
-        axios.post('http://43.138.21.64/doc/get/all/',formData)
-            .then(function (response) {
-              if(response.data.success){
-                this.tableData=response.data.document.results;
-              }
-              else {
-                console.log("获取失败");
-              }
-            })
-            .catch(function (error) {
-              console.log("Fail", error)
-            });
-       */
-    },
     submit() {
       let formData = new FormData();
-      formData.append('userID', '');
-      formData.append('docID', '');
+      formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
+      formData.append('docID', global.fileid);//global.fileid
       formData.append('docType', 3);
       formData.append('content', this.contentEditor.getValue());
        let config = {
@@ -158,18 +115,14 @@ export default {
               console.log(response.data.message);
             }
           })
-      var find=false;
-      for(let i=0;i<this.tableData.length;i++){
-        if(global.fileid===this.tableData[i].ID){
-          this.tableData[i].content = this.contentEditor.getValue();
-          this.$router.push({path:'/'});
-          find=true;
-          break;
+
+      global.filecontent=this.contentEditor.getValue();
+      this.$router.push({
+        name:'documentManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
         }
-      }
-      if(!find){
-        alert('未找到相关文件');
-      }
+      });
     },
 
   },
