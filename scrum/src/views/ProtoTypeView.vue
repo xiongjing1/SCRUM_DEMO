@@ -33,8 +33,8 @@
       </div>
       <div id="list">
         <ul style="padding: 0; width: 100%; margin: 0">
-          <li v-for="(el,index) in prototypeData" :class="{classSelected:idSelected===el.id}"
-              :key="el.id" class="prototypeList"  @click="changeCanvas(el,index)">{{el.name}}
+          <li v-for="(el,index) in prototypeData" :class="{classSelected:idSelected===el.ID}"
+              :key="el.ID" class="prototypeList"  @click="changeCanvas(el,index)">{{el.name}}
             <i class="el-icon-edit" style="padding: 5px" @click.stop="showChangeDialog(el)"></i>
             <i class="el-icon-delete-solid" @click.stop="deletePrototype(el.ID)"></i>
           </li>
