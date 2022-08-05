@@ -12,7 +12,7 @@
           <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
         </div>
         <div class="TeamName">
-          Yigaa's Team
+          {{ team.t_name }}
         </div>
       </div>
       <div class="buttons">
@@ -43,14 +43,14 @@
                 <span>确认要删除团队吗？</span>
                 <span slot="footer" class="dialog-footer">
                               <el-button @click="removeTeam = false" >取 消</el-button>
-                              <el-button type="primary" @click="removeTeam = false;" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="removeTeam = false;DelteTeam();" class="el-buttons">确 定</el-button>
                         </span>
               </el-dialog>
               <el-dialog title="Rename" :visible.sync="rename" width="350px">
                 <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="rename = false">取 消</el-button>
-                  <el-button @click="rename = false" class="el-buttons">确 定</el-button>
+                  <el-button @click="rename = false;RenameProject();" class="el-buttons">确 定</el-button>
                 </div>
               </el-dialog>
               <el-dialog title="重新上传图标" :visible.sync="changeIcon" width="400px">
@@ -76,9 +76,16 @@
     <div class="content">
         <div class="left-side">
           <div class="members-top-side">
-            <div class="members-add">
+            <div class="members-add" v-on:click="invite = true" v-if="IsManage===true">
               Add member
             </div>
+            <el-dialog title="Invite By Email" :visible.sync="invite" width="350px">
+              <el-input v-model="inviteEmail" placeholder="Email" class="invite-input"></el-input>
+              <div slot="footer" class="rename-footer">
+                <el-button @click="invite = false">取 消</el-button>
+                <el-button @click="invite = false;sendInvite();" class="el-buttons">确 定</el-button>
+              </div>
+            </el-dialog>
             <div class="members-search">
               <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
             </div>
@@ -86,40 +93,46 @@
           <div class="members-main">
             <div :class="IsManage===true?'table-leader':'table-member'">
               <el-table
-                  :data="tableData"
+                  :data="currentPageData"
                   :header-cell-style="{'text-align':'center'}"
                   :cell-style="{'text-align':'center'}"
                   style="width: 100%"
-                  max-height="480">
+                  max-height="600"
+                  height="500px">
                 <el-table-column
                     fixed
-                    prop="name"
+                    prop="m_name"
                     label="姓名"
-                    width="200">
+                    width="180">
                 </el-table-column>
                 <el-table-column
-                    prop="nickname"
+                    prop="m_id"
+                    label="uid"
+                    width="150">
+                </el-table-column>
+                <el-table-column
+                    prop="m_nickname"
                     label="昵称"
-                    width="200">
+                    width="150">
                 </el-table-column>
                 <el-table-column
-                    prop="email"
+                    prop="m_email"
                     label="邮箱"
-                    width="200">
+                    width="150">
                 </el-table-column>
                 <el-table-column
-                    prop="lastactive"
+                    prop="m_login_time"
                     label="上次登录"
-                    width="180">
+                    width="150">
                 </el-table-column>
                 <el-table-column
-                    prop="identity"
+                    prop="m_membership"
                     label="身份"
-                    width="180">
+                    width="150">
                 </el-table-column>
                 <el-table-column
                     label="操作"
-                    width="220"
+                    width="200"
                     fixed="right"
                     v-if="IsManage===true">
                   <template slot-scope="scope">
@@ -140,7 +153,7 @@
                         <span>确认要删除该成员吗？</span>
                         <span slot="footer" class="dialog-footer">
                               <el-button @click="removeMember = false">取 消</el-button>
-                              <el-button type="primary" @click="removeMember = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="removeMember = false;" @click.native.prevent="deleteRow(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                       <div class="identity-choose">
@@ -163,7 +176,7 @@
                         <span>确认要设置该成员为管理员吗？</span>
                         <span slot="footer" class="dialog-footer">
                               <el-button @click="changeManager = false">取 消</el-button>
-                              <el-button type="primary" @click="changeManager = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="changeManager = false;" @click.native.prevent="setManager(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                       <el-dialog
@@ -175,7 +188,7 @@
                         <span>确认要设置该成员为普通成员吗？</span>
                         <span slot="footer" class="dialog-footer">
                               <el-button @click="changeMember = false">取 消</el-button>
-                              <el-button type="primary" @click="changeMember = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="changeMember = false;" @click.native.prevent="setMember(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                     </div>
@@ -185,9 +198,12 @@
             </div>
             <div class="pagination">
               <el-pagination
-                  background="true"
+                  background
+                  @current-change="handleCurrentChange"
+                  :current-page.sync="currentPage"
+                  :page-size="this.pageSize"
                   layout="prev, pager, next"
-                  :total="1000">
+                  :total=total>
               </el-pagination>
             </div>
           </div>
@@ -207,13 +223,13 @@
               </textarea>
               <div slot="footer" class="rename-footer">
                 <el-button @click="editSummary = false">取 消</el-button>
-                <el-button @click="editSummary = false" class="el-buttons">确 定</el-button>
+                <el-button @click="editSummary = false" class="el-buttons" v-on:click="Edit();update();">确 定</el-button>
               </div>
             </el-dialog>
           </div>
 
           <div class="team-content">
-            简介内容
+            {{ team.t_introduction }}
           </div>
           <el-divider></el-divider>
           <div class="team-leader">
@@ -223,17 +239,17 @@
             <div class="leader-nickname">
               <img src="../assets/user.png" class="leader-img-size">
               <div class="nickname">姓名</div>
-              <div class="name-info">徐亦佳</div>
+              <div class="name-info">{{leader.l_name}}</div>
             </div>
             <div class="leader-email">
               <img src="../assets/mail.png" class="leader-img-size">
               <div class="email">电子邮箱</div>
-              <div class="email-info">1223160472@qq.com</div>
+              <div class="email-info">{{ leader.l_email }}</div>
             </div>
             <div class="leader-active">
               <img src="../assets/login.png" class="leader-img-size">
               <div class="active">上次登录</div>
-              <div class="active-info">5分钟前</div>
+              <div class="active-info">{{leader.l_login_time}}</div>
             </div>
           </div>
           <el-divider></el-divider>
@@ -253,22 +269,111 @@
 <script>
 import HeadSide from "@/components/HeadSide";
 import LeftSide from "@/components/LeftSide";
+import axios from "axios";
 
 export default {
   name: "TeamManage",
+  inject:['reload'],
   components: {
     LeftSide,
     HeadSide,
   },
   mounted() {
+    console.log('teamid'+window.localStorage.getItem('tid'));
+    this.$axios.get('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
+      this.team=res.data.team
+      this.leader=res.data.leader
+      this.member_list=res.data.member_list
+      console.log("res.data."+res.data.team.t_id)
+      console.log(res.data.is_Manager)
+      if(res.data.is_Manager===0){
+        this.IsManage=false
+      }else{
+        this.IsManage=true
+      }
+      this.total=this.member_list.length
+      this.load();
+      console.log(this.currentPage)
+    })
     document.body.style.backgroundColor="#FFFFFF";
   },
+  watch:{
+    $route(to,from){
+      console.log(from.path);//从哪来
+      console.log(to.path);//到哪去
+      this.reload()
+    }
+  },
   methods:{
+    update(){
+      this.reload()
+      console.log('刷新页面')
+    },
     searchjump(){
 
     },
     deleteRow(row){
-      console.log(row);
+      console.log()
+      let param = new FormData() // 创建form对象
+      param.append('is_delete_member', this.addmember)// 通过append向form对象添加数据
+      param.append('a_id', row.m_id)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.$message.success("移除成员成功！")
+            }else{
+              if(response.data.errno === 4004)
+                this.$message.error(response.data.msg);
+            }
+
+          })
+    },
+    setMember(row){
+      let param = new FormData() // 创建form对象
+      param.append('is_change_identity', this.addmember)// 通过append向form对象添加数据
+      param.append('new_identity', '普通成员')
+      param.append('a_id', row.m_id)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.$message.success("成功设置为普通成员！")
+            }else{
+              if(response.data.errno === 3003)
+                this.$message.error(response.data.msg);
+            }
+
+          })
+    },
+    setManager(row){
+      let param = new FormData() // 创建form对象
+      param.append('is_change_identity', this.addmember)// 通过append向form对象添加数据
+      param.append('new_identity', '团队管理员')
+      param.append('a_id', row.m_id)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.$message.success("成功设置为团队管理员！")
+            }else{
+              if(response.data.errno === 3003)
+                this.$message.error(response.data.msg);
+            }
+
+          })
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
@@ -286,15 +391,129 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
+    },
+    sendInvite(){
+      console.log(this.inviteEmail)
+      let param = new FormData() // 创建form对象
+      param.append('is_add_new_member', this.addmember)// 通过append向form对象添加数据
+      param.append('email', this.inviteEmail)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              this.$message.success("成功发送邀请！")
+            }else{
+              if(response.data.errno === 3003)
+                this.$message.error(response.data.msg);
+            }
+          })
+      this.inviteEmail=''
+    },
+    Edit(){
+      console.log(this.inviteEmail)
+      let param = new FormData() // 创建form对象
+      param.append('is_rewrite_introduction', this.addmember)// 通过append向form对象添加数据
+      param.append('new_introduction', this.Summarycontent)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 5000) {
+              this.$message.success(response.data.msg)
+            }else {
+              this.$message.error("编辑简介失败！");
+            }
+          })
+    },
+    DelteTeam(){
+      let param = new FormData() // 创建form对象
+      param.append('is_delete_team', this.addmember)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 6000) {
+              this.$message.success(response.data.msg)
+              window.localStorage.setItem('tid',response.data.default_tid);
+              this.$router.push({
+                name:'TeamManage',
+                params:{
+                  tid:response.data.default_tid
+                }
+              });
+            }else{
+                this.$message.error(response.data.msg);
+            }
+          })
+    },
+    RenameProject(){
+      window.localStorage.setItem('tname',this.nameInput);
+      let param = new FormData() // 创建form对象
+      param.append('is_rename_team', this.addmember)
+      param.append('new_name', this.nameInput)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 7000) {
+              this.$message.success(response.data.msg)
+              this.update();
+            }else{
+              this.$message.error(response.data.msg);
+            }
+          })
+    },
+    handleCurrentChange(val){
+      this.currentPage = val
+      this.getList()
+    },
+    getList(){
+      if(this.currentPage===1){
+        console.log('fen')
+        this.currentPageData = this.member_list.slice(1, 7);
+      }else{
+        let begin = (this.currentPage - 1) * this.pageSize;
+        let end = this.currentPage * this.pageSize;
+        this.currentPageData = this.member_list.slice(begin, end);
+      }
+    },
+    load () {
+      setTimeout(() => {
+        this.getList()
+      }, 50)
     },
   },
   data(){
     return{
       input:'',
+      addmember:'1',
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -362,6 +581,40 @@ export default {
       imageUrl: '',
       editSummary:false,
       Summarycontent:'',
+      inviteEmail:'',
+      invite:false,
+      leader:[
+        {
+          l_id:'',
+          l_name:'',
+          l_nickname: '',
+          l_email: '',
+          l_headshot: '',
+          l_login_time: '',
+        }
+      ],
+      team:[
+        {
+          t_id: '',
+          t_name: '',
+          t_introduction: '',
+          t_headshot: '',
+        }
+      ],
+      member_list:[
+        {
+          m_id: 9,
+          m_name: '111222',
+          m_email: '111222@qq.com',
+          m_login_time: null,
+          m_membership: '团队管理员',
+          m_nickname:''
+        }
+      ],
+      currentPage: 1,
+      total:2,
+      currentPageData:[],
+      pageSize:6,
     }
   }
 };
@@ -391,14 +644,14 @@ export default {
 .team{
   display: flex;
   flex-direction: row;
-  width: 300px;
+  width: 600px;
   height: 80px;
 }
 .buttons{
   display: flex;
   margin-left: 10px;
   padding-top: 30px;
-  padding-left:700px;
+  padding-left:500px;
   width: 350px;
   height: 80px;
 }
@@ -434,11 +687,11 @@ export default {
 }
 .TeamName{
   padding-top: 20px;
-  width: 300px;
+  width: 400px;
   margin-top: 10px;
-  margin-left: 30px;
+  margin-left: -60px;
   font-size: 30px;
-  font-family: "Berlin Sans FB Demi";
+  font-family: "ruizhi";
 }
 .manage-project{
   width: 80px;
@@ -780,6 +1033,9 @@ export default {
 .rename-input{
   width: 120px;
 }
+.invite-input{
+  width: 200px;
+}
 .rename-footer{
   margin-right: 75px;
 }
@@ -812,7 +1068,7 @@ export default {
 </style>
 
 
-<style>
+<style scoped>
 /deep/.el-dropdown-menu:hover {
   border: none;
   color: #666;

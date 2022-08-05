@@ -12,7 +12,7 @@
               <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
             </div>
             <div class="TeamName">
-              Yigaa's Team
+              {{ this.tname }}
             </div>
           </div>
           <div class="buttons">
@@ -312,19 +312,44 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTrashManage() {
-      this.$router.push('/TrashManage');
+      this.$router.push({
+        name:'TrashManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpTodesignManage() {
-      this.$router.push('/designManage');
+      this.$router.push({
+        name:'designManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpTodocumentManage() {
-      this.$router.push('/documentManage');
+      this.$router.push({
+        name:'documentManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     handleSearch(){
       console.log(this.tableData);
@@ -438,6 +463,7 @@ export default {
   data(){
     return{
       input:'',
+      tname:window.localStorage.getItem('tname'),
       input1:'',
       options: [{
         value: '选项1',
@@ -1075,7 +1101,7 @@ export default {
 </style>
 
 
-<style>
+<style scoped>
 .el-popover.moreinfo{
   margin-top: 60px;
 }

@@ -2,7 +2,7 @@
   <div id="app">
     <nav>
     </nav>
-    <router-view/>
+    <router-view v-if="isShow"></router-view>
   </div>
 </template>
 
@@ -35,6 +35,25 @@ nav a.router-link-exact-active {
 
 
 export default {
-  components: {}
+  name:'app',
+  components: {},
+  provide(){
+    return{
+      reload:this.reload
+    }
+  },
+  data(){
+    return{
+      isShow:true
+    }
+  },
+  methods:{
+    reload(){
+      this.isShow=false;
+      this.$nextTick(()=>{
+        this.isShow=true
+      })
+    }
+  }
 }
 </script>
