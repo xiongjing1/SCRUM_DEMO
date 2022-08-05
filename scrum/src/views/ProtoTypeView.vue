@@ -1,5 +1,7 @@
 <template>
+  <div>
   <div id="diva">
+    <HeadSide></HeadSide>
     <div id="left">
       <div style="width: 100%;height: 40px; line-height: 40px">
         <img src="../assets/PrototypeMaterial/back.png" style="height: 40px ; width: auto ;float: left" id="back" @click="BackToDesignManage">
@@ -80,14 +82,17 @@
       </div>
     </el-dialog>
   </div>
-
+  </div>
 </template>
 
 <script>
 import { fabric } from "fabric";
 import Vue from "vue";
+import HeadSide from "@/components/HeadSide";
 export default {
   name: "PrototypeView",
+  components: {HeadSide},
+
   data(){
     return{
       changeForm:{
@@ -309,6 +314,7 @@ export default {
     }
   },
   mounted() {
+    document.body.style.backgroundColor="#404446";
     this.init()
   },
 }
