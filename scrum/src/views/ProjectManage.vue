@@ -100,7 +100,7 @@
                   <div class="project-mode">
                     <div class="project-info" v-on:click="JumpTodesignManage(item.ID)">
                       <div class="project-name">
-                        {{item.project_name}}
+                        {{item.project_name}}{{item.ID}}
                       </div>
                       <div class="project-leader">
                         <img src="../assets/build.png" class="project-build-img">
@@ -128,7 +128,7 @@
                         </el-dialog>
                       </div>
                       <div class="project-operation-delete">
-                        <img src="../assets/delete.png" class="project-delete-img" @click="deletedProject = true;currentRow=index;current=item">
+                        <img src="../assets/delete.png" class="project-delete-img" @click="deletedProject = true;currentRow=index;current=item;">
                         <el-dialog
                             title="提示"
                             :visible.sync="deletedProject"
@@ -138,7 +138,7 @@
                           <span>确认要删除项目 {{current.project_name}} 吗？</span>
                           <span slot="footer" class="dialog-footer">
                               <el-button @click="deletedProject = false" >取 消</el-button>
-                              <el-button type="primary" @click="deletedProject = false;deleteProject(currentRow);update();" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="deletedProject = false;notice(current);update();" class="el-buttons">确 定</el-button>
                         </span>
                         </el-dialog>
                       </div>
@@ -243,11 +243,19 @@ export default {
     axios.post('http://43.138.21.64:8080/project/view/all', param,config)
         .then(response => {
           if(response.data.success===true){
-            this.projectList=response.data.message
+            this.total=0
+            this.allprojectList=response.data.message
+            this.alltotal=this.allprojectList.length
+            for(var i=0;i<this.alltotal;i++){
+              if(this.allprojectList[i].is_recycled===false){
+                this.projectList.push(this.allprojectList[i])
+                this.total=this.total+1
+              }
+            }
           }else{
             console.log(response.data.success)
           }
-          this.total=this.projectList.length
+
           this.load();
           console.log(this.currentPage)
         })
@@ -286,6 +294,12 @@ export default {
             else{
               console.log(response.data.message);
             }
+            this.$router.push({
+              name:'ProtoTypeView',
+              params:{
+                pid:window.localStorage.getItem('pid')
+              }
+            });
           })
       var newproject={
         projectName:this.Projectnameinput,
@@ -297,10 +311,10 @@ export default {
       };
       this.projectList.push(newproject);
     },
-    deleteProject(index){
+    deleteProject(current){
       let formData = new FormData();
+      formData.append('projectID', current.ID);
       formData.append('userID',  window.localStorage.getItem('uid'));
-      formData.append('projectID', this.projectList[index].ID);
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       };
@@ -316,9 +330,9 @@ export default {
               console.log(response.data.message);
             }
           })
-      this.projectList.splice(index,1);
     },
     renameProject(index){
+
       let formData = new FormData();
       formData.append('userID',  window.localStorage.getItem('uid'));
       formData.append('projectID', this.projectList[index].ID);
@@ -411,6 +425,28 @@ export default {
         this.getList()
       }, 50)
     },
+    notice(current){
+      console.log(current);
+      let formData = new FormData();
+      formData.append('projectID', current.ID);
+      formData.append('userID',  window.localStorage.getItem('uid'));
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/project/remove/one',formData,config)
+          .then(response => {
+            console.log("发送请求");
+            if(response.status === 200){
+              console.log(response.data.message);
+            }
+            else if(response.status === 404){
+              console.log(response.data.message);
+            }
+            else{
+              console.log(response.data.message);
+            }
+          })
+    }
   },
   data(){
     return{
@@ -422,6 +458,7 @@ export default {
       deletedProject:false,
       current:'',
       pageSize:3,
+      alltotal:'',
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -495,6 +532,7 @@ export default {
       currentPage: 1,
       total:2,
       currentPageData:[],
+      allprojectList:[],
     }
   }
 };
@@ -842,225 +880,225 @@ export default {
 }
 
 /deep/.identity-choose:hover{
- color: rgba(23,43,72,0.45);
+  color: rgba(23,43,72,0.45);
 }
 /deep/.move-button{
- color: #2c3e50;
- font-size: 15px;
- cursor: pointer;
- padding-left: 50px;
+  color: #2c3e50;
+  font-size: 15px;
+  cursor: pointer;
+  padding-left: 50px;
 }
 /deep/.move-button:hover{
- color: rgba(23,43,72,0.45);
+  color: rgba(23,43,72,0.45);
 }
 /deep/.el-input__inner {
- background-color: rgba(255,255,255,0.45);
- color:#2c3e50 ;
- border-width: 0 0 1px 0 ;
- border-bottom-color: #2c3e50;
- border-radius: 0;
+  background-color: rgba(255,255,255,0.45);
+  color:#2c3e50 ;
+  border-width: 0 0 1px 0 ;
+  border-bottom-color: #2c3e50;
+  border-radius: 0;
 }
 
 .el-buttons{
- background-color: #2c3e50;
- color: azure;
+  background-color: #2c3e50;
+  color: azure;
 }
 .cancel-buttons{
- margin-right: 30px;
+  margin-right: 30px;
 }
 .yes-buttons{
- margin-left: 30px;
- background-color: #2c3e50;
- color: azure;
+  margin-left: 30px;
+  background-color: #2c3e50;
+  color: azure;
 }
 .rename-input{
- width: 120px;
+  width: 120px;
 }
 .project-input{
   width: 200px;
 }
 .rename-footer{
- margin-right: 75px;
+  margin-right: 75px;
 }
 .photo-footer{
- margin-right: 70px;
+  margin-right: 70px;
 }
 
 /deep/.el-pagination.is-background .el-pager li:not(.disabled) {
 }
 /deep/.el-pagination.is-background .el-pager li:hover {
-color: #2b597d;
+  color: #2b597d;
 }
 /deep/.el-pagination.is-background .el-pager li:not(.disabled).active{
-background-color: #2b597d;
-color: azure;
+  background-color: #2b597d;
+  color: azure;
 }
 .summary-content{
- border-radius:18px;
- margin-left: 20px;
- width: 200px;
- height: 56px;
- resize: none;
- margin-right: 16px;
- padding: 8px 18px;
- border: none;
- background-color: rgba(241,250,238,0.05);
+  border-radius:18px;
+  margin-left: 20px;
+  width: 200px;
+  height: 56px;
+  resize: none;
+  margin-right: 16px;
+  padding: 8px 18px;
+  border: none;
+  background-color: rgba(241,250,238,0.05);
 }
 .summary-content:focus{
- border-color: #2c3e50;
+  border-color: #2c3e50;
 }
 .project-main{
 
- width: 100%;
- height: 400px;
+  width: 100%;
+  height: 400px;
 }
 .project-total{
   width: 100%;
- float: left;
+  float: left;
   height: 600px;
- margin-top: 60px;
+  margin-top: 60px;
 }
 .project{
- width: 100%;
- height: 150px;
- margin-top: 30px;
+  width: 100%;
+  height: 150px;
+  margin-top: 30px;
 }
 .project-mode{
 
- width: 88%;
- height: 150px;
- margin-left: 35px;
- margin-top: 10px;
- border-radius: 30px;
- border: 1px solid #d9d9d9;
- box-shadow: 0 0 2px 2px rgba(23, 43, 72, 0.45);
+  width: 88%;
+  height: 150px;
+  margin-left: 35px;
+  margin-top: 10px;
+  border-radius: 30px;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 0 2px 2px rgba(23, 43, 72, 0.45);
 }
 .project-info{
- padding-left: 30px;
- float: left;
- width: 40%;
- height: 100%;
- cursor: pointer;
+  padding-left: 30px;
+  float: left;
+  width: 40%;
+  height: 100%;
+  cursor: pointer;
 }
 .project-name{
 
- width: calc(100% - 35px);
- text-align: left;
- font-family: "Berlin Sans FB Demi";
- font-size: 26px;
- padding-top: 13px;
- padding-left: 35px;
+  width: calc(100% - 35px);
+  text-align: left;
+  font-family: "Berlin Sans FB Demi";
+  font-size: 26px;
+  padding-top: 13px;
+  padding-left: 35px;
 }
 .project-leader{
 
- height: 35px;
- margin-top: 10px;
+  height: 35px;
+  margin-top: 10px;
 
 }
 .project-leader-name{
 
- float: left;
- text-align: left;
- width: 200px;
- margin-left: 31px;
- font-size: 13px;
+  float: left;
+  text-align: left;
+  width: 200px;
+  margin-left: 31px;
+  font-size: 13px;
 }
 .project-leader-title{
 
- float: left;
- text-align: left;
- width: 200px;
- margin-left: 25px;
- font-size: 13px;
+  float: left;
+  text-align: left;
+  width: 200px;
+  margin-left: 25px;
+  font-size: 13px;
 
 }
 .project-build-img{
- float: left;
- margin-left: 31px;
- width: 25px;
- height: 25px;
- margin-top: 5px;
+  float: left;
+  margin-left: 31px;
+  width: 25px;
+  height: 25px;
+  margin-top: 5px;
 
 }
 .project-lately-edit{
 
- height:35px;
- align-items: center;
- margin-top: 10px;
+  height:35px;
+  align-items: center;
+  margin-top: 10px;
 }
 .project-lately-edit-title{
- float: left;
- text-align: left;
- width: 200px;
- margin-left: 25px;
- font-size: 13px;
+  float: left;
+  text-align: left;
+  width: 200px;
+  margin-left: 25px;
+  font-size: 13px;
 
 }
 .project-lately-edit-time{
- float: left;
- width: 60px;
- margin-left: 28px;
- margin-top: 2px;
- font-size: 13px;
- text-align: left;
+  float: left;
+  width: 60px;
+  margin-left: 28px;
+  margin-top: 2px;
+  font-size: 13px;
+  text-align: left;
 }
 .project-edittime-img{
- float: left;
- margin-left: 31px;
- width: 25px;
- height: 25px;
- margin-top: 5px;
+  float: left;
+  margin-left: 31px;
+  width: 25px;
+  height: 25px;
+  margin-top: 5px;
 }
 .project-img{
- float: left;
- height: 100%;
- width: 280px;
- margin-left: -10px;
- cursor: pointer;
+  float: left;
+  height: 100%;
+  width: 280px;
+  margin-left: -10px;
+  cursor: pointer;
 }
 .img-size{
- width: 220px;
- margin-top: 30px;
+  width: 220px;
+  margin-top: 30px;
 }
 .project-operation{
 
- float: right;
- margin-left: 70px;
- margin-top: 50px;
+  float: right;
+  margin-left: 70px;
+  margin-top: 50px;
 }
 .project-operation-rename{
- margin-right: 40px;
- margin-top: -20px;
+  margin-right: 40px;
+  margin-top: -20px;
 }
 .project-operation-delete{
- margin-top: 20px;
- margin-right: 40px;
+  margin-top: 20px;
+  margin-right: 40px;
 }
 .project-rename-img{
 
- width: 32px;
- height: 32px;
- cursor: pointer;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
 }
 .project-delete-img{
 
- width: 32px;
- height: 32px;
- cursor: pointer;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
 }
 
 /deep/.el-dropdown-menu:hover {
- border: none;
- color: #666;
- border-radius: 0;
- padding: 0;
- margin: 0;
+  border: none;
+  color: #666;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
 
- align-items: center;
- justify-content: center;
+  align-items: center;
+  justify-content: center;
 }
 /deep/el-input::-webkit-input-placeholder{
- color:#2c3e50;
+  color:#2c3e50;
 }
 /deep/el-input::-moz-placeholder{   /* Mozilla Firefox 19+ */
 
@@ -1072,7 +1110,7 @@ color: azure;
 }
 /deep/el-input:-ms-input-placeholder{  /* Internet Explorer 10-11 */
 
-color:#2c3e50;
+  color:#2c3e50;
 }
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
@@ -1098,4 +1136,3 @@ color:#2c3e50;
   display: block;
 }
 </style>
-
