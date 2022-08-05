@@ -12,7 +12,7 @@
               <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
             </div>
             <div class="TeamName">
-              Yigaa's Team
+              {{ this.tname }}
             </div>
           </div>
           <div class="buttons">
@@ -106,7 +106,7 @@
               </div>
             </div>
             <div class="members-main">
-              <div class="UML">
+              <div class="UML" v-on:click="jumpDrawio()">
                 <div class="uml-design">
                   <img src="../assets/uml.png" class="uml-img">
                 </div>
@@ -114,7 +114,7 @@
                   绘制UML
                 </div>
               </div>
-              <div class="draft">
+              <div class="draft" @click="JumpToPrototype">
                 <div class="draft-design">
                   <img src="../assets/draft.png" class="draft-img">
                 </div>
@@ -197,8 +197,25 @@ export default {
     document.body.style.backgroundColor="#FFFFFF";
   },
   methods:{
+    JumpToPrototype(){
+      console.log(window.localStorage.getItem('pid'))
+      this.$router.push({
+        name:'ProtoTypeView',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
+    },
+    jumpDrawio(){
+      window.open('https://www.draw.io/', '_blank');
+    },
     JumpToProjectManage(){
-      this.$router.push('/ProjectManage');
+      this.$router.push({
+        name:'ProjectManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     searchjump(){
 
@@ -222,21 +239,42 @@ export default {
       return isJPG && isLt2M;
     },
     JumpToTeamManage(){
-      this.$router.push('/TeamManage');
+      this.$router.push({
+        name:'TeamManage',
+        params:{
+          tid:window.localStorage.getItem('tid')
+        }
+      });
     },
     JumpToTrashManage() {
-      this.$router.push('/TrashManage');
+      this.$router.push({
+        name:'TrashManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpTodesignManage() {
-      this.$router.push('/designManage');
+      this.$router.push({
+        name:'designManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpTodocumentManage() {
-      this.$router.push('/documentManage');
+      this.$router.push({
+        name:'documentManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     }
   },
   data(){
     return{
       input:'',
+      tname:window.localStorage.getItem('tname'),
       options: [{
         value: '选项1',
         label: '全部成员'
@@ -339,8 +377,8 @@ export default {
   height: 80px;
 }
 .choose-box{
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 .design-box{
   display: flex;
@@ -920,7 +958,7 @@ export default {
 </style>
 
 
-<style>
+<style scoped>
 /deep/.el-dropdown-menu:hover {
   border: none;
   color: #666;

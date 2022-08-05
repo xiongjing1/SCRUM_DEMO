@@ -257,10 +257,38 @@ export default {
   },
   mounted() {
     document.body.style.backgroundColor="#FFFFFF";
+    for(let i=0;i<this.tableData.length;i++){
+      if(!this.tableData[i].isRecycled){
+        this.searchData.push(this.tableData[i]);
+      }
+    }
   },
   created() {
-    this.initParams();
+    const that=this;
+    let formData = new FormData();
+    formData.append('projectID', window.localStorage.getItem('pid'));//window.localStorage.getItem('pid')
+    formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
+    let config = {
+      headers: {'Content-Type': 'multipart/form-data'}
+    };
+    axios.post('http://43.138.21.64:8080/doc/get/all',formData,config)
+        .then(response => {
+          if(response.status === 200){
+            that.tableData = response.data.message.document.results || [];
+          }
+          else {
+            console.log('失败');
+          }
+        })
+
+
+    for(let i=0;i<that.tableData.length;i++){
+      if(!that.tableData[i].isRecycled){
+        that.searchData.push(that.tableData[i]);
+      }
+    }
   },
+
   methods:{
     searchjump(){
 
@@ -298,41 +326,35 @@ export default {
     JumpTodocumentManage() {
       this.$router.push('/documentManage');
     },
-    initParams(){
-      let formData = new FormData();
-      formData.append('projectID', '');
-      formData.append('userID', '');
-      let config = {
-        headers: {'Content-Type': 'multipart/form-data'}
-      };
-      axios.post('http://43.138.21.64:8080/doc/get/all',formData,config)
-          .then(response => {
-            if(response.status === 200){
-              this.tableData=response.data.document.results;
-              console.log(response.data.message);
-            }
-            else {
-              console.log(response.data.message);
-            }
-          })
-      this.searchData=this.tableData;
-    },
     handleSearch(){
+      console.log(this.tableData);
       var search1= this.input;
       if(search1){
         if(search1 === null || search1 === undefined){
-          this.searchData=this.tableData;
+          this.searchData=[];
+          for(let i=0;i<this.tableData.length;i++) {
+              if(!this.tableData[i].isRecycled){
+                this.searchData.push(this.tableData[i]);
+              }
+          }
         }else{
           this.searchData=[];
           for(let i=0;i<this.tableData.length;i++) {
             if(this.tableData[i].name.search(search1)!==-1){
-              this.searchData.push(this.tableData[i]);
+              if(!this.tableData[i].isRecycled){
+                this.searchData.push(this.tableData[i]);
+              }
             }
           }
         }
       }
       else{
-        this.searchData=this.tableData;
+        this.searchData=[];
+        for(let i=0;i<this.tableData.length;i++) {
+          if(!this.tableData[i].isRecycled){
+            this.searchData.push(this.tableData[i]);
+          }
+        }
       }
     },
     handleNew(){
@@ -344,8 +366,8 @@ export default {
       }
       if(add){
         let formData = new FormData();
-        formData.append('userID', '');
-        formData.append('projectID', '');
+        formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
+       formData.append('projectID', window.localStorage.getItem('pid'));//window.localStorage.getItem('pid')
         formData.append('docName', this.input1);
         let config = {
           headers: {'Content-Type': 'multipart/form-data'}
@@ -360,6 +382,7 @@ export default {
               }
             })
 
+
         var data1={
           ID: '',
           name: this.input1,
@@ -371,8 +394,10 @@ export default {
           isRecycled: '',
         };
         this.tableData.push(data1);
-        alert(this.input1+'添加成功');
+
+
         this.input1='';
+        this.$router.go(0);
       }
       else{
         alert(this.input1+'已存在，请重新输入');
@@ -382,17 +407,19 @@ export default {
     handleEdit(index, row) {
       console.log(index, row);
       global.fileid=row.ID;
+      global.filecontent=row.content;
       this.$router.push({path: '/about'});
     },
     handleDelete(index, row) {
+      console.log(row.ID);
       let formData = new FormData();
       formData.append('docID', row.ID);
-      formData.append('userID', '');
+      formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
       formData.append('docType', 3);
       let config = {
           headers: {'Content-Type': 'multipart/form-data'}
         };
-      axios.post('http://http://43.138.21.64:8080/doc/remove/one',formData,config)
+      axios.post('http://43.138.21.64:8080/doc/remove/one',formData,config)
           .then(response => {
             if(response.status === 200){
               console.log(response.data.message);
@@ -401,8 +428,11 @@ export default {
               console.log(response.data.message);
             }
           })
+
+
       this.tableData.splice(index,1);
-      alert("已删除"+row.name);
+
+      console.log(row);
     }
   },
   data(){
@@ -420,115 +450,8 @@ export default {
         label: '普通成员'
       }],
       searchData: [],
-      tableData: [{
-        ID: '1',
-        name: '文件1',
-        creatorID: '用户名1',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目1',
-        isRecycled: '',
-      }, {
-        ID: '2',
-        name: '文件2',
-        creatorID: '用户名2',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目2',
-        isRecycled: '',
-      }, {
-        ID: '3',
-        name: '文件3',
-        creatorID: '用户名3',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目3',
-        isRecycled: '',
-      }, {
-        ID: '4',
-        name: '文件4',
-        creatorID: '用户名4',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目4',
-        isRecycled: '',
-      }, {
-        ID: '5',
-        name: '文件5',
-        creatorID: '用户名5',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目5',
-        isRecycled: '',
-      }, {
-        ID: '6',
-        name: '文件6',
-        creatorID: '用户名6',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目6',
-        isRecycled: '',
-      }, {
-        ID: '7',
-        name: '文件7',
-        creatorID: '用户名7',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目7',
-        isRecycled: '',
-      }, {
-        ID: '8',
-        name: '文件8',
-        creatorID: '用户名8',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目8',
-        isRecycled: '',
-      }, {
-        ID: '9',
-        name: '文件9',
-        creatorID: '用户名9',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目9',
-        isRecycled: '',
-      },{
-        ID: '10',
-        name: '文件10',
-        creatorID: '用户名10',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目10',
-        isRecycled: '',
-      }, {
-        ID: '11',
-        name: '文件11',
-        creatorID: '用户名11',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目11',
-        isRecycled: '',
-      }, {
-        ID: '12',
-        name: '文件12',
-        creatorID: '用户名12',
-        createdDate: '2022-08-02 09:00',
-        modifiedDate: '2022-08-02 10:00',
-        content: '',
-        projectID: '项目12',
-        isRecycled: '',
-      }],
+      getData:[],
+      tableData: [],
       value:'',
       removeMember: false,
       currentRow:'',
