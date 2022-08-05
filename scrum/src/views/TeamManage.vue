@@ -297,6 +297,13 @@ export default {
     })
     document.body.style.backgroundColor="#FFFFFF";
   },
+  watch:{
+    $route(to,from){
+      console.log(from.path);//从哪来
+      console.log(to.path);//到哪去
+      this.reload()
+    }
+  },
   methods:{
     update(){
       this.reload()

@@ -106,7 +106,7 @@ export default {
       window.localStorage.setItem('pid',id);
       window.localStorage.setItem('pname',name);
       window.localStorage.setItem('tname',tname);
-      this.$router.push('/ProjectManage/'+id);
+      this.$router.push('/designManage/'+id);
     },
   }
 }
