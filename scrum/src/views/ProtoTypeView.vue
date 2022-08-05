@@ -206,8 +206,8 @@ export default {
     addPrototype(){
       const that = this
       let dataPost = new FormData()
-      dataPost.append("userID", 10)
-      dataPost.append("projectID", 4)
+      dataPost.append("userID", window.localStorage.getItem('uid'))
+      dataPost.append("projectID", this.$route.params.pid)
       dataPost.append("prototypeName",that.addForm.name)
       dataPost.append("canvas_Width", that.addForm.width.toString())
       dataPost.append("canvas_Height" , that.addForm.height.toString())
@@ -290,8 +290,8 @@ export default {
         }
       });
       let dataPost = new FormData()
-      dataPost.append("userID", 10)
-      dataPost.append("projectID", 4)
+      dataPost.append("userID", window.localStorage.getItem('uid'))
+      dataPost.append("projectID", this.$route.params.pid)
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
       }
@@ -310,16 +310,13 @@ export default {
           that.prototypeData = res.data.message.prototype.results || []
         }
       })
-      rect1.selectable = false
-      // 在canvas画布中加入矩形（rect）。add是“添加”的意思
-      this.dataArr.canvas.add(rect1)
     },
     deletePrototype(index){
       const that = this
       let dataPost = new FormData()
       //dataPost.append("userID", 10)
       dataPost.append("docID", index)
-      dataPost.append("userID", 10)
+      dataPost.append("userID", window.localStorage.getItem('uid'))
       dataPost.append("docType", 1)
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
@@ -377,7 +374,7 @@ export default {
       console.log(json)
       let dataPost = new FormData()
       //dataPost.append("userID", 10)
-      dataPost.append("userID", 10)
+      dataPost.append("userID", window.localStorage.getItem('uid'))
       dataPost.append("docID", that.idSelected)
       dataPost.append("docType", 1)
       dataPost.append("content", json)
