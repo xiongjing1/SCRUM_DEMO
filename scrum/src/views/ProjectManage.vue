@@ -100,7 +100,7 @@
                   <div class="project-mode">
                     <div class="project-info" v-on:click="JumpTodesignManage(item.ID)">
                       <div class="project-name">
-                        {{item.project_name}}
+                        {{item.project_name}}{{item.ID}}
                       </div>
                       <div class="project-leader">
                         <img src="../assets/build.png" class="project-build-img">
@@ -128,7 +128,7 @@
                         </el-dialog>
                       </div>
                       <div class="project-operation-delete">
-                        <img src="../assets/delete.png" class="project-delete-img" @click="deletedProject = true;currentRow=index;current=item">
+                        <img src="../assets/delete.png" class="project-delete-img" @click="deletedProject = true;currentRow=index;current=item;">
                         <el-dialog
                             title="提示"
                             :visible.sync="deletedProject"
@@ -138,7 +138,7 @@
                           <span>确认要删除项目 {{current.project_name}} 吗？</span>
                           <span slot="footer" class="dialog-footer">
                               <el-button @click="deletedProject = false" >取 消</el-button>
-                              <el-button type="primary" @click="deletedProject = false;deleteProject(currentRow);update();" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="deletedProject = false;notice(current);update();" class="el-buttons">确 定</el-button>
                         </span>
                         </el-dialog>
                       </div>
@@ -286,6 +286,7 @@ export default {
             else{
               console.log(response.data.message);
             }
+            this.update();
           })
       var newproject={
         projectName:this.Projectnameinput,
@@ -297,10 +298,10 @@ export default {
       };
       this.projectList.push(newproject);
     },
-    deleteProject(index){
+    deleteProject(current){
       let formData = new FormData();
+      formData.append('projectID', current.ID);
       formData.append('userID',  window.localStorage.getItem('uid'));
-      formData.append('projectID', this.projectList[index].ID);
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       };
@@ -316,9 +317,9 @@ export default {
               console.log(response.data.message);
             }
           })
-      this.projectList.splice(index,1);
     },
     renameProject(index){
+
       let formData = new FormData();
       formData.append('userID',  window.localStorage.getItem('uid'));
       formData.append('projectID', this.projectList[index].ID);
@@ -411,6 +412,28 @@ export default {
         this.getList()
       }, 50)
     },
+    notice(current){
+      console.log(current);
+      let formData = new FormData();
+      formData.append('projectID', current.ID);
+      formData.append('userID',  window.localStorage.getItem('uid'));
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/project/remove/one',formData,config)
+          .then(response => {
+            console.log("发送请求");
+            if(response.status === 200){
+              console.log(response.data.message);
+            }
+            else if(response.status === 404){
+              console.log(response.data.message);
+            }
+            else{
+              console.log(response.data.message);
+            }
+          })
+    }
   },
   data(){
     return{
