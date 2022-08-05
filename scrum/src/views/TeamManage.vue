@@ -280,7 +280,7 @@ export default {
   },
   mounted() {
     console.log('teamid'+window.localStorage.getItem('tid'));
-    this.$axios.get('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
+    this.$axios.get('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
       this.team=res.data.team
       this.leader=res.data.leader
       this.member_list=res.data.member_list
@@ -320,7 +320,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -341,7 +341,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -362,7 +362,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -414,7 +414,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -435,7 +435,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -452,7 +452,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
@@ -478,7 +478,7 @@ export default {
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      axios.post('http://43.138.21.64:8088/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
           .then(response => {
             console.log(response.data)
             // console.log("denglu:"+response.data);
