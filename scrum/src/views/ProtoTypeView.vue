@@ -173,10 +173,9 @@ export default {
       this.$router.push({
         name:'designManage',
         params:{
-          pid:this.$route.params.pid
+          pid:window.localStorage.getItem('pid')
         }
       });
-      this.$router.push('/designManage');
     },
     showChangeDialog(elm){
       this.changeForm.width = elm.width
