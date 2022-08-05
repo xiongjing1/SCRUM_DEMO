@@ -294,7 +294,12 @@ export default {
             else{
               console.log(response.data.message);
             }
-            this.update();
+            this.$router.push({
+              name:'ProtoTypeView',
+              params:{
+                pid:window.localStorage.getItem('pid')
+              }
+            });
           })
       var newproject={
         projectName:this.Projectnameinput,
