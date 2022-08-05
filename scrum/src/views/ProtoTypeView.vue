@@ -19,10 +19,10 @@
       </div>
       <div id="list">
         <ul style="padding: 0; width: 98%; margin: 0">
-          <li v-for="(el,index) in prototypeData" :class="{classSelected:idSelected===el.id}"
-              :key="el.id" class="prototypeList"  @click="changeCanvas(el,index)">{{el.name}}
+          <li v-for="(el,index) in prototypeData" :class="{classSelected:idSelected===el.ID}"
+              :key="el.ID" class="prototypeList"  @click="changeCanvas(el,index)">{{el.name}}
             <i class="el-icon-edit" style="padding: 5px" @click.stop="showChangeDialog(el)"></i>
-            <i class="el-icon-delete-solid" @click.stop="deletePrototype(el.id)"></i>
+            <i class="el-icon-delete-solid" @click.stop="deletePrototype(el.ID)"></i>
           </li>
         </ul>
         <el-empty description="还没有创建原型实例" v-show=" prototypeData.length === 0" :image-size="200"></el-empty>
@@ -154,7 +154,7 @@ export default {
         {id:40 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/location.png')},
         {id:41 , name:"占位符" , imgURL:require('../assets/PrototypeMaterial/histogram.png')},
       ],
-      prototypeData: [{id: 0, name:"" , content:"" , canvasWidth:0 , canvasHeight:0}],
+      prototypeData: [],
       canvasWidth:400,
       canvasHeight:400,
       dataArr:{},
@@ -213,7 +213,7 @@ export default {
         console.log(res)
         that.dialogAddVisible = false
         const newPrototype = {name: that.addForm.name , canvasWidth: that.addForm.width , canvasHeight: that.addForm.height ,
-          id:res.data.id , content: ''}
+          ID:res.data.id , content: ''}
         that.prototypeData.push(newPrototype)
         that.changeCanvas(newPrototype,that.prototypeData.length -1)
       })
@@ -240,9 +240,11 @@ export default {
 
     },
     changeCanvas(elm , index){
-      this.indexSelected = index
-      this.idSelected = elm.id
+      console.log(elm.ID)
       console.log(this.idSelected)
+      this.indexSelected = index
+      this.idSelected = elm.ID
+
       this.dataArr.canvas.clear()
       this.dataArr.canvas.setWidth(elm.canvasWidth)
       this.dataArr.canvas.setHeight(elm.canvasHeight)
@@ -256,16 +258,17 @@ export default {
       const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 
       const repeatDownload = async () => {
-        for (let i = 0; i <= 2; i++) {
+        for (let i = 0; i < this.prototypeData.length; i++) {
           this.changeCanvas(this.prototypeData[i] , i)
-          await sleep(100)
+          await sleep(500)
           this.toPic(pd)
-          await sleep(100)
+          await sleep(500)
         }
       }
       repeatDownload()
     },
     init(){
+      console.log(this.idSelected)
       this.addForm.name = '新建原型实例'
       Vue.set( this.dataArr , 'canvas' , new fabric.Canvas('c' , {
         includeDefaultValues: false }))
@@ -311,7 +314,7 @@ export default {
         console.log(res)
         if(res.status === 200){
           console.log(res.data.message.prototype)
-          that.prototypeData = res.data.message.prototype.results
+          that.prototypeData = res.data.message.prototype.results || []
         }
       })
     },
@@ -326,12 +329,16 @@ export default {
         headers: {'Content-Type': 'multipart/form-data'}
       }
       axios.post("http://43.138.21.64:8080/doc/remove/one",dataPost,config).then( res => {
-        console.log(res)
-        that.prototypeData = that.prototypeData.filter(ele =>{
-          return ele.id !== index
-        })
-        console.log(that.prototypeData)
-        that.idSelected = -1
+        if( res.status  === 200){
+          console.log(res)
+          that.prototypeData = that.prototypeData.filter(ele =>{
+            return ele.ID !== index
+          })
+          console.log(that.prototypeData)
+          that.idSelected = -1
+          that.indexSelected = -1
+        }
+
       })
 
     },
@@ -354,8 +361,8 @@ export default {
         const blob = this.dataArr.canvas.toDataURL();
         const pika = document.createElement("a");
         pika.href = blob;
-        if(pd === 1) pika.download = this.prototypeData[this.idSelected].name+".png"
-        else pika.download = this.prototypeData[this.idSelected].name+".jpg"
+        if(pd === 1) pika.download = this.prototypeData[this.indexSelected].name+".png"
+        else pika.download = this.prototypeData[this.indexSelected].name+".jpg"
         pika.click();
       //}, 1);
     },
