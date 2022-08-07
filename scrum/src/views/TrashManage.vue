@@ -16,6 +16,9 @@
             </div>
           </div>
           <div class="buttons">
+            <div class="document-center" v-on:click="JumpToProjectManage()">
+              文档中心
+            </div>
             <div class="manage-project" v-on:click="JumpToProjectManage()">
               项目管理
             </div>
@@ -116,7 +119,7 @@
             <div class="members-main">
               <div class="table-leader">
                 <el-table
-                    :data="tableData"
+                    :data="currentPageData"
                     :header-cell-style="{'text-align':'center'}"
                     :cell-style="{'text-align':'center'}"
                     style="width: 100%"
@@ -126,21 +129,25 @@
                       prop="docname"
                       label="文件名"
                       width="200">
-                  </el-table-column>
-                  <el-table-column
-                      prop="builder"
-                      label="创建者"
-                      width="200">
+                    <template slot-scope="scope">
+                      <span style="margin-left: 10px">{{ scope.row.name }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column
                       prop="buildTime"
                       label="创建时间"
                       width="200">
+                    <template slot-scope="scope">
+                      <span style="margin-left: 10px">{{ scope.row.created_date }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column
                       prop="deleteTime"
                       label="删除时间"
                       width="180">
+                    <template slot-scope="scope">
+                      <span style="margin-left: 10px">{{ scope.row.modified_date }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column
                       label="操作"
@@ -165,7 +172,7 @@
                           <span>确认要恢复该文档吗？</span>
                           <span slot="footer" class="dialog-footer">
                               <el-button @click="recover = false">取 消</el-button>
-                              <el-button type="primary" @click="recover = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="recover = false;" @click.native.prevent="RecoverProject(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                         </el-dialog>
                         <el-button
@@ -195,8 +202,11 @@
               <div class="pagination">
                 <el-pagination
                     background="true"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage"
+                    :page-size="this.pageSize"
                     layout="prev, pager, next"
-                    :total="1000">
+                    :total=total>
                 </el-pagination>
               </div>
             </div>
@@ -232,17 +242,17 @@
               <div class="leader-nickname">
                 <img src="../assets/user.png" class="leader-img-size">
                 <div class="nickname">创建用户</div>
-                <div class="name-info">徐亦佳</div>
+                <div class="name-info">{{ this.p_creator }}</div>
               </div>
               <div class="leader-email">
                 <img src="../assets/time.png" class="leader-img-size">
                 <div class="email">创建时间</div>
-                <div class="email-info">2022-8-3 14：22</div>
+                <div class="email-info">{{ this.p_create_time }}</div>
               </div>
               <div class="leader-active">
                 <img src="../assets/document.png" class="leader-img-size">
                 <div class="active">文档数目</div>
-                <div class="active-info">5</div>
+                <div class="active-info">{{this.p_doc_count}}</div>
               </div>
             </div>
             <el-divider></el-divider>
@@ -275,8 +285,30 @@ export default {
   },
   mounted() {
     document.body.style.backgroundColor="#FFFFFF";
+    const that=this;
+    let formData = new FormData() // 创建form对象
+    formData.append('projectID', window.localStorage.getItem('pid'));
+    let config = {
+      headers: {'Content-Type': 'multipart/form-data'}
+    } // 添加请求头
+    axios.post('http://43.138.21.64:8080/recyclebin/docs', formData,config)
+        .then(response => {
+          if(response.status === 200){
+            console.log(response.data.data.result);
+            that.tableData = response.data.data.result|| [];
+            console.log('文档列表获取成功');
+            this.load();
+          }
+          else {
+            console.log('文档列表获取失败');
+          }
+        })
   },
   methods:{
+    update(){
+      this.reload()
+      console.log('刷新页面')
+    },
     searchjump(){
 
     },
@@ -382,9 +414,49 @@ export default {
             }
           })
     },
-    update(){
-      this.reload()
-      console.log('刷新页面')
+    RecoverProject(row){
+      let param = new FormData() // 创建form对象
+      param.append('docsID', row.ID)// 通过append向form对象添加数据
+      param.append('docType', "3")// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/recyclebin/docs/restore', param,config)
+          .then(response => {
+            console.log("recover"+response.data.success)
+            if(response.data.success){
+              this.$message.success("恢复成功")
+            }else{
+              this.$message.error("恢复失败")
+            }
+          })
+    },
+    handleCurrentChange(val){
+      this.currentPage = val;
+      this.getList();
+    },
+    getList(){
+      this.searchData=[];
+      for(let i=this.tableData.length-1;i>=0;i--){
+        if(this.tableData[i].type==="document"){
+          this.searchData.push(this.tableData[i]);
+        }
+      }
+      this.total=this.searchData.length;
+      if(this.currentPage===1){
+        console.log('fen')
+        this.currentPageData = this.searchData.slice(0, 6);
+        console.log(this.currentPageData)
+      }else{
+        let begin = (this.currentPage - 1) * this.pageSize;
+        let end = this.currentPage * this.pageSize;
+        this.currentPageData = this.searchData.slice(begin, end);
+      }
+    },
+    load () {
+      setTimeout(() => {
+        this.getList()
+      }, 50)
     },
   },
   data(){
@@ -400,37 +472,20 @@ export default {
         value: '选项3',
         label: '普通成员'
       }],
-      tableData: [ {
-        docname: '文档2',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      }, {
-        docname: '文档3',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      },{
-        docname: '文档4',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      }, {
-        docname: '文档5',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      }, {
-        docname: '文档6',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      }, {
-        docname: '文档7',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      },],
+      tableData: [{
+        ID:'',
+        type:'',
+        name:'',
+        created_date:'',
+        modified_date:'',
+      }],
+      searchData:[{
+        ID:'',
+        type:'',
+        name:'',
+        created_date:'',
+        modified_date:'',
+      }],
       value:'',
       tname:window.localStorage.getItem('tname'),
       pname:window.localStorage.getItem('pname'),
@@ -450,6 +505,14 @@ export default {
       recover:false,
       remove:false,
       pintro:window.localStorage.getItem('pintro'),
+      currentPage: 1,
+      currentPageData:[],
+      total:2,
+      pageSize:6,
+      p_creator:window.localStorage.getItem('p_creator'),
+      p_create_time:window.localStorage.getItem('p_create_time'),
+      p_doc_count:window.localStorage.getItem('p_doc_count'),
+
     }
   }
 };
@@ -479,14 +542,6 @@ export default {
   display: flex;
   flex-direction: row;
   width: 300px;
-  height: 80px;
-}
-.buttons{
-  display: flex;
-  margin-left: 10px;
-  padding-top: 30px;
-  padding-left:700px;
-  width: 350px;
   height: 80px;
 }
 .choose-box{
@@ -603,6 +658,15 @@ export default {
   font-size: 30px;
   font-family: "Berlin Sans FB Demi";
 }
+.buttons{
+  float: left;
+  margin-left:10px;
+  padding-left: 15px;
+  margin-top:0px;
+  padding-top: 20px;
+  width: 400px;
+  height: 60px;
+}
 .manage-project{
   width: 80px;
   height: 28px;
@@ -611,11 +675,28 @@ export default {
   outline-color: #2c3e50;
   cursor: pointer;
   padding-top:12px;
-  margin-left:-30px;
+  float: left;
   margin-top: 10px;
   font-size: 14px;
+  margin-left: 15px;
 }
 .manage-project:hover{
+  color: rgba(23,43,72,0.45);
+}
+.document-center{
+  width: 80px;
+  height: 28px;
+  border: 2px solid;
+  border-radius: 3px;
+  outline-color: #2c3e50;
+  cursor: pointer;
+  padding-top:12px;
+  float: left;
+  margin-top: 10px;
+  margin-left: 9px;
+  font-size: 14px;
+}
+.document-center:hover{
   color: rgba(23,43,72,0.45);
 }
 .list-members{
@@ -627,6 +708,7 @@ export default {
   cursor: pointer;
   padding-top:12px;
   margin-top: 10px;
+  float: left;
   font-size: 14px;
   margin-left: 15px;
 }
@@ -646,6 +728,7 @@ export default {
   margin-left: 15px;
   color: #2c3e50;
   letter-spacing: 3px;
+  float: left;
 }
 .more:hover{
   color: rgba(23,43,72,0.45);

@@ -1,5 +1,5 @@
 <template>
-  <div class="web">
+  <div>
     <div class="head">
       <HeadSide></HeadSide>
     </div>
@@ -16,6 +16,9 @@
         </div>
       </div>
       <div class="buttons">
+        <div class="document-center" v-on:click="JumpToProjectManage()">
+          文档中心
+        </div>
         <div class="manage-project" v-on:click="JumpToProjectManage()">
           项目管理
         </div>
@@ -623,6 +626,7 @@ export default {
 
 <style scoped>
 .whole{
+
 }
 .main{
   position: absolute;
@@ -649,12 +653,13 @@ export default {
   height: 80px;
 }
 .buttons{
-  display: flex;
-  margin-left: 10px;
-  padding-top: 30px;
-  padding-left:500px;
-  width: 350px;
-  height: 80px;
+  float: left;
+  margin-left:10px;
+  padding-left: 15px;
+  margin-top:0px;
+  padding-top: 20px;
+  width: 400px;
+  height: 60px;
 }
 .choose-box{
   width:100% ;
@@ -702,11 +707,28 @@ export default {
   outline-color: #2c3e50;
   cursor: pointer;
   padding-top:12px;
-  margin-left:-30px;
+  float: left;
   margin-top: 10px;
   font-size: 14px;
+  margin-left: 15px;
 }
 .manage-project:hover{
+  color: rgba(23,43,72,0.45);
+}
+.document-center{
+  width: 80px;
+  height: 28px;
+  border: 2px solid;
+  border-radius: 3px;
+  outline-color: #2c3e50;
+  cursor: pointer;
+  padding-top:12px;
+  float: left;
+  margin-top: 10px;
+  margin-left: 9px;
+  font-size: 14px;
+}
+.document-center:hover{
   color: rgba(23,43,72,0.45);
 }
 .list-members{
@@ -718,6 +740,7 @@ export default {
   cursor: pointer;
   padding-top:12px;
   margin-top: 10px;
+  float: left;
   font-size: 14px;
   margin-left: 15px;
 }
@@ -737,6 +760,7 @@ export default {
   margin-left: 15px;
   color: #2c3e50;
   letter-spacing: 3px;
+  float: left;
 }
 .more:hover{
   color: rgba(23,43,72,0.45);
@@ -1115,5 +1139,10 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.web{
+  width: 100%;
+  overflow: hidden;
+  background-color: #fe686c;
 }
 </style>

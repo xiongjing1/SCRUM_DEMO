@@ -16,6 +16,9 @@
             </div>
           </div>
           <div class="buttons">
+            <div class="document-center" v-on:click="JumpToProjectManage()">
+              文档中心
+            </div>
             <div class="manage-project" v-on:click="JumpToProjectManage()">
               项目管理
             </div>
@@ -87,7 +90,7 @@
               <div class="search-button" @click="handleSearch()">
                 search
               </div>
-              <el-popover  trigger="click" placement="bottom-end" popper-class="moreinfo" >
+              <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
                 <p><el-input v-model="input1" placeholder="请输入文件名" style="width: 400px;"></el-input></p>
                 <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew()">确认</el-button></p>
                 <div slot="reference" class="name-wrapper" >
@@ -127,9 +130,10 @@
             <div class="members-main">
               <div class="table-leader">
                 <el-table
-                    :data="searchData"
+                    :data="currentPageData"
                     :header-cell-style="{'text-align':'center'}"
-                    :cell-style="{'text-align':'center'}"
+                    :cell-style="{'text-align':'center','padding':'0px'}"
+                    :row-style="{'height':'72px'}"
                     max-height="480"
                     style="width: 100%">
                   <el-table-column
@@ -179,8 +183,11 @@
               <div class="pagination">
                 <el-pagination
                     background="true"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage"
+                    :page-size="this.pageSize"
                     layout="prev, pager, next"
-                    :total="1000">
+                    :total=total>
                 </el-pagination>
               </div>
             </div>
@@ -216,17 +223,17 @@
               <div class="leader-nickname">
                 <img src="../assets/user.png" class="leader-img-size">
                 <div class="nickname">创建用户</div>
-                <div class="name-info">徐亦佳</div>
+                <div class="name-info">{{ this.p_creator }}</div>
               </div>
               <div class="leader-email">
                 <img src="../assets/time.png" class="leader-img-size">
                 <div class="email">创建时间</div>
-                <div class="email-info">2022-8-3 14：22</div>
+                <div class="email-info">{{ this.p_create_time }}</div>
               </div>
               <div class="leader-active">
                 <img src="../assets/document.png" class="leader-img-size">
                 <div class="active">文档数目</div>
-                <div class="active-info">5</div>
+                <div class="active-info">{{this.total}}</div>
               </div>
             </div>
             <el-divider></el-divider>
@@ -258,13 +265,6 @@ export default {
   },
   mounted() {
     document.body.style.backgroundColor="#FFFFFF";
-    for(let i=0;i<this.tableData.length;i++){
-      if(!this.tableData[i].isRecycled){
-        this.searchData.push(this.tableData[i]);
-      }
-    }
-  },
-  created() {
     const that=this;
     let formData = new FormData();
     formData.append('projectID', window.localStorage.getItem('pid'));//window.localStorage.getItem('pid')
@@ -277,20 +277,14 @@ export default {
           if(response.status === 200){
             console.log("ok");
             that.tableData = response.data.message.document.results || [];
-            console.log( that.tableData)
-            that.tableData[3].isRecycled=false;
-            for(let i=0;i<that.tableData.length;i++){
-              if(!that.tableData[i].isRecycled){
-                that.searchData.push(that.tableData[i]);
-              }
-            }
+            console.log('文档列表获取成功');
+            this.load();
           }
           else {
-            console.log('失败');
+            console.log('文档列表获取失败');
           }
         })
   },
-
   methods:{
     searchjump(){
 
@@ -354,19 +348,18 @@ export default {
       });
     },
     handleSearch(){
-      console.log(this.tableData);
       var search1= this.input;
       if(search1){
         if(search1 === null || search1 === undefined){
           this.searchData=[];
-          for(let i=0;i<this.tableData.length;i++) {
+          for(let i=this.tableData.length-1;i>=0;i--){
               if(!this.tableData[i].isRecycled){
                 this.searchData.push(this.tableData[i]);
               }
           }
         }else{
           this.searchData=[];
-          for(let i=0;i<this.tableData.length;i++) {
+          for(let i=this.tableData.length-1;i>=0;i--){
             if(this.tableData[i].name.search(search1)!==-1){
               if(!this.tableData[i].isRecycled){
                 this.searchData.push(this.tableData[i]);
@@ -377,17 +370,26 @@ export default {
       }
       else{
         this.searchData=[];
-        for(let i=0;i<this.tableData.length;i++) {
+        for(let i=this.tableData.length-1;i>=0;i--){
           if(!this.tableData[i].isRecycled){
             this.searchData.push(this.tableData[i]);
           }
         }
       }
+      this.total=this.searchData.length;
+      if(this.currentPage===1){
+        console.log('fen')
+        this.currentPageData = this.searchData.slice(1, 7);
+      }else{
+        let begin = (this.currentPage - 1) * this.pageSize;
+        let end = this.currentPage * this.pageSize;
+        this.currentPageData = this.searchData.slice(begin, end);
+      }
     },
     handleNew(){
       var add=true;
       for(let i=0;i<this.tableData.length;i++) {
-        if(this.tableData[i].name===this.input1){
+        if(this.tableData[i].name===this.input1&&this.tableData[i].isRecycled===false){
           add=false;
         }
       }
@@ -407,33 +409,22 @@ export default {
               else {
                 console.log(response.data.message);
               }
+              //this.reload();
             })
-
-
-        var data1={
-          ID: '',
-          name: this.input1,
-          creatorID: '当前用户',
-          createdDate: '',
-          modifiedDate: '',
-          content: '',
-          projectID: '当前项目',
-          isRecycled: '',
-        };
-        this.tableData.push(data1);
-
-
         this.input1='';
-      //  this.$router.go(0);
+        global.filename=this.input1;
+        global.filecontent='null';
+        this.$router.push({path: '/about'});
       }
       else{
-        alert(this.input1+'已存在，请重新输入');
+        this.$message.error(this.input1+'已存在，请重新输入');
         this.input1='';
       }
     },
     handleEdit(index, row) {
       console.log(index, row);
       global.fileid=row.ID;
+      global.filename=row.name;
       global.filecontent=row.content;
       this.$router.push({path: '/about'});
     },
@@ -454,12 +445,39 @@ export default {
             else {
               console.log(response.data.message);
             }
+            this.reload()
           })
-
-
-      this.tableData.splice(index,1);
-
+      //this.tableData.splice(index,1);
       console.log(row);
+    },
+    handleCurrentChange(val){
+      this.currentPage = val
+      this.getList()
+    },
+    getList(){
+      console.log(this.tableData);
+      this.searchData=[];
+      for(let i=this.tableData.length-1;i>=0;i--){
+        if(this.tableData[i].isRecycled === false){
+          this.searchData.push(this.tableData[i]);
+        }
+      }
+      console.log(this.searchData)
+      this.total=this.searchData.length;
+      if(this.currentPage===1){
+        console.log('fen')
+        this.currentPageData = this.searchData.slice(0, 6);
+      }else{
+        let begin = (this.currentPage - 1) * this.pageSize;
+        let end = this.currentPage * this.pageSize;
+        this.currentPageData = this.searchData.slice(begin, end);
+      }
+      console.log(this.currentPageData)
+    },
+    load() {
+      setTimeout(() => {
+        this.getList()
+      }, 50)
     },
     DelteTeam(){
       let param = new FormData() // 创建form对象
@@ -526,9 +544,29 @@ export default {
         value: '选项3',
         label: '普通成员'
       }],
-      searchData: [],
-      getData:[],
-      tableData: [],
+      searchData: [{
+          ID: '',
+          content: '',
+          createdDate: '',
+          creatorID: '',
+          isRecycled: false,
+          is_subfile: '',
+          modifiedDate: '',
+          name: '',
+          projectID: '',
+
+      }],
+      tableData: [{
+        ID: '',
+        content: '',
+        createdDate: '',
+        creatorID: '',
+        isRecycled: false,
+        is_subfile: '',
+        modifiedDate: '',
+        name: '',
+        projectID: '',
+      }],
       value:'',
       removeMember: false,
       currentRow:'',
@@ -545,7 +583,14 @@ export default {
       Summarycontent:'',
       recover:false,
       remove:false,
+      currentPage: 1,
+      currentPageData:[],
+      total:2,
+      pageSize:6,
       pintro:window.localStorage.getItem('pintro'),
+      p_creator:window.localStorage.getItem('p_creator'),
+      p_create_time:window.localStorage.getItem('p_create_time'),
+      p_doc_count:window.localStorage.getItem('p_doc_count'),
     }
   }
 };
@@ -576,14 +621,6 @@ export default {
   display: flex;
   flex-direction: row;
   width: 300px;
-  height: 80px;
-}
-.buttons{
-  display: flex;
-  margin-left: 10px;
-  padding-top: 30px;
-  padding-left:700px;
-  width: 350px;
   height: 80px;
 }
 .choose-box{
@@ -695,7 +732,6 @@ export default {
   padding-top: 10px;
   width: 70px;
   height: 70px;
-
 }
 .TeamName{
   padding-top: 20px;
@@ -705,6 +741,15 @@ export default {
   font-size: 30px;
   font-family: "Berlin Sans FB Demi";
 }
+.buttons{
+  float: left;
+  margin-left:10px;
+  padding-left: 15px;
+  margin-top:0px;
+  padding-top: 20px;
+  width: 400px;
+  height: 60px;
+}
 .manage-project{
   width: 80px;
   height: 28px;
@@ -713,11 +758,28 @@ export default {
   outline-color: #2c3e50;
   cursor: pointer;
   padding-top:12px;
-  margin-left:-30px;
+  float: left;
   margin-top: 10px;
   font-size: 14px;
+  margin-left: 15px;
 }
 .manage-project:hover{
+  color: rgba(23,43,72,0.45);
+}
+.document-center{
+  width: 80px;
+  height: 28px;
+  border: 2px solid;
+  border-radius: 3px;
+  outline-color: #2c3e50;
+  cursor: pointer;
+  padding-top:12px;
+  float: left;
+  margin-top: 10px;
+  margin-left: 9px;
+  font-size: 14px;
+}
+.document-center:hover{
   color: rgba(23,43,72,0.45);
 }
 .list-members{
@@ -729,6 +791,7 @@ export default {
   cursor: pointer;
   padding-top:12px;
   margin-top: 10px;
+  float: left;
   font-size: 14px;
   margin-left: 15px;
 }
@@ -748,6 +811,7 @@ export default {
   margin-left: 15px;
   color: #2c3e50;
   letter-spacing: 3px;
+  float: left;
 }
 .more:hover{
   color: rgba(23,43,72,0.45);
