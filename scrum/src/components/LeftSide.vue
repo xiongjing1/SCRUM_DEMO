@@ -10,7 +10,7 @@
           <div class="teamname" >{{ item.name }}</div>
         </div>
         <div v-for="(item2,index2) in projects" v-bind:key="index2">
-          <div class="project-part" v-if="item2.teamid==item.id"  v-on:click="projectjump(item2.id,item2.name,item.name)">
+          <div class="project-part" v-if="item2.teamid==item.id"  v-on:click="projectjump(item2.id,item2.name,item.name,item2.p_description,item2.p_creator,item2.p_create_time,item2.p_doc_count)">
             <div class="projectname">{{ item2.name }}</div>
           </div>
         </div>
@@ -50,7 +50,7 @@ export default {
         return Object.assign({}, { id: item.t_id, name: item.t_name})
       })
       this.projects= this.origin_projects.map((item) => {
-        return Object.assign({}, { id: item.p_id, name: item.p_name, teamid: item.p_tid})
+        return Object.assign({}, { id: item.p_id, name: item.p_name, teamid: item.p_tid,p_description:item.p_description,p_creator:item.p_creator,p_create_time:item.p_create_time,p_doc_count:item.p_doc_count})
       })
       console.log(this.teams)
     });
@@ -102,10 +102,14 @@ export default {
       window.localStorage.setItem('tname',tname);
       this.$router.push('/TeamManage/'+id);
     },
-    projectjump(id,name,tname){
+    projectjump(id,name,tname,p_description,p_creator,p_create_time,p_doc_count){
       window.localStorage.setItem('pid',id);
       window.localStorage.setItem('pname',name);
       window.localStorage.setItem('tname',tname);
+      window.localStorage.setItem('pintro',p_description);
+      window.localStorage.setItem('p_creator',p_creator);
+      window.localStorage.setItem('p_create_time',p_create_time);
+      window.localStorage.setItem('p_doc_count',p_doc_count);
       this.$router.push('/designManage/'+id);
     },
   }

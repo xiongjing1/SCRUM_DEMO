@@ -16,6 +16,9 @@
             </div>
           </div>
           <div class="buttons">
+            <div class="document-center" v-on:click="JumpToProjectManage()">
+              文档中心
+            </div>
             <div class="manage-project" v-on:click="JumpToProjectManage()">
               项目管理
             </div>
@@ -216,17 +219,17 @@
               <div class="leader-nickname">
                 <img src="../assets/user.png" class="leader-img-size">
                 <div class="nickname">创建用户</div>
-                <div class="name-info">徐亦佳</div>
+                <div class="name-info">{{ this.p_creator }}</div>
               </div>
               <div class="leader-email">
                 <img src="../assets/time.png" class="leader-img-size">
                 <div class="email">创建时间</div>
-                <div class="email-info">2022-8-3 14：22</div>
+                <div class="email-info">{{ this.p_create_time }}</div>
               </div>
               <div class="leader-active">
                 <img src="../assets/document.png" class="leader-img-size">
                 <div class="active">文档数目</div>
-                <div class="active-info">5</div>
+                <div class="active-info">{{ this.p_doc_count }}</div>
               </div>
             </div>
             <el-divider></el-divider>
@@ -545,6 +548,9 @@ export default {
       recover:false,
       remove:false,
       pintro:window.localStorage.getItem('pintro'),
+      p_creator:window.localStorage.getItem('p_creator'),
+      p_create_time:window.localStorage.getItem('p_create_time'),
+      p_doc_count:window.localStorage.getItem('p_doc_count'),
     }
   }
 };
@@ -575,14 +581,6 @@ export default {
   display: flex;
   flex-direction: row;
   width: 300px;
-  height: 80px;
-}
-.buttons{
-  display: flex;
-  margin-left: 10px;
-  padding-top: 30px;
-  padding-left:700px;
-  width: 350px;
   height: 80px;
 }
 .choose-box{
@@ -694,7 +692,6 @@ export default {
   padding-top: 10px;
   width: 70px;
   height: 70px;
-
 }
 .TeamName{
   padding-top: 20px;
@@ -704,6 +701,15 @@ export default {
   font-size: 30px;
   font-family: "Berlin Sans FB Demi";
 }
+.buttons{
+  float: left;
+  margin-left:10px;
+  padding-left: 15px;
+  margin-top:0px;
+  padding-top: 20px;
+  width: 400px;
+  height: 60px;
+}
 .manage-project{
   width: 80px;
   height: 28px;
@@ -712,11 +718,28 @@ export default {
   outline-color: #2c3e50;
   cursor: pointer;
   padding-top:12px;
-  margin-left:-30px;
+  float: left;
   margin-top: 10px;
   font-size: 14px;
+  margin-left: 15px;
 }
 .manage-project:hover{
+  color: rgba(23,43,72,0.45);
+}
+.document-center{
+  width: 80px;
+  height: 28px;
+  border: 2px solid;
+  border-radius: 3px;
+  outline-color: #2c3e50;
+  cursor: pointer;
+  padding-top:12px;
+  float: left;
+  margin-top: 10px;
+  margin-left: 9px;
+  font-size: 14px;
+}
+.document-center:hover{
   color: rgba(23,43,72,0.45);
 }
 .list-members{
@@ -728,6 +751,7 @@ export default {
   cursor: pointer;
   padding-top:12px;
   margin-top: 10px;
+  float: left;
   font-size: 14px;
   margin-left: 15px;
 }
@@ -747,6 +771,7 @@ export default {
   margin-left: 15px;
   color: #2c3e50;
   letter-spacing: 3px;
+  float: left;
 }
 .more:hover{
   color: rgba(23,43,72,0.45);
