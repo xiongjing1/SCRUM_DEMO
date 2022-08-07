@@ -43,14 +43,14 @@
                   <span>确认要删除团队吗？</span>
                   <span slot="footer" class="dialog-footer">
                               <el-button @click="removeTeam = false" >取 消</el-button>
-                              <el-button type="primary" @click="removeTeam = false;" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="removeTeam = false;DelteTeam();update();" class="el-buttons">确 定</el-button>
                         </span>
                 </el-dialog>
                 <el-dialog title="Rename" :visible.sync="rename" width="350px">
                   <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                   <div slot="footer" class="rename-footer">
                     <el-button @click="rename = false">取 消</el-button>
-                    <el-button @click="rename = false" class="el-buttons">确 定</el-button>
+                    <el-button @click="rename = false;RenameTeam();update();" class="el-buttons">确 定</el-button>
                   </div>
                 </el-dialog>
                 <el-dialog title="重新上传图标" :visible.sync="changeIcon" width="400px">
@@ -65,7 +65,7 @@
                   </el-upload>
                   <div slot="footer" class="photo-footer">
                     <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
-                    <el-button @click="changeIcon = false" class="yes-buttons">确 定</el-button>
+                    <el-button @click="changeIcon = false;" class="yes-buttons">确 定</el-button>
                   </div>
                 </el-dialog>
               </el-dropdown>
@@ -98,9 +98,9 @@
               <div class="project-main">
                 <div class="project" v-for="(item,index) in currentPageData" :key="index" >
                   <div class="project-mode">
-                    <div class="project-info" v-on:click="JumpTodesignManage(item.ID)">
+                    <div class="project-info" v-on:click="JumpTodesignManage(item.ID,item.project_name,item.description)">
                       <div class="project-name">
-                        {{item.project_name}}{{item.ID}}
+                        {{item.project_name}}
                       </div>
                       <div class="project-leader">
                         <img src="../assets/build.png" class="project-build-img">
@@ -113,7 +113,7 @@
                         <div class="project-lately-edit-time">{{item.modified_date}}</div>
                       </div>
                     </div>
-                    <div class="project-img" v-on:click="JumpTodesignManage()">
+                    <div class="project-img" v-on:click="JumpTodesignManage(item.ID,item.project_name,item.description)">
                       <img src="../assets/project.png" class="img-size">
                     </div>
                     <div class="project-operation">
@@ -174,13 +174,13 @@
               </textarea>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="editSummary = false">取 消</el-button>
-                  <el-button @click="editSummary = false" class="el-buttons">确 定</el-button>
+                  <el-button @click="editSummary = false;Edit();update();" class="el-buttons">确 定</el-button>
                 </div>
               </el-dialog>
             </div>
 
             <div class="team-content">
-              简介内容
+              {{this.tintro}}
             </div>
             <el-divider></el-divider>
             <div class="team-leader">
@@ -287,6 +287,7 @@ export default {
           .then(response => {
             if(response.status === 200){
               console.log(response.data.message);
+              window.localStorage.setItem('pid',response.data.id)
             }
             else if(response.status === 404){
               console.log(response.data.message);
@@ -294,7 +295,13 @@ export default {
             else{
               console.log(response.data.message);
             }
-            this.update();
+            window.localStorage.setItem('pintro',this.Projectdescriptioninput)
+            this.$router.push({
+              name:'ProtoTypeView',
+              params:{
+                pid:window.localStorage.getItem('pid')
+              }
+            });
           })
       var newproject={
         projectName:this.Projectnameinput,
@@ -383,9 +390,11 @@ export default {
         }
       });
     },
-    JumpTodesignManage(pid){
+    JumpTodesignManage(pid,pname,pintro){
       let storage = window.localStorage;
       storage.setItem('pid',pid);
+      storage.setItem('pname',pname);
+      storage.setItem('pintro',pintro);
       this.$router.push({
         name:'designManage',
         params:{
@@ -408,7 +417,7 @@ export default {
     getList(){
       if(this.currentPage===1){
         console.log('fen')
-        this.currentPageData = this.projectList.slice(1, 4);
+        this.currentPageData = this.projectList.slice(0, 3);
       }else{
         let begin = (this.currentPage - 1) * this.pageSize;
         let end = this.currentPage * this.pageSize;
@@ -441,7 +450,70 @@ export default {
               console.log(response.data.message);
             }
           })
-    }
+    },
+    Edit(){
+      console.log(this.inviteEmail)
+      let param = new FormData() // 创建form对象
+      param.append('is_rewrite_introduction', this.addmember)// 通过append向form对象添加数据
+      param.append('new_introduction', this.Summarycontent)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 5000) {
+              this.$message.success(response.data.msg)
+            }else {
+              this.$message.error("编辑简介失败！");
+            }
+          })
+    },
+    DelteTeam(){
+      let param = new FormData() // 创建form对象
+      param.append('is_delete_team', this.addmember)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 6000) {
+              this.$message.success(response.data.msg)
+              window.localStorage.setItem('tid',response.data.default_tid);
+              this.$router.push({
+                name:'TeamManage',
+                params:{
+                  tid:response.data.default_tid
+                }
+              });
+            }else{
+              this.$message.error(response.data.msg);
+            }
+          })
+    },
+    RenameTeam(){
+      window.localStorage.setItem('tname',this.nameInput);
+      let param = new FormData() // 创建form对象
+      param.append('is_rename_team', this.addmember)
+      param.append('new_name', this.nameInput)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 7000) {
+              this.$message.success(response.data.msg)
+              this.update();
+            }else{
+              this.$message.error(response.data.msg);
+            }
+          })
+    },
   },
   data(){
     return{
@@ -528,6 +600,7 @@ export default {
       total:2,
       currentPageData:[],
       allprojectList:[],
+      tintro:window.localStorage.getItem('tintro'),
     }
   }
 };

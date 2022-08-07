@@ -15,7 +15,8 @@
     <div id="left" :style="{height: this.wholeHeight}">
       <div class="title">
         <img src="../assets/PrototypeMaterial/back.png" height="25px" class="backlogo" @click="BackToDesignManage" alt="">
-        <div style="width:200px;height: 40px; color: #FFFFFF; font-size: 16px; letter-spacing: 2px;margin-top: 13px">项目名称</div>
+        <div style="width:200px;height: 40px; color: #FFFFFF; font-size: 16px; letter-spacing: 2px;margin-top: 13px">
+          {{ projName }}</div>
       </div>
       <div id="menu" >
         <el-button  id="buttonAdd" @click="dialogAddVisible = true" icon="el-icon-plus">添加页面</el-button>
@@ -33,8 +34,8 @@
       </div>
       <div id="list">
         <ul style="padding: 0; width: 100%; margin: 0">
-          <li v-for="(el,index) in prototypeData" :class="{classSelected:idSelected===el.id}"
-              :key="el.id" class="prototypeList"  @click="changeCanvas(el,index)">{{el.name}}
+          <li v-for="(el,index) in prototypeData" :class="{classSelected:idSelected===el.ID}"
+              :key="el.ID" class="prototypeList"  @click="changeCanvas(el,index)">{{el.name}}
             <i class="el-icon-edit" style="padding: 5px" @click.stop="showChangeDialog(el)"></i>
             <i class="el-icon-delete-solid" @click.stop="deletePrototype(el.ID)"></i>
           </li>
@@ -169,6 +170,7 @@ export default {
       dataArr:{},
       pictureData:[],
       wholeHeight:0,
+      projName:window.localStorage.getItem('pname')
     }
 
   },

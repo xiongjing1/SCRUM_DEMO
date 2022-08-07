@@ -43,14 +43,14 @@
                   <span>确认要删除团队吗？</span>
                   <span slot="footer" class="dialog-footer">
                               <el-button @click="removeTeam = false" >取 消</el-button>
-                              <el-button type="primary" @click="removeTeam = false;" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="removeTeam = false;DelteTeam();update();" class="el-buttons">确 定</el-button>
                         </span>
                 </el-dialog>
                 <el-dialog title="Rename" :visible.sync="rename" width="350px">
                   <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                   <div slot="footer" class="rename-footer">
                     <el-button @click="rename = false">取 消</el-button>
-                    <el-button @click="rename = false" class="el-buttons">确 定</el-button>
+                    <el-button @click="rename = false;RenameTeam();update();" class="el-buttons">确 定</el-button>
                   </div>
                 </el-dialog>
                 <el-dialog title="重新上传图标" :visible.sync="changeIcon" width="400px">
@@ -77,7 +77,7 @@
           <div class="left-side">
             <div class="members-top-side">
               <div class="project-name">
-                Project's Name
+                {{ this.pname}}
               </div>
             </div>
             <div class="search-mode">
@@ -210,7 +210,7 @@
             </div>
 
             <div class="team-content">
-              简介内容
+              {{ this.pintro }}
             </div>
             <el-divider></el-divider>
             <div class="team-leader">
@@ -272,6 +272,7 @@ export default {
     axios.post('http://43.138.21.64:8080/doc/get/all',formData,config)
         .then(response => {
           if(response.status === 200){
+            console.log("ok");
             that.tableData = response.data.message.document.results || [];
             console.log('文档列表获取成功');
             this.load();
@@ -475,11 +476,60 @@ export default {
         this.getList()
       }, 50)
     },
+    DelteTeam(){
+      let param = new FormData() // 创建form对象
+      param.append('is_delete_team', this.addmember)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 6000) {
+              this.$message.success(response.data.msg)
+              window.localStorage.setItem('tid',response.data.default_tid);
+              this.$router.push({
+                name:'TeamManage',
+                params:{
+                  tid:response.data.default_tid
+                }
+              });
+            }else{
+              this.$message.error(response.data.msg);
+            }
+          })
+    },
+    RenameTeam(){
+      window.localStorage.setItem('tname',this.nameInput);
+      let param = new FormData() // 创建form对象
+      param.append('is_rename_team', this.addmember)
+      param.append('new_name', this.nameInput)// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 7000) {
+              this.$message.success(response.data.msg)
+              this.update();
+            }else{
+              this.$message.error(response.data.msg);
+            }
+          })
+    },
+    update(){
+      this.reload()
+      console.log('刷新页面')
+    },
   },
   data(){
     return{
       input:'',
       tname:window.localStorage.getItem('tname'),
+      pname:window.localStorage.getItem('pname'),
       input1:'',
       options: [{
         value: '选项1',
@@ -534,6 +584,7 @@ export default {
       currentPageData:[],
       total:2,
       pageSize:6,
+      pintro:window.localStorage.getItem('pintro'),
     }
   }
 };
