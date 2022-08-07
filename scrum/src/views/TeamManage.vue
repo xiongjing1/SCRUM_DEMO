@@ -1,5 +1,5 @@
 <template>
-  <div class="web">
+  <div>
     <div class="head">
       <HeadSide></HeadSide>
     </div>
@@ -623,6 +623,7 @@ export default {
 
 <style scoped>
 .whole{
+
 }
 .main{
   position: absolute;
@@ -1115,5 +1116,10 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.web{
+  width: 100%;
+  overflow: hidden;
+  background-color: #fe686c;
 }
 </style>
