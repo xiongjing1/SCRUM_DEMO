@@ -9,7 +9,7 @@
         <div class="title">
           <div class="team">
             <div class="TeamPhoto">
-              <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
+              <img :src="this.theadshot" style="height: 60px;width:60px;background-color:cornflowerblue;margin-top: 10px;float: left;margin-left: 20px;border-radius: 100%">
             </div>
             <div class="TeamName">
               {{ this.tname }}
@@ -402,6 +402,7 @@ export default {
       p_creator:window.localStorage.getItem('p_creator'),
       p_create_time:window.localStorage.getItem('p_create_time'),
       p_doc_count:window.localStorage.getItem('p_doc_count'),
+      theadshot:window.localStorage.getItem('theadshot'),
     }
   }
 };
