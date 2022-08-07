@@ -5,10 +5,10 @@
   <div class="username">{{ nickname }}</div>
   <div class="email">{{email}}</div>
   <div class="picture">
-   <img src="../assets/avatar.jpg" alt="">
+   <img :src="imgStr" alt="">
   </div>
   <div class="message">
-    <img src="../assets/message.png" height="20px" alt=" "  style="margin-top: 15px" v-on:click="ifNotification=!ifNotification">
+    <img src="../assets/message.png" height="20px" alt=" "  style="margin-top: 15px" v-on:click="changeN">
   </div>
   <div class="setting">
     <img src="../assets/setting.png" height="20px" alt=" "  style="margin-top: 15px" v-on:click="begin_edit=true;ifNotification=false">
@@ -26,7 +26,7 @@
         <div class="underline"></div>
           <div class="user-header">
             <div class="edit-header">
-              <img src="../assets/avatar.jpg" alt="">
+              <img :src="imgStr" alt="">
             </div>
             <div class="upload-header" >Edit</div>
           </div>
@@ -55,7 +55,7 @@
         <el-button type="primary" class="save-btn" v-on:click="reset_nickname()">Save it</el-button>
       </div>
     </div>
-    <input type="file" name="image" accept="image/*" class="real-button" v-if="begin_edit&&!modify_nickname">
+    <input type="file" name="image" accept="image/*" class="real-button" v-if="begin_edit&&!modify_nickname" v-on:change="onchangeImgFun">
    <div class="thewhole" v-if="ifNotification">
      <div class="atip"></div>
     <div class="notification" >
@@ -64,43 +64,43 @@
       <div class="n-context">
       <ul class="newsList" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="5">
         <div v-for="(item,index) in newsList" v-bind:key="index" class="message-block">
-          <div class="type1" v-if="item.type===1">
+          <div class="type1"  v-if="item.type==='1'">
             <div class="txt-part">
-            <div class="var">{{item.username}}</div>
+            <div class="var">{{item.sender_name}}</div>
             <div class="const">&nbsp;邀请你加入&nbsp;</div>
-            <div class="var">{{item.team}}</div>
+            <div class="var">{{item.team_name}}</div>
             <div class="const">&nbsp;团队&nbsp;</div>
             </div>
-            <div type="primary" class="sure-btn" v-if="!item.accept" v-on:click="item.accept=true">Accept</div>
-            <div type="primary" class="after-sure" v-if="item.accept" >已同意</div>
+            <div type="primary" class="sure-btn" v-if="item.accept==='0'" v-on:click="acceptInvitation(item)">Accept</div>
+            <div type="primary" class="after-sure" v-if="item.accept==='1'" >已同意</div>
           </div>
-          <div class="type1" v-if="item.type===2">
-            <div class="var">{{item.username}}</div>
+          <div class="type1" v-if="item.type==='2'">
+            <div class="var">{{item.sender_name}}</div>
             <div class="const">&nbsp;将你移出&nbsp;</div>
-            <div class="var">{{item.team}}</div>
+            <div class="var">{{item.team_name}}</div>
             <div class="const">&nbsp;团队&nbsp;</div>
           </div>
-          <div class="type1" v-if="item.type===3">
-            <div class="var">{{item.username}}</div>
+          <div class="type1" v-if="item.type==='3'">
+            <div class="var">{{item.sender_name}}</div>
             <div class="const">&nbsp;将你在&nbsp;</div>
-            <div class="var">{{item.team}}</div>
+            <div class="var">{{item.team_name}}</div>
             <div class="const">&nbsp;团队中的身份改变为&nbsp;</div>
             <div class="var">{{item.identity}}</div>
           </div>
-          <div class="type1" v-if="item.type===4">
-            <div class="var">{{item.username}}</div>
+          <div class="type1" v-if="item.type==='4'">
+            <div class="var">{{item.sender_name}}</div>
             <div class="const">&nbsp;将你加入&nbsp;</div>
-            <div class="var">{{item.team}}</div>
+            <div class="var">{{item.team_name}}</div>
             <div class="const">&nbsp;团队的&nbsp;</div>
-            <div class="var">{{item.project}}</div>
+            <div class="var">{{item.project_name}}</div>
             <div class="const">&nbsp;项目&nbsp;</div>
           </div>
-          <div class="type1" v-if="item.type===5">
-            <div class="var">{{item.username}}</div>
+          <div class="type1" v-if="item.type==='5'">
+            <div class="var">{{item.sender_name}}</div>
             <div class="const">&nbsp;将你移出&nbsp;</div>
-            <div class="var">{{item.team}}</div>
+            <div class="var">{{item.team_name}}</div>
             <div class="const">&nbsp;团队的&nbsp;</div>
-            <div class="var">{{item.project}}</div>
+            <div class="var">{{item.project_name}}</div>
             <div class="const">&nbsp;项目&nbsp;</div>
           </div>
         </div>
@@ -130,17 +130,19 @@ export default {
       modify_nickname:false,
       new_nickname:'',
       count: 0,
+      imgStr:require('../assets/avatar.jpg'),
       busy: false, //是否正在加载过程中
+      /*
       newsList:[
         {type:1,username:'KA',team:'Hong Team',identity:'',project:'',accept:false},
-        {type:2,username:'KA',team:'Hong Team',identity:'Boss',project:'',accept:false },
-        {type:3,username:'KA',team:'Hong Team',identity:'boss',project:'' ,accept:false},
+        {type:2,username:'KA',team:'Hong Team',identity:'管理员',project:'',accept:false },
+        {type:3,username:'KA',team:'Hong Team',identity:'普通用户',project:'' ,accept:false},
         {type:4,username:'KA',team:'Hong Team',identity:'',project:'APTITUDE',accept:false },
         {type:5,username:'KA',team:'Hong Team',identity:'',project:'APTITUDE' ,accept:false},
         {type:1,username:'KA',team:'Hong Team',identity:'',project:'' ,accept:false},
         {type:1,username:'KA',team:'Hong Team',identity:'',project:'',accept:false },
-
-      ],
+      ],*/
+      newsList:[],
       moreList : [],
       i : 0,
       droping : false,
@@ -178,6 +180,32 @@ export default {
           })
 
     },
+    beginLoad(){
+      this.$axios.get('http://43.138.21.64:8080/user/'+ window.localStorage.getItem('uid')+'/message').then((res) => {
+        this.newsList=res.data.messages;
+        console.log( this.newsList);
+      })
+
+    },
+    acceptInvitation(item){
+      let param = new FormData()
+      param.append('mid', item.mid)// 通过append向form对象添加数据
+      param.append('invite_team_id', item.team_id)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+ window.localStorage.getItem('uid')+'/message', param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 1000) {
+              item.accept='1';
+            }else{
+              this.$message.error("发生错误");
+            }
+          })
+    },
+
       loadMore(){
         // console.log(111);
         var _vm = this;
@@ -186,24 +214,88 @@ export default {
         this.dropDown = false;
         _vm.i += 1;
         // setTimeout(() => {
-
-       // console.log(newsList);
-
-        if(this.moreList.length == 0){
+        this.$axios.get('http://43.138.21.64:8080/user/'+ window.localStorage.getItem('uid')+'message').then((res) => {
+          // console.log(newsList);
+          this.newsList=res.data;
+          console.log( this.newsList);
+          if (this.moreList.length == 0) {
             _vm.noMore = true;
             _vm.droping = false;
             _vm.busy = true;
-          }else{
+          } else {
             _vm.droping = true;
             _vm.noMore = false;
-            _vm.moreList.forEach(function(item){
+            _vm.moreList.forEach(function (item) {
               _vm.newsList.push(item);
             })
           }
 
-        this.busy = false;
-        // }, 1000);
+          this.busy = false;
+      //     }, 1000);
+        })
+      },
+    changeN(){
+      this.ifNotification=!this.ifNotification;
+      this.beginLoad();
+    },
+    onchangeImgFun (e) {
+      this.file = e.target.files[0]
+      console.log(e.target.files[0])
+      let file=this.file
+      console.log(this.file)
+      // 获取图⽚的⼤⼩，做⼤⼩限制有⽤
+      let imgSize = file.size
+      console.log(imgSize)
+      var _this = this // this指向问题，所以在外⾯先定义
+      // ⽐如上传头像限制5M⼤⼩，这⾥获取的⼤⼩单位是b
+      if (imgSize <= 500 * 1024) {
+        // 合格
+        _this.errorStr = ''
+        console.log('⼤⼩合适')
+        // 开始渲染选择的图⽚
+        // 本地路径⽅法 1
+        // this.imgStr = window.URL.createObjectURL(e.target.files[0])
+        // console.log(window.URL.createObjectURL(e.target.files[0])) // 获取当前⽂件的信息
+        // base64⽅法 2
+        var reader = new FileReader()
+        reader.readAsDataURL(file) // 读出 base64
+        reader.onloadend = function () {
+          // 图⽚的 base64 格式, 可以直接当成 img 的 src 属性值
+          var dataURL = reader.result
+          //    console.log(dataURL)
+
+          // console.log(this.imgurl)
+          _this.imgStr = dataURL
+          // 下⾯逻辑处理
+        }
+      } else {
+        this.$message.error("图⽚⼤⼩超出范围500kb");
+        _this.errorStr = '图⽚⼤⼩超出范围500kb'
       }
+      this.imgurl2= _this.imgStr
+      console.log("he"+this.imgurl2)
+      console.log(this.file)
+
+      let param = new FormData() // 创建form对象
+      param.append('new_headshot', this.file)// 通过append向form对象添加数据
+      console.log("why"+param.get('new_headshot')) // FormData私有类对象，访问不到，可以通过get判断值是否传进去
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+ window.localStorage.getItem('uid')+'/info', param,config)
+          .then(response => {
+            console.log(response.data)
+            if (response.data.errno === 1000) {
+              console.log("yes");
+              this.imgStr='http://43.138.21.64:8080'+response.data.headshot_url;
+              console.log(this.imgStr);
+              let storage = window.localStorage;
+              storage.setItem('headshot',this.imgStr);
+            }else{
+              this.$message.error("发生错误");
+            }
+          })
+    },
 
 
   },
@@ -213,6 +305,7 @@ export default {
     this.nickname=storage.getItem('nickname');
     this.name=storage.getItem('name');
     this.uid=storage.getItem('uid');
+    this.imgStr=storage.getItem('headshot');
     this.wholeHeight=document.documentElement.scrollHeight-50+'px';
   }
 }
@@ -223,9 +316,10 @@ export default {
   position:absolute;
   top:0;
   width: 100%;
-  min-width: 1520px;
+  min-width: 1510px;
   height: 50px;
   background-color: #2C2C2C;
+  overflow: hidden;
 }
 .username{
   position: absolute;
@@ -387,7 +481,7 @@ export default {
   border-radius: 50%;
   overflow: hidden;
   text-align: left;
-  background-color: #2c3e50;
+  border-color: transparent;
 }
 .edit-header img {
   position: relative;

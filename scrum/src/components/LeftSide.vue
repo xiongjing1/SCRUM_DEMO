@@ -4,6 +4,7 @@
     <div class="team-inform">
       <img src="../assets/team.png" height="25px" alt=" " style="position: absolute; left: 15px;top:39px">
       <div class="team-title">My Teams</div>
+      <div class="real-team">
       <div class="ateam" v-for="(item,index) in teams" v-bind:key="index">
         <div class="team-part" v-on:click="teamjump(item.id,item.name)" >
           <div class="teamno" :style="{'background-color':color[index%4]}"></div>
@@ -14,6 +15,7 @@
             <div class="projectname">{{ item2.name }}</div>
           </div>
         </div>
+      </div>
       </div>
       <div class="team-part">
         <img src="../assets/add.png" height="16px" alt=" " style="float: left;margin-left: 16px; margin-top: 10px;">
@@ -132,8 +134,27 @@ export default {
   width: 230px;
   margin-top: 20px;
 
-}
 
+}
+::-webkit-scrollbar{
+  width: 7px;
+}
+::-webkit-scrollbar-track{
+  background-color: #f5f5f5;
+  -webkit-box-shadow:inset 0 0 3px rgba(0,0,0,0.1);
+  border-radius:5px;
+}
+::-webkit-scrollbar-thumb{
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-button{
+  background-color: #eee;
+  display: none;
+}
+::-webkit-scrollbar-corner{
+  background-color: black;
+}
 .team-title {
   width: 100px;
   height: 50px;
@@ -257,5 +278,9 @@ export default {
 .save-btn{
   margin-top: 30px;
   margin-left: 330px;
+}
+.real-team{
+  overflow: auto;
+  height: 600px;
 }
 </style>
