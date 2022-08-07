@@ -16,6 +16,9 @@
             </div>
           </div>
           <div class="buttons">
+            <div class="document-center" v-on:click="JumpToProjectManage()">
+              文档中心
+            </div>
             <div class="manage-project" v-on:click="JumpToProjectManage()">
               项目管理
             </div>
@@ -90,15 +93,48 @@
               <div class="project-trash" v-on:click="JumpToProjectTrash()">
                 trash
               </div>
+              <div class="date-choose">
+                <el-date-picker
+                    v-model="datechoose"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    class="date-choose-ed">
+                </el-date-picker>
+              </div>
+              <div class="search-range">
+                <el-select v-model="value" placeholder="搜索范围">
+                  <el-option
+                      v-for="item in options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                  </el-option>
+                </el-select>
+              </div>
               <div class="project-search">
-                <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
+                <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump()"></el-input>
+              </div>
+              <div class="search-button" @click="searchjump()">
+                search
+              </div>
+            </div>
+            <div class="project-second-side">
+              <div class="sort">
+                <el-cascader
+                    v-model="sortout"
+                    :options="sort"
+                    placeholder="排序方式"
+                    clearable
+                    @change="handleChange"></el-cascader>
               </div>
             </div>
             <div class="project-total">
               <div class="project-main">
                 <div class="project" v-for="(item,index) in currentPageData" :key="index" >
                   <div class="project-mode">
-                    <div class="project-info" v-on:click="JumpTodesignManage(item.ID,item.project_name,item.description)">
+                    <div class="project-info" v-on:click="JumpTodesignManage(item.ID,item.project_name,item.description,item.creator_date,item.creator_id)">
                       <div class="project-name">
                         {{item.project_name}}
                       </div>
@@ -141,6 +177,9 @@
                               <el-button type="primary" @click="deletedProject = false;notice(current);update();" class="el-buttons">确 定</el-button>
                         </span>
                         </el-dialog>
+                      </div>
+                      <div class="project-operation-copy">
+                        <img src="../assets/copy.png" class="project-copy-img" @click="copyProject(item.ID)">
                       </div>
                     </div>
                   </div>
@@ -353,8 +392,135 @@ export default {
           })
       this.projectList[index].projectName=this.projectList[index].nameInput;
     },
+    copyProject(pid){
+      let param = new FormData() // 创建form对象
+      param.append('projectID', pid)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/project/copy', param,config)
+          .then(response => {
+            console.log(response.data.success)
+            if(response.data.success===true){
+              this.$message.success("复制成功")
+            }else{
+              this.$message.error("复制失败")
+            }
+          })
+    },
     searchjump(){
-
+      console.log("date-start "+this.datechoose[0])
+      console.log("date-end "+this.datechoose[1])
+      console.log("value "+this.value)
+      console.log("input "+this.input)
+      if(this.datechoose[0]===undefined){
+        console.log("no date")
+      }
+      let param = new FormData() // 创建form对象
+      param.append('searchKey', this.input)
+      param.append('sortMethod', 'time')
+      param.append('sortOrder', 'desc')
+      param.append('startDate',this.datechoose[0])// 通过append向form对象添加数据
+      param.append('endDate',this.datechoose[1])
+      param.append('teamID',window.localStorage.getItem('tid'))
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      var searchMode=''
+      searchMode=this.value
+      if(this.value===''){
+        console.log("no-value")
+        searchMode='search'
+        console.log(searchMode)
+      }
+      axios.post('http://43.138.21.64:8080/project/'+searchMode, param,config)
+          .then(response => {
+            console.log(response.data.success)
+            if(response.data.success===true){
+              this.data=response.data.data
+              console.log(response.data.data)
+              this.allprojectList=this.data.results
+              this.alltotal=this.data.totalResults
+              this.total=0
+              this.projectList=[]
+              this.alltotal=this.allprojectList.length
+              for(var i=0;i<this.alltotal;i++) {
+                if (this.allprojectList[i].is_recycled === false) {
+                  this.projectList.push(this.allprojectList[i])
+                  this.total = this.total + 1
+                }
+              }
+              this.currentPage=1;
+              this.load();
+            }else{
+              console.log("没有相关结果")
+              this.total=0;
+              this.projectList=[];
+              this.currentPage=1;
+              this.load();
+            }
+          })
+    },
+    handleChange(){
+      console.log("way "+this.sortout[0])
+      console.log("sort "+this.sortout[1])
+      console.log("date-start "+this.datechoose[0])
+      console.log("date-end "+this.datechoose[1])
+      console.log("value "+this.value)
+      console.log("input "+this.input)
+      var way=''
+      var order=''
+      way=this.sortout[0]
+      order=this.sortout[1]
+      if(this.sortout[0]===undefined){
+        console.log("no sort")
+        way='time'
+        order='desc'
+      }
+      let param = new FormData() // 创建form对象
+      param.append('searchKey', this.input)
+      param.append('sortMethod', way)
+      param.append('sortOrder', order)
+      param.append('startDate',this.datechoose[0])// 通过append向form对象添加数据
+      param.append('endDate',this.datechoose[1])
+      param.append('teamID',window.localStorage.getItem('tid'))
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      var searchMode=''
+      searchMode=this.value
+      if(this.value===''){
+        console.log("no-value")
+        searchMode='search'
+        console.log(searchMode)
+      }
+      axios.post('http://43.138.21.64:8080/project/'+searchMode, param,config)
+          .then(response => {
+            console.log(response.data.success)
+            if(response.data.success===true){
+              this.data=response.data.data
+              console.log(response.data.data)
+              this.allprojectList=this.data.results
+              this.alltotal=this.data.totalResults
+              this.total=0
+              this.projectList=[]
+              this.alltotal=this.allprojectList.length
+              for(var i=0;i<this.alltotal;i++) {
+                if (this.allprojectList[i].is_recycled === false) {
+                  this.projectList.push(this.allprojectList[i])
+                  this.total = this.total + 1
+                }
+              }
+              this.currentPage=1;
+              this.load();
+            }else{
+              console.log("没有相关结果")
+              this.total=0;
+              this.projectList=[];
+              this.currentPage=1;
+              this.load();
+            }
+          })
     },
     deleteRow(row){
       console.log(row);
@@ -390,11 +556,13 @@ export default {
         }
       });
     },
-    JumpTodesignManage(pid,pname,pintro){
+    JumpTodesignManage(pid,pname,pintro,p_create_time,p_creator){
       let storage = window.localStorage;
       storage.setItem('pid',pid);
       storage.setItem('pname',pname);
       storage.setItem('pintro',pintro);
+      storage.setItem('p_create_time',p_create_time);
+      storage.setItem('p_creator',p_creator);
       this.$router.push({
         name:'designManage',
         params:{
@@ -526,59 +694,50 @@ export default {
       current:'',
       pageSize:3,
       alltotal:'',
+      sortout:[],
+      datechoose:'',
+      sort:[{
+        value: 'name',
+        label: '按项目名称',
+        children: [{
+          value: 'asc',
+          label: '顺序'
+        }, {
+          value: 'desc',
+          label: '逆序'
+        }]
+      },{
+        value: 'time',
+        label: '按创建时间',
+        children: [{
+          value: 'asc',
+          label: '顺序'
+        }, {
+          value: 'desc',
+          label: '逆序'
+        }]
+      },{
+        value: 'creator',
+        label: '按创建者',
+        children: [{
+          value: 'asc',
+          label: '顺序'
+        }, {
+          value: 'desc',
+          label: '逆序'
+        }]
+      }],
       options: [{
-        value: '选项1',
-        label: '全部成员'
+        value: 'search',
+        label: '不限'
+      },{
+        value: 'creator',
+        label: '按创建者'
       }, {
-        value: '选项2',
-        label: '管理员'
-      }, {
-        value: '选项3',
-        label: '普通成员'
+        value: 'name',
+        label: '按项目名'
       }],
-      tableData: [{
-        name: '王小虎1',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }, {
-        name: '王小虎2',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }, {
-        name: '王小虎3',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }, {
-        name: '王小虎4',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }, {
-        name: '王小虎5',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }, {
-        name: '王小虎6',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }, {
-        name: '王小虎7',
-        nickname:'tiger',
-        email: '20373661@qq.com',
-        lastactive: '5分钟前',
-        identity: '管理员',
-      }],
+      tableData: [],
       value:'',
       removeMember: false,
       currentRow:'',
@@ -629,16 +788,15 @@ export default {
   height: 80px;
 }
 .buttons{
-
   float: left;
-  margin-left:681px;
-  margin-top: 14px;
-  width: 290px;
+  margin-left:870px;
+  margin-top: -60px;
+  width: 400px;
   height: 60px;
 }
 
 .content{
-
+    height: 750px;
 }
 .left-side{
   height: 600px;
@@ -667,6 +825,21 @@ export default {
   font-size: 30px;
   font-family: "Berlin Sans FB Demi";
 }
+.document-center{
+  width: 80px;
+  height: 28px;
+  border: 2px solid;
+  border-radius: 3px;
+  outline-color: #2c3e50;
+  cursor: pointer;
+  padding-top:12px;
+  float: left;
+  margin-top: 10px;
+  font-size: 14px;
+}
+.document-center:hover{
+  color: rgba(23,43,72,0.45);
+}
 .manage-project{
   width: 80px;
   height: 28px;
@@ -678,6 +851,7 @@ export default {
   float: left;
   margin-top: 10px;
   font-size: 14px;
+  margin-left: 15px;
 }
 .manage-project:hover{
   color: rgba(23,43,72,0.45);
@@ -735,10 +909,13 @@ export default {
   width: 100%;
   margin-top: 0px;
 }
-.members-second-side{
-
+.project-second-side{
+  margin-top: 90px;
   height: 70px;
   width: 100%;
+  margin-left: -335px;
+  left: -100px;
+  float: left;
 }
 
 .pagination{
@@ -763,6 +940,7 @@ export default {
   font-family: "Berlin Sans FB Demi";
   position: absolute;
   float: left;
+  z-index: 5;
 }
 .project-add:hover{
   color: #E9E9E9;
@@ -783,25 +961,67 @@ export default {
   color: #FFFFFF;
   background-color: #2c3e50;
   font-family: "Berlin Sans FB Demi";
-  z-index: 3;
+  z-index: 5;
   float: left;
 }
 .project-trash:hover{
   color: #E9E9E9;
 }
+.search-range{
+  padding-left:230px;
+  padding-top: 60px;
+  width: 110px;
+  margin-left: 160px;
+  top:65px;
+  left: 130px;
+  position: absolute;
+  float: left;
+  z-index: 3;
+}
+.date-choose{
+  padding-top: 66px;
+  padding-left: 290px;
+  position: absolute;
+  z-index: 4;
+  width: 190px;
+}
+.date-choose-ed{
+  width: 230px;
+  text-align: center;
+}
 .project-search{
-
   padding-left:400px;
   padding-top: 60px;
-  width: 20%;
+  width: 15%;
   justify-content: space-between;
-  margin-left: 50px;
+  margin-left: 110px;
   top:65px;
   left: 120px;
   position: absolute;
   float: left;
 }
-
+.search-button{
+  width: 90px;
+  height: 24px;
+  border: 2px solid;
+  border-radius: 5px;
+  outline-color: #2c3e50;
+  cursor: pointer;
+  padding-top:4px;
+  padding-bottom: 4px;
+  margin-left: 140px;
+  font-size: 18px;
+  top:130px;
+  left: 690px;
+  color: #FFFFFF;
+  background-color: #2c3e50;
+  font-family: "Berlin Sans FB Demi";
+  position: absolute;
+  float: left;
+}
+.search-button:hover{
+  color: #E9E9E9;
+}
 .team-summary{
   display: flex;
   padding-left:15px ;
@@ -1024,7 +1244,7 @@ export default {
   width: 100%;
   float: left;
   height: 600px;
-  margin-top: 60px;
+  margin-top: -20px;
 }
 .project{
   width: 100%;
@@ -1129,18 +1349,25 @@ export default {
   margin-top: 30px;
 }
 .project-operation{
-
-  float: right;
-  margin-left: 70px;
+  width: 180px;
+  float: left;
+  margin-left: 0px;
   margin-top: 50px;
 }
 .project-operation-rename{
-  margin-right: 40px;
-  margin-top: -20px;
+  float: left;
+  margin-left: 0px;
+  margin-top: 0px;
 }
 .project-operation-delete{
-  margin-top: 20px;
-  margin-right: 40px;
+  float: left;
+  margin-top: 0px;
+  margin-left: 30px;
+}
+.project-operation-copy{
+  float: left;
+  margin-top: 0px;
+  margin-left: 30px;
 }
 .project-rename-img{
 
@@ -1154,7 +1381,12 @@ export default {
   height: 32px;
   cursor: pointer;
 }
+.project-copy-img{
 
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
 /deep/.el-dropdown-menu:hover {
   border: none;
   color: #666;
