@@ -116,7 +116,7 @@
             <div class="members-main">
               <div class="table-leader">
                 <el-table
-                    :data="tableData"
+                    :data="currentPageData"
                     :header-cell-style="{'text-align':'center'}"
                     :cell-style="{'text-align':'center'}"
                     style="width: 100%"
@@ -126,21 +126,25 @@
                       prop="docname"
                       label="文件名"
                       width="200">
-                  </el-table-column>
-                  <el-table-column
-                      prop="builder"
-                      label="创建者"
-                      width="200">
+                    <template slot-scope="scope">
+                      <span style="margin-left: 10px">{{ scope.row.name }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column
                       prop="buildTime"
                       label="创建时间"
                       width="200">
+                    <template slot-scope="scope">
+                      <span style="margin-left: 10px">{{ scope.row.created_date }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column
                       prop="deleteTime"
                       label="删除时间"
                       width="180">
+                    <template slot-scope="scope">
+                      <span style="margin-left: 10px">{{ scope.row.modified_date }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column
                       label="操作"
@@ -165,7 +169,7 @@
                           <span>确认要恢复该文档吗？</span>
                           <span slot="footer" class="dialog-footer">
                               <el-button @click="recover = false">取 消</el-button>
-                              <el-button type="primary" @click="recover = false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="recover = false;" @click.native.prevent="RecoverProject(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                         </el-dialog>
                         <el-button
@@ -195,8 +199,11 @@
               <div class="pagination">
                 <el-pagination
                     background="true"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage"
+                    :page-size="this.pageSize"
                     layout="prev, pager, next"
-                    :total="1000">
+                    :total=total>
                 </el-pagination>
               </div>
             </div>
@@ -275,8 +282,30 @@ export default {
   },
   mounted() {
     document.body.style.backgroundColor="#FFFFFF";
+    const that=this;
+    let formData = new FormData() // 创建form对象
+    formData.append('projectID', window.localStorage.getItem('pid'));
+    let config = {
+      headers: {'Content-Type': 'multipart/form-data'}
+    } // 添加请求头
+    axios.post('http://43.138.21.64:8080/recyclebin/docs', formData,config)
+        .then(response => {
+          if(response.status === 200){
+            console.log(response.data.data.result);
+            that.tableData = response.data.data.result|| [];
+            console.log('文档列表获取成功');
+            this.load();
+          }
+          else {
+            console.log('文档列表获取失败');
+          }
+        })
   },
   methods:{
+    update(){
+      this.reload()
+      console.log('刷新页面')
+    },
     searchjump(){
 
     },
@@ -382,9 +411,49 @@ export default {
             }
           })
     },
-    update(){
-      this.reload()
-      console.log('刷新页面')
+    RecoverProject(row){
+      let param = new FormData() // 创建form对象
+      param.append('docsID', row.ID)// 通过append向form对象添加数据
+      param.append('docType', "3")// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/recyclebin/docs/restore', param,config)
+          .then(response => {
+            console.log("recover"+response.data.success)
+            if(response.data.success){
+              this.$message.success("恢复成功")
+            }else{
+              this.$message.error("恢复失败")
+            }
+          })
+    },
+    handleCurrentChange(val){
+      this.currentPage = val;
+      this.getList();
+    },
+    getList(){
+      this.searchData=[];
+      for(let i=this.tableData.length-1;i>=0;i--){
+        if(this.tableData[i].type==="document"){
+          this.searchData.push(this.tableData[i]);
+        }
+      }
+      this.total=this.searchData.length;
+      if(this.currentPage===1){
+        console.log('fen')
+        this.currentPageData = this.searchData.slice(0, 6);
+        console.log(this.currentPageData)
+      }else{
+        let begin = (this.currentPage - 1) * this.pageSize;
+        let end = this.currentPage * this.pageSize;
+        this.currentPageData = this.searchData.slice(begin, end);
+      }
+    },
+    load () {
+      setTimeout(() => {
+        this.getList()
+      }, 50)
     },
   },
   data(){
@@ -400,37 +469,20 @@ export default {
         value: '选项3',
         label: '普通成员'
       }],
-      tableData: [ {
-        docname: '文档2',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      }, {
-        docname: '文档3',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      },{
-        docname: '文档4',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      }, {
-        docname: '文档5',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      }, {
-        docname: '文档6',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      }, {
-        docname: '文档7',
-        builder:'tiger',
-        buildTime: '2022-08-03',
-        deleteTime: '5分钟前',
-      },],
+      tableData: [{
+        ID:'',
+        type:'',
+        name:'',
+        created_date:'',
+        modified_date:'',
+      }],
+      searchData:[{
+        ID:'',
+        type:'',
+        name:'',
+        created_date:'',
+        modified_date:'',
+      }],
       value:'',
       tname:window.localStorage.getItem('tname'),
       pname:window.localStorage.getItem('pname'),
@@ -450,6 +502,10 @@ export default {
       recover:false,
       remove:false,
       pintro:window.localStorage.getItem('pintro'),
+      currentPage: 1,
+      currentPageData:[],
+      total:2,
+      pageSize:6,
     }
   }
 };

@@ -300,6 +300,7 @@ export default {
           })
 
       global.filecontent=this.contentEditor.getValue();
+      this.reload();
       /*
       this.$router.push({
         name:'documentManage',
