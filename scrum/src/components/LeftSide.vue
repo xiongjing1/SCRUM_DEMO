@@ -103,7 +103,9 @@ export default {
       window.localStorage.setItem('tid',id);
       window.localStorage.setItem('tname',tname);
       var shot=''
-      shot='http://43.138.21.64:8080/'+headshot
+
+      shot='http://43.138.21.64:8080'+headshot
+      console.log(shot);
       window.localStorage.setItem('theadshot',shot);
       this.$router.push('/TeamManage/'+id);
     },
@@ -116,7 +118,8 @@ export default {
       window.localStorage.setItem('p_create_time',p_create_time);
       window.localStorage.setItem('p_doc_count',p_doc_count);
       var shot=''
-      shot='http://43.138.21.64:8080/'+headshot
+      shot='http://43.138.21.64:8080'+headshot
+      console.log(shot);
       window.localStorage.setItem('theadshot',shot);
       this.$router.push('/designManage/'+id);
     },
