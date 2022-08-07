@@ -128,7 +128,7 @@ export default {
               storage.setItem('email',this.login_email);
               storage.setItem('uid',response.data.uid);
               storage.setItem('nickname',response.data.nickname);
-              storage.setItem('headshot',response.data.headshot);
+              storage.setItem('headshot','http://43.138.21.64:8080'+response.data.headshot);
               storage.setItem('name',response.data.name);
               storage.setItem('tid',response.data.tid);
               storage.setItem('iflogin',1);
@@ -167,6 +167,7 @@ export default {
               storage.setItem('nickname','jrs');
               storage.setItem('uid',response.data.uid);
               storage.setItem('tid',response.data.tid);
+              storage.setItem('headshot','http://43.138.21.64:8080'+response.data.headshot);
             //  storage.setItem('headshot',response.data.headshot);
               storage.setItem('name',this.register_name);
               storage.setItem('iflogin',1);
