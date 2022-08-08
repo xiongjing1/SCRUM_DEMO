@@ -7,7 +7,9 @@ import ElementUI from 'element-ui';
 import axios from 'axios';
 import '@/assets/font/font.css';
 import infiniteScroll from "vue-infinite-scroll";
+import VueSVGIcon from 'vue-svgicon'
 Vue.use(infiniteScroll);
+Vue.use(VueSVGIcon)
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
@@ -17,7 +19,10 @@ new Vue({
   axios,
   router,
   store,
-  render: h => h(App)
+  render: h => h(App),
+  beforeCreate(){
+    Vue.prototype.$bus = this
+  },
 }).$mount('#app')
 
 //axios.defaults.baseURL='/test'
