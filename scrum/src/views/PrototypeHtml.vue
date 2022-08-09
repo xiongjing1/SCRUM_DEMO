@@ -306,7 +306,7 @@ export default {
       console.log('vv')
       console.log(eggIndex)
       console.log(this.selectedPage.children[0].id)
-      console.log(this.selectedPage.children[1].id)
+      //console.log(this.selectedPage.children[1].id)
       console.log(this.$store.state.selectedItem[0].id)
       console.log(this.selectedPage.children[eggIndex].left)
       console.log(payload)
