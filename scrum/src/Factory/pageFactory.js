@@ -1,7 +1,6 @@
-import shortid from 'shortid'
-function newPage (name, height, width) {
+function newPage (id , name, height, width) {
     return {
-        id: shortid.generate(),
+        id: id,
         name: name,
         width: width || '100%',
         height: height || '100%',

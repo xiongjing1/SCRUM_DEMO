@@ -6,7 +6,7 @@
         <img src="../assets/PrototypeMaterial/aspicture.png" height="25px"   v-on:click="asPicture=!asPicture" class="backlogo"  title="导出图片">
         <img src="../assets/PrototypeMaterial/delete.png" height="25px"   class="backlogo"  title="删除选中元素">
         <img src="../assets/PrototypeMaterial/clear.png" height="23px"    class="backlogo"  title="清空页面">
-        <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="保存当前修改">
+        <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="保存当前修改" @click="save">
       </div>
       <div class="show-picture" v-if="asPicture">
         <div class="picture-btn">jpg格式</div>
@@ -15,7 +15,7 @@
 
       <div id="left" >
         <div class="title">
-          <img src="../assets/PrototypeMaterial/back.png" height="25px" class="backlogo"  alt="">
+          <img src="../assets/PrototypeMaterial/back.png" height="25px" @click="BackToDesignManage" class="backlogo"  alt="">
           <div style="width:200px;height: 40px; color: #FFFFFF; font-size: 16px; letter-spacing: 2px;margin-top: 13px">
             {{ projName }}</div>
         </div>
@@ -44,7 +44,7 @@
           <el-empty description="还没有创建原型实例"  v-show="pages.length===0" :image-size="200"></el-empty>
         </div>
       </div>
-      <main id="main" role="main" >
+      <main id="main" role="main" v-if="selectedPage" >
         <mainEgg :pageselect="selectedPage"></mainEgg>
       </main>
       <drawegg></drawegg>
@@ -106,13 +106,15 @@ import newPage from '@/Factory/pageFactory'
 import Drawegg from '@/components/drawer'
 import MainEgg from '@/components/main';
 import '@/assets/icons/system/elements/'
+import {setElId} from "@/helpers/recursiveMethods";
+import axios from "axios";
 export default {
   name: "PrototypeHtml",
   components: { Drawegg , HeadSide,MainEgg,},
 
   data(){
     return{
-      pages:[newPage('新建原型实例' , 500 , 500) , newPage('新建原型实例2' , 400 , 300)],
+      pages:[],
 
       selectedElements:[],
       selectedPage:null,
@@ -143,12 +145,67 @@ export default {
     }
   },
   methods:{
+    BackToDesignManage(){
+      this.$router.push({
+        name:'designManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
+    },
+    init(){
+      console.log(this.idSelected)
+      this.addForm.name = '新建原型实例'
+
+      let dataPost = new FormData()
+      dataPost.append('userID', window.localStorage.getItem('uid'))
+      dataPost.append('projectID', this.$route.params.pid)
+      let config ={
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+     // const that = this
+      //axios.post('http://43.138.21.64:8080/prototype/get', dataPost , config).then( res => {
+      //  console.log(res)
+      //  if(res.status === 200){
+      //    console.log(res.data.message.prototype)
+      //    that.prototypeData = res.data.message.prototype.results
+      //  }
+      //})
+      axios.post('http://43.138.21.64:8080/doc/get/all', dataPost , config).then( res => {
+        console.log(res)
+        if(res.status === 200){
+          console.log(res.data.message.prototype.results)
+          //let dataArr = res.data.message.prototype.results.filter(ele =>{
+          //  return ele.isRecycled === false
+          //}) || []
+        }
+      })
+    },
 
     addPrototype() {
-      this.dialogAddVisible = false
-      let page = newPage(this.addForm.name , this.addForm.height,this.addForm.width)
-      this.pages.push(page)
-      //todo
+
+      let dataPost = new FormData();
+      dataPost.append('user',1);
+      dataPost.append('userID', window.localStorage.getItem('uid'));
+      dataPost.append('projectID', this.$route.params.pid);
+      dataPost.append('prototypeName',this.addForm.name);
+      dataPost.append('canvas_Width', this.addForm.width.toString());
+      dataPost.append('canvas_Height' , this.addForm.height.toString());
+      const dataForm = {'user':1 , 'userID': window.localStorage.getItem('uid'), 'projectID':this.$route.params.pid ,
+        'prototypeName':this.addForm.name,'canvas_Width': this.addForm.width.toString(),'canvas_Height': this.addForm.height.toString()}
+      console.log(dataForm)
+      const that = this
+      console.log(dataPost)
+      let config ={
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post("http://43.138.21.64:8080/prototype/add", dataForm , config).then( res => {
+        console.log(res)
+        that.dialogAddVisible = false
+        let page = newPage(res.data.id , this.addForm.name , this.addForm.height,this.addForm.width)
+        that.pages.push(page)
+        that.changeCanvas(page,that.pages.length -1)
+      })
     },
     changeCanvas(elm, index) {
       this.indexSelected = index
@@ -166,19 +223,65 @@ export default {
       this.dialogChangeVisible = false
       this.selectedPage.width = this.changeForm.width
       this.selectedPage.height = this.changeForm.height
-      //todo
+      this.save()
+
     },
     deletePrototype(){
-      this.dialogDeleteVisible = false
-      this.pages = this.pages.filter(ele =>{
-        return ele.id !== this.idSelected
-      })
-      this.idSelected = null
-      this.indexSelected = -1
+
       //todo
+      const that = this
+      let dataPost = new FormData()
+      //dataPost.append("userID", 10)
+      dataPost.append('docID', that.indexSelected)
+      dataPost.append('userID', window.localStorage.getItem('uid'))
+      dataPost.append('docType', 1)
+      let config ={
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post("http://43.138.21.64:8080/doc/remove/one",dataPost,config).then( res => {
+        if( res.status  === 200){
+          console.log(res)
+
+          that.dialogDeleteVisible = false
+          that.pages = that.pages.filter(ele =>{
+            return ele.id !== that.idSelected
+          })
+          that.idSelected = null
+          that.indexSelected = -1
+        }
+
+      })
+    },
+    save(){
+      //todo
+      const that = this
+      const  json = JSON.stringify(that.selectedPage)
+      console.log(that.indexSelected)
+      console.log(json)
+      let dataPost = new FormData()
+      //dataPost.append("userID", 10)
+      dataPost.append('userID', window.localStorage.getItem('uid'));
+      dataPost.append('docID', that.idSelected);
+      dataPost.append('docType', 1);
+      dataPost.append('content', json);
+      let config ={
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post("http://43.138.21.64:8080/doc/update",dataPost , config).then( res => {
+        console.log(res)
+        //const prototypeContent = that.prototypeData[that.indexSelected]
+        //prototypeContent.content = json
+        //that.prototypeData.splice(that.indexSelected , 1 , prototypeContent)
+        //console.log(that.prototypeData[that.indexSelected].content)
+      })
     },
     addElement(elm){
-      this.selectedPage.children.push(elm)
+      let egglement = setElId(elm, this.selectedPage.pageId)
+      //this.$store.commit('set' , egglement)
+      this.selectedPage.children.push(egglement)
+      console.log(egglement)
+      console.log(this.selectedPage)
+
     },
     deleteElement(){
       if(this.$store.state.selectedItem.length){
@@ -217,6 +320,7 @@ export default {
     this.$bus.$on("addElement" , this.addElement)
     this.$bus.$on("deleteElement" , this.deleteElement)
     this.$bus.$on("updateElement" , this.updateElement)
+    this.init()
 
   }
 }
