@@ -29,7 +29,7 @@
 import StageEl from './StageEl'
 import MrContainer from '@/components/common/mr-vue/MrContainer'
 import elementsFromPoint from '@/polyfills/elementsFromPoint'
-import {getChildNode} from "@/helpers/recursiveMethods";
+//import {getChildNode} from "@/helpers/recursiveMethods";
 
 const DROP_BORDER = {
   width: '2px',
@@ -118,7 +118,8 @@ export default {
       this.toggleDroppableCursor(!!this.dropContainer)
     },
 
-    moveStopHandler () {
+    moveStopHandler (moveStopData) {
+
       //const containegg = this.getContaineggOnPoint(moveStopData.absMouseX, moveStopData.absMouseY)
       //const parentId = containegg ? containegg.id : null
 
@@ -129,11 +130,12 @@ export default {
       //  mouseX: moveStopData.relMouseX,
       //  mouseY: moveStopData.relMouseY
       //}))
-      let freshElements =  getChildNode(this.page, this.$store.state.selectedItem.id)
-      this.$store.commit('clear')
-      this.$store.commit('set' , freshElements)
-      this.toggleDroppableCursor(false)
-      this.dropContainer = null
+      //let freshElements =  getChildNode(this.page, this.$store.state.selectedItem.id)
+      //this.$store.commit('clear')
+      //this.$store.commit('set' , freshElements)
+      //this.toggleDroppableCursor(false)
+      //this.dropContainer = null
+      this.$bus.$emit('updateElement' , moveStopData)
     },
 
     getContaineggOnPoint (x, y) {

@@ -184,18 +184,36 @@ export default {
       let egglement = setElId(elm, this.selectedPage.pageId)
       //this.$store.commit('set' , egglement)
       this.selectedPage.children.push(egglement)
+      console.log(egglement)
+      console.log(this.selectedPage)
     },
     deleteElement(elm){
       let eggIndex = this.selectedPage.children.findIndex(egg => egg.id === elm.elId)
       this.selectedPage.children.splice(eggIndex, 1)
       this.$store.commit('clear')
+    },
+    updateElement(elm , data){
+      let eggIndex = this.selectedPage.children.findIndex(egg => egg.id === elm.elId)
+      if ((typeof data.left !== 'undefined') && (data.left !== null)) this.selectedPage.children[eggIndex].left = data.left
+      if ((typeof data.top !== 'undefined') && (data.top !== null)) this.selectedPage.children[eggIndex].top = data.top
+      if ((typeof data.right !== 'undefined') && (data.right !== null)) this.selectedPage.children[eggIndex].right = data.right
+      if ((typeof data.bottom !== 'undefined') && (data.bottom !== null)) this.selectedPage.children[eggIndex].bottom = data.bottom
+      if ((typeof data.zIndex !== 'undefined') && (data.zIndex !== null)) this.selectedPage.children[eggIndex].zIndex = data.zIndex
+      if ((typeof data.height !== 'undefined') && (data.height !== null)) this.selectedPage.children[eggIndex].height = data.height
+      if ((typeof data.width !== 'undefined') && (data.width !== null)) this.selectedPage.children[eggIndex].width = data.width
+      if ((typeof data.text !== 'undefined') && (data.text !== null)) this.selectedPage.children[eggIndex].text = data.text
+      if (data.classes) this.selectedPage.children[eggIndex].classes = data.classes
+      if (data.styles) this.selectedPage.children[eggIndex].styles = data.styles
+      if (data.attrs) this.selectedPage.children[eggIndex].attrs = data.attrs
     }
+
 
 
   },
   mounted() {
     this.$bus.$on("addElement" , this.addElement)
     this.$bus.$on("deleteElement" , this.deleteElement)
+    this.$bus.$on("updateElement" , this.updateElement)
   }
 }
 </script>

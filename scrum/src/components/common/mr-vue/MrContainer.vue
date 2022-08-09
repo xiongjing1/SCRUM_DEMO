@@ -73,7 +73,7 @@ export default {
 
       if (this.initialAbsPos !== this.currentAbsPos) {
         if (this.resizing) this.$emit('resizestop', this.resizeStopData())
-        else if (this.moving) this.$emit('movestop', )//this.moveStopData())
+        else if (this.moving) this.$emit('movestop', this.moveStopData())
       }
       this.moving = false
       this.resizing = false
@@ -100,7 +100,7 @@ export default {
         // this.$emit('resizing')
       } else if (this.moving) {
         this.moveElementBy(this.mrElements, offX, offY)
-        this.$emit('moving', this.currentAbsPos.x, this.currentAbsPos.y)
+        //this.$emit('moving', this.currentAbsPos.x, this.currentAbsPos.y)
       }
         //this.renderSelectionArea(this.initialRelPos, this.currentRelPos)
         // this.$emit('selecting')
@@ -230,21 +230,20 @@ export default {
 
     moveStopData () {
       return {
-        moveElData: {
-            elId: this.mrElements.childNodes[0].id,
-            top: (this.mrElements.style.top.indexOf('%') !== -1 || this.mrElements.style.top === 'auto')
-              ? this.mrElements.style.top
-              : parseInt(this.mrElements.style.top),
-            left: (this.mrElements.style.left.indexOf('%') !== -1 || this.mrElements.style.left === 'auto')
-              ? this.mrElements.style.left
-              : parseInt(this.mrElements.style.left),
-            bottom: (this.mrElements.style.bottom.indexOf('%') !== -1 || this.mrElements.style.bottom === 'auto')
-              ? this.mrElements.style.bottom
-              : parseInt(this.mrElements.style.bottom),
-            right: (this.mrElements.style.right.indexOf('%') !== -1 || this.mrElements.style.right === 'auto')
-              ? this.mrElements.style.right
-              : parseInt(this.mrElements.style.right)
-          },
+        elId: this.mrElements.childNodes[0].id,
+        top: (this.mrElements.style.top.indexOf('%') !== -1 || this.mrElements.style.top === 'auto')
+          ? this.mrElements.style.top
+          : parseInt(this.mrElements.style.top),
+        left: (this.mrElements.style.left.indexOf('%') !== -1 || this.mrElements.style.left === 'auto')
+          ? this.mrElements.style.left
+          : parseInt(this.mrElements.style.left),
+        bottom: (this.mrElements.style.bottom.indexOf('%') !== -1 || this.mrElements.style.bottom === 'auto')
+          ? this.mrElements.style.bottom
+          : parseInt(this.mrElements.style.bottom),
+        right: (this.mrElements.style.right.indexOf('%') !== -1 || this.mrElements.style.right === 'auto')
+          ? this.mrElements.style.right
+          : parseInt(this.mrElements.style.right),
+
         relMouseX: Math.round(this.currentRelPos.x),
         relMouseY: Math.round(this.currentRelPos.y),
         absMouseX: this.currentAbsPos.x,

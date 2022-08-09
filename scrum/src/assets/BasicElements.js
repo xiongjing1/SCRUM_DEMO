@@ -19,7 +19,7 @@ const basicElements = [
       'overflow': 'hidden',
       'border-color': 'rgba(0, 0, 0, 0.15)',
       'border-style': 'solid',
-      'border-width': '1px'
+      'border-width': '1px',
     },
     'children': []
   },
