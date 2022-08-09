@@ -396,7 +396,6 @@ export default {
       formData.append('is_change_headshot', this.addmember)// 通过append向form对象添加数据
       formData.append('new_headshot', this.newheadshot)
 
-      window.localStorage.setItem('theadshot',this.imageUrl)
       this.teamshot=this.imageUrl
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
@@ -407,6 +406,9 @@ export default {
             // console.log("denglu:"+response.data);
             if (response.data.errno === 8000) {
               this.$message.success(response.data.msg)
+              this.teamshot='http://43.138.21.64:8080'+response.data.new_headshot
+              window.localStorage.setItem('theadshot',this.teamshot)
+              this.update();
             }else{
               this.$message.error("头像更换失败");
             }
