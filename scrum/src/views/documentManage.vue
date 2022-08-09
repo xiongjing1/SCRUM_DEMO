@@ -279,6 +279,7 @@ export default {
             console.log("ok");
             that.tableData = response.data.message.document.results || [];
             console.log('文档列表获取成功');
+            console.log(response.data.message.document.results)
             this.load();
           }
           else {
@@ -360,10 +361,13 @@ export default {
           }
         }else{
           this.searchData=[];
+          console.log('search:'+this.tableData.length);
+          console.log(search1);
           for(let i=this.tableData.length-1;i>=0;i--){
             if(this.tableData[i].name.search(search1)!==-1){
               if(!this.tableData[i].isRecycled){
                 this.searchData.push(this.tableData[i]);
+                console.log('search'+this.tableData[i].name);
               }
             }
           }
@@ -380,20 +384,16 @@ export default {
       this.total=this.searchData.length;
       if(this.currentPage===1){
         console.log('fen')
-        this.currentPageData = this.searchData.slice(1, 7);
+        this.currentPageData = this.searchData.slice(0, 6);
       }else{
         let begin = (this.currentPage - 1) * this.pageSize;
         let end = this.currentPage * this.pageSize;
         this.currentPageData = this.searchData.slice(begin, end);
       }
+      console.log('a'+this.currentPageData);
     },
     handleNew(){
       var add=true;
-      for(let i=0;i<this.tableData.length;i++) {
-        if(this.tableData[i].name===this.input1&&this.tableData[i].isRecycled===false){
-          add=false;
-        }
-      }
       if(add){
         let formData = new FormData();
         formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
@@ -405,6 +405,7 @@ export default {
         axios.post('http://43.138.21.64:8080/doc/add',formData,config)
             .then(response => {
               if(response.status === 200){
+                console.log('add')
                 console.log(response.data.message);
               }
               else {
@@ -412,9 +413,9 @@ export default {
               }
               //this.reload();
             })
-        this.input1='';
         global.filename=this.input1;
         global.filecontent='null';
+        this.input1='';
         this.$router.push({path: '/about'});
       }
       else{
