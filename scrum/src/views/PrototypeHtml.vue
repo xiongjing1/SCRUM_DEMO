@@ -158,7 +158,7 @@ export default {
       this.addForm.name = '新建原型实例'
 
       let dataPost = new FormData()
-      dataPost.append('userID', window.localStorage.getItem('uid'))
+      dataPost.append('userID', 1)
       dataPost.append('projectID', this.$route.params.pid)
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
@@ -175,9 +175,18 @@ export default {
         console.log(res)
         if(res.status === 200){
           console.log(res.data.message.prototype.results)
-          //let dataArr = res.data.message.prototype.results.filter(ele =>{
-          //  return ele.isRecycled === false
-          //}) || []
+          let dataArr = res.data.message.prototype.results.filter(ele =>{
+            return ele.isRecycled === false
+          }) || []
+          for (var i=0;i<dataArr.length;i++)
+          {
+            if(dataArr[i].content === null) {
+              const pageTemp = newPage(dataArr[i].ID ,dataArr[i].name ,dataArr[i].canvasHeight ,dataArr[i].canvasWidth)
+              this.pages.push(pageTemp)
+            }
+            else this.pages.push(JSON.parse(dataArr[i].content))
+          }
+          console.log(this.pages)
         }
       })
     },
@@ -185,13 +194,12 @@ export default {
     addPrototype() {
 
       let dataPost = new FormData();
-      dataPost.append('user',1);
-      dataPost.append('userID', window.localStorage.getItem('uid'));
+      dataPost.append('userID', 1);
       dataPost.append('projectID', this.$route.params.pid);
       dataPost.append('prototypeName',this.addForm.name);
       dataPost.append('canvas_Width', this.addForm.width.toString());
       dataPost.append('canvas_Height' , this.addForm.height.toString());
-      const dataForm = {'user':1 , 'userID': window.localStorage.getItem('uid'), 'projectID':this.$route.params.pid ,
+      const dataForm = {'userID': 1, 'projectID':this.$route.params.pid ,
         'prototypeName':this.addForm.name,'canvas_Width': this.addForm.width.toString(),'canvas_Height': this.addForm.height.toString()}
       console.log(dataForm)
       const that = this
@@ -199,7 +207,7 @@ export default {
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
       }
-      axios.post("http://43.138.21.64:8080/prototype/add", dataForm , config).then( res => {
+      axios.post("http://43.138.21.64:8080/prototype/add", dataPost , config).then( res => {
         console.log(res)
         that.dialogAddVisible = false
         let page = newPage(res.data.id , this.addForm.name , this.addForm.height,this.addForm.width)
@@ -232,8 +240,8 @@ export default {
       const that = this
       let dataPost = new FormData()
       //dataPost.append("userID", 10)
-      dataPost.append('docID', that.indexSelected)
-      dataPost.append('userID', window.localStorage.getItem('uid'))
+      dataPost.append('docID', that.idSelected)
+      dataPost.append('userID', 1)
       dataPost.append('docType', 1)
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
@@ -248,6 +256,7 @@ export default {
           })
           that.idSelected = null
           that.indexSelected = -1
+          that.selectedPage = null
         }
 
       })
@@ -260,7 +269,7 @@ export default {
       console.log(json)
       let dataPost = new FormData()
       //dataPost.append("userID", 10)
-      dataPost.append('userID', window.localStorage.getItem('uid'));
+      dataPost.append('userID', 1);
       dataPost.append('docID', that.idSelected);
       dataPost.append('docType', 1);
       dataPost.append('content', json);
