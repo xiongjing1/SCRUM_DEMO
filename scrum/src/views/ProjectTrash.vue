@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="buttons">
-        <div class="document-center" v-on:click="JumpToProjectManage()">
+        <div class="document-center" v-on:click="jumpToFileCenter()">
           文档中心
         </div>
         <div class="manage-project" v-on:click="JumpToProjectManage()">
@@ -296,6 +296,11 @@ export default {
         this.$message.error('上传头像图片大小不能超过 2MB!');
       }
       return isJPG && isLt2M;
+    },
+    jumpToFileCenter(){
+      this.$router.push({
+        name:'fileCenter',
+      });
     },
     JumpToProjectManage(){
       this.$router.push({

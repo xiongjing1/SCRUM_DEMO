@@ -1,47 +1,148 @@
 <template>
   <div>
-    <el-col :span="4" class="filelist" >
-      <h5><i class="el-icon-files"></i>文档中心</h5>
-      <el-menu
-          default-active="4"
-          class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose">
-        <el-submenu index="1">
-          <template slot="title">
-            <i class="el-icon-files"></i>
-            <span>项目文档区</span>
-          </template>
-          <el-submenu index="1-1">
-            <template slot="title">项目1</template>
-            <el-menu-item index="1-1-1">文档1</el-menu-item>
-          </el-submenu>
-          <el-submenu index="1-2">
-            <template slot="title">项目2</template>
-            <el-menu-item index="1-4-1">文档2</el-menu-item>
-          </el-submenu>
-          <el-submenu index="1-3">
-            <template slot="title">项目3</template>
-            <el-menu-item index="1-3-1">文档3</el-menu-item>
-          </el-submenu>
-          <el-submenu index="1-4">
-            <template slot="title">项目4</template>
-            <el-menu-item index="1-4-1">文档1</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-        <el-menu-item index="2">
-          <i class="el-icon-files"></i>
-          <span slot="title">部门介绍</span>
-        </el-menu-item>
-        <el-menu-item index="3" >
-          <i class="el-icon-files"></i>
-          <span slot="title">其他文件夹</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <i class="el-icon-document"></i>
-          <span slot="title">团队介绍</span>
-        </el-menu-item>
-      </el-menu>
+    <el-col :span="4" class="filelist" style="background-color:#87CEFA;color: white;">
+      <h4 style="text-align: center; " ><i class="el-icon-folder" style="color: yellow"></i>&emsp;文档中心</h4>
+      <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
+        <p><el-input v-model="input1" placeholder="请输入文件名" style="width: 400px;"></el-input></p>
+        <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew1()">确认</el-button></p>
+        <div slot="reference" class="name-wrapper" >
+          <el-button class="new-button" style="width: 254px">新建文件夹<i class="el-icon-folder-add el-icon--right" style="color: deepskyblue"></i></el-button>
+        </div>
+      </el-popover>
+      <div>
+        <el-menu
+            :default-active="activeIndex"
+            :unique-opened="false">
+          <div v-for="(item,index) in tableData" :key="index">
+            <!-- 一级菜单（没有任何子级菜单）-->
+            <el-menu-item :index="'1-'+item.id" v-if="!item.doc_list">
+              {{item.name}}
+              <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
+                <p><el-input v-model="input2" placeholder="请输入文档名" style="width: 400px;"></el-input></p>
+                <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew2(item.id,null)">确认</el-button></p>
+                <div slot="reference" class="name-wrapper" >
+                  <el-button
+                      style="position: absolute;left:120px;top:5px"
+                      type="text"
+                      size="small"
+                      class="move-button"
+                  ><i class="el-icon-document-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                </div>
+              </el-popover>
+              <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
+                <p><el-input v-model="input3" placeholder="请输入文件名" style="width: 400px;"></el-input></p>
+                <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew3()">确认</el-button></p>
+                <div slot="reference" class="name-wrapper" >
+                  <el-button
+                      v-if="item.id!==0"
+                      style="position: absolute;left:150px;top:5px"
+                      type="text"
+                      size="small"
+                      class="move-button"
+                  ><i class="el-icon-folder-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                </div>
+              </el-popover>
+              <el-button
+                  v-if="item.id!==0"
+                  style="position: absolute;left:180px;top:5px"
+                  type="text"
+                  size="small"
+                  class="move-button"
+                  @click="deletefold(item.id,1)"><i class="el-icon-folder-delete" style="color:red;font-size: 20px;" ></i></el-button>
+            </el-menu-item>
+            <!-- 一级菜单（有子级菜单）-->
+            <el-submenu :index="'1-'+item.id" v-else>
+              <template slot="title">
+                {{item.name}}
+                <el-popover  trigger="click" placement="right" popper-class="moreinfo" v-if="index!==0">
+                  <p><el-input v-model="input2" placeholder="请输入文档名" style="width: 400px;"></el-input></p>
+                  <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew2(item.id,null)">确认</el-button></p>
+                  <div slot="reference" class="name-wrapper" >
+                    <el-button
+                        style="position: absolute;left:120px;top:5px"
+                        type="text"
+                        size="small"
+                        class="move-button"
+                    ><i class="el-icon-document-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                  </div>
+                </el-popover>
+                <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
+                  <p><el-input v-model="input3" placeholder="请输入文件名" style="width: 400px;"></el-input></p>
+                  <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew3(item.id)">确认</el-button></p>
+                  <div slot="reference" class="name-wrapper" >
+                    <el-button
+                        v-if="item.id!==0"
+                        style="position: absolute;left:150px;top:5px"
+                        type="text"
+                        size="small"
+                        class="move-button"
+                    ><i class="el-icon-folder-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                  </div>
+                </el-popover>
+                <el-button
+                    v-if="item.id!==0"
+                    style="position: absolute;left:180px;top:5px"
+                    type="text"
+                    size="small"
+                    class="move-button"
+                    @click="deletefold(item.id,1)"><i class="el-icon-folder-delete" style="color:red;font-size: 20px;" ></i></el-button>
+              </template>
+
+              <!-- 遍历二级菜单容器 -->
+              <div v-for="(i,index) in item.doc_list" :key="index">
+                <!-- 判断二级菜单（没有三级菜单）-->
+                <el-menu-item :index="item.id+'-2-'+i.id" v-if="!i.doc_list" @click.native="get2Content(item.id,i.id)">
+                  {{i.name}}
+                  <el-button
+                      style="position: absolute;left:180px;top:5px"
+                      type="text"
+                      size="small"
+                      class="move-button"
+                      @click="deletefile(item.id,i.id)"
+                  ><i class="el-icon-document-delete" style="color:red;font-size: 20px;" ></i></el-button>
+                </el-menu-item>
+
+                <!-- 判断二级菜单（有三级菜单）-->
+                <el-submenu :index="item.id+'-2-'+i.id" v-else>
+                  <template slot="title">
+                    {{i.name}}
+                    <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
+                      <p><el-input v-model="input2" placeholder="请输入文档名" style="width: 400px;"></el-input></p>
+                      <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew2(item.id,i.id)">确认</el-button></p>
+                      <div slot="reference" class="name-wrapper" >
+                        <el-button
+                            style="position: absolute;left:150px;top:5px"
+                            type="text"
+                            size="small"
+                            class="move-button"
+                        ><i class="el-icon-document-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                      </div>
+                    </el-popover>
+                    <el-button
+                        v-if="item.id!==0"
+                        style="position: absolute;left:180px;top:5px"
+                        type="text"
+                        size="small"
+                        class="move-button"
+                        @click="deletefold(i.id,2)"
+                    ><i class="el-icon-folder-delete" style="color:red;font-size: 20px;" ></i></el-button>
+                  </template>
+                  <el-menu-item :index="item.id+'-'+i.id+'-3-'+j.id" v-for="(j,index) in i.doc_list" :key="index" @click.native="get3Content(item.id,i.id,j.id)">
+                    {{j.name}}
+                    <el-button
+                        style="position: absolute;left:180px;top:5px"
+                        type="text"
+                        size="small"
+                        class="move-button"
+                        @click="deletefile(item.id,j.id)"
+                    ><i class="el-icon-document-delete" style="color:red;font-size: 20px;" ></i></el-button>
+                  </el-menu-item>
+                </el-submenu>
+              </div>
+            </el-submenu>
+          </div>
+        </el-menu>
+      </div>
     </el-col>
 
     <el-col :span="4">
@@ -52,23 +153,35 @@
     </el-col>
   </div>
 
-</template>...
+</template>
 <script>
 import Vditor from "vditor";
 import global from "@/api/global";
 import 'vditor/dist/index.css';
-//import axios from 'axios';
+import axios from "axios";
 
 
 export default {
   inject:['reload'],
   data() {
     return {
+      activeIndex:'',
+      input:'',
+      input1:'',
+      input2:'',
+      input3:'',
       contentEditor: {},
       tableData: [],
     }
   },
   mounted() {
+    this.activeIndex=global.activeid;
+    console.log('act'+this.activeIndex);
+    axios.get('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/doc/info').then((res) => {
+      this.tableData=res.data.folder_list;
+      console.log(this.tableData);
+    })
+
     this.contentEditor = new Vditor('vditor', {
       height: 710,
       width: 1283,
@@ -144,12 +257,216 @@ export default {
     });
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
+    get2Content(itemid,iid){
+      var project;
+      if(itemid===0) {
+        project=1;
+      }
+      else project=0;
+      let param = new FormData();
+      param.append('is_project_doc', project);
+      param.append('doc_id', iid);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/doc/view', param,config)
+          .then(response => {
+            global.isproject='0';
+              global.filecontent=response.data.content;
+              global.fileid=iid;
+              global.activeid=itemid+'-2-'+iid;
+              console.log(response.data.msg);
+              this.reload();
+          })
     },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
-    }
+    get3Content(itemid,iid,jid){
+      var project;
+      if(itemid===0) {
+        let param = new FormData();
+        param.append('doc_id', jid);
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        axios.post('http://43.138.21.64:8080/user/' + window.localStorage.getItem('uid') + '/team/' + window.localStorage.getItem('tid') + '/doc/view/one', param, config)
+            .then(response => {
+              global.isproject='1';
+              global.filecontent = response.data.content;
+              global.fileid = jid;
+              global.activeid = itemid +'-'+ iid + '-3-' + jid;
+              console.log(global.activeid);
+              console.log(response.data.msg);
+              this.reload();
+            })
+      }
+      else {
+        project = 0;
+        let param = new FormData();
+        param.append('is_project_doc', project);
+        param.append('doc_id', jid);
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        axios.post('http://43.138.21.64:8080/user/' + window.localStorage.getItem('uid') + '/team/' + window.localStorage.getItem('tid') + '/doc/view', param, config)
+            .then(response => {
+              global.isproject='0';
+              global.filecontent = response.data.content;
+              global.fileid = jid;
+              global.activeid = itemid +'-'+ iid + '-3-' + jid;
+              console.log(response.data.msg);
+              this.reload();
+            })
+      }
+    },
+    handleNew1(){
+      let param = new FormData();
+      param.append('folder_name', this.input1);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/folder/add', param,config)
+          .then(response => {
+            console.log(response.data.msg);
+              this.reload();
+          })
+    },
+    handleNew3(itemid){
+      let param = new FormData();
+      param.append('f_id', itemid);
+      param.append('folder_name', this.input3);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/folder/add', param,config)
+          .then(response => {
+            console.log(response.data.msg);
+            this.reload();
+          })
+    },
+    handleNew2(itemid,iid){
+      if(itemid!==0){
+        let param = new FormData();
+        if(iid===null){
+          param.append('f_id', itemid);
+          param.append('doc_name', this.input2);
+        }
+        else{
+          param.append('f_id', itemid);
+          param.append('s_id', iid);
+          param.append('doc_name', this.input2);
+        }
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/folder/doc/add', param,config)
+            .then(response => {
+              console.log(response.data.msg);
+              this.reload();
+            })
+      }
+      else {
+        let formData = new FormData();
+        formData.append('userID', window.localStorage.getItem('uid'));
+        formData.append('projectID', iid);
+        formData.append('docName', this.input2);
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        };
+        axios.post('http://43.138.21.64:8080/doc/add',formData,config)
+            .then(response => {
+              if(response.status === 200){
+                console.log('add')
+                console.log(response.data.message);
+              }
+              else {
+                console.log(response.data.message);
+              }
+              this.reload();
+            })
+      }
+    },
+    deletefold(foldid,isfirst){
+      let param = new FormData();
+      param.append('folder_id', foldid);
+      param.append('first_or_second', isfirst);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/folder/delete', param,config)
+          .then(response => {
+            console.log(response.data.msg);
+            this.reload();
+          })
+    },
+    submit(){
+      if(global.isproject==='0'){
+        let param = new FormData();
+        param.append('doc_id', global.fileid);
+        param.append('content', this.contentEditor.getValue());
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/folder/doc/save', param,config)
+            .then(response => {
+              console.log(response.data.msg);
+              global.filecontent=this.contentEditor.getValue();
+              this.reload();
+            })
+      }
+      else{
+        let formData = new FormData();
+        formData.append('userID', window.localStorage.getItem('uid'));
+        formData.append('docID', global.fileid);
+        formData.append('docType', 3);
+        formData.append('content', this.contentEditor.getValue());
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        };
+        axios.post('http://43.138.21.64:8080/doc/update',formData,config)
+            .then(response => {
+              if(response.status === 200){
+                console.log(response.data.message);
+              }
+              else {
+                console.log(response.data.message);
+              }
+            })
+        global.filecontent=this.contentEditor.getValue();
+        this.reload();
+      }
+    },
+    deletefile(itemid,iid){
+      if(itemid===0){
+        let formData = new FormData();
+        formData.append('docID', iid);
+        formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
+        formData.append('docType', 3);
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        };
+        axios.post('http://43.138.21.64:8080/doc/remove/one',formData,config)
+            .then(response => {
+              if(response.status === 200){
+                console.log(response.data.message);
+              }
+              else {
+                console.log(response.data.message);
+              }
+              this.reload()
+            })
+      }
+      else{
+        let param = new FormData();
+        param.append('doc_id',iid);
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/folder/doc/delete', param,config)
+            .then(response => {
+              console.log(response.data.msg);
+              this.reload();
+            })
+      }
+    },
   }
 }
 </script>
