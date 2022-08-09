@@ -155,7 +155,7 @@ export default {
     quit(){
       let storage = window.localStorage;
       storage.setItem('iflogin',0);
-      this.$router.push('/');
+      this.$router.push('/login');
     },
     reset_nickname(){
       console.log("yes");

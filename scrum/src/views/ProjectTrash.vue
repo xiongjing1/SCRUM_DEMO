@@ -9,7 +9,7 @@
     <div class="title">
       <div class="team">
         <div class="TeamPhoto">
-          <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
+          <img :src="this.teamshot" style="height: 60px;width:60px;background-color:cornflowerblue;margin-top: 10px;float: left;margin-left: 20px;border-radius: 100%">
         </div>
         <div class="TeamName">
           {{ this.tname }}
@@ -62,13 +62,14 @@
                     action="https://jsonplaceholder.typicode.com/posts/"
                     :show-file-list="false"
                     :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload">
+                    :before-upload="beforeAvatarUpload"
+                    :http-request="uploadFile">
                   <img v-if="imageUrl" :src="imageUrl" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
                 <div slot="footer" class="photo-footer">
                   <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
-                  <el-button @click="changeIcon = false" class="yes-buttons">确 定</el-button>
+                  <el-button @click="changeIcon = false;uploadHeadshot()" class="yes-buttons">确 定</el-button>
                 </div>
               </el-dialog>
             </el-dropdown>
@@ -284,6 +285,7 @@ export default {
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
+      console.log(this.imageUrl)
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg';
@@ -297,10 +299,38 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    jumpToFileCenter(){
+
+    jumpToFileCenter() {
       this.$router.push({
-        name:'fileCenter',
+        name: 'fileCenter',
       });
+    },
+    uploadFile(params){
+      this.newheadshot = params.file;
+      this.imageUrl = URL.createObjectURL(this.newheadshot);
+    },
+    uploadHeadshot(){
+      var formData = new FormData();
+      formData.append('is_change_headshot', '1')// 通过append向form对象添加数据
+      formData.append('new_headshot', this.newheadshot)
+      this.teamshot=this.imageUrl
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), formData,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 8000) {
+              this.$message.success(response.data.msg)
+              this.teamshot='http://43.138.21.64:8080'+response.data.new_headshot
+              window.localStorage.setItem('theadshot',this.teamshot)
+              this.update();
+            }else{
+              this.$message.error("头像更换失败");
+            }
+          })
+
     },
     JumpToProjectManage(){
       this.$router.push({
@@ -460,6 +490,8 @@ export default {
       currentPageData:[],
       pageSize:6,
       tintro:window.localStorage.getItem('tintro'),
+      teamshot:window.localStorage.getItem('theadshot'),
+      newheadshot:'',
     }
   }
 };

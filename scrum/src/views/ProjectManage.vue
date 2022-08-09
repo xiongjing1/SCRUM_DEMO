@@ -9,7 +9,7 @@
         <div class="title">
           <div class="team">
             <div class="TeamPhoto">
-              <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
+              <img :src="this.theadshot" style="height: 60px;width:60px;background-color:cornflowerblue;margin-top: 10px;float: left;margin-left: 20px;border-radius: 100%">
             </div>
             <div class="TeamName">
               {{this.tname}}
@@ -62,13 +62,14 @@
                       action="https://jsonplaceholder.typicode.com/posts/"
                       :show-file-list="false"
                       :on-success="handleAvatarSuccess"
-                      :before-upload="beforeAvatarUpload">
+                      :before-upload="beforeAvatarUpload"
+                      :http-request="uploadFile">
                     <img v-if="imageUrl" :src="imageUrl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </el-upload>
                   <div slot="footer" class="photo-footer">
                     <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
-                    <el-button @click="changeIcon = false;" class="yes-buttons">确 定</el-button>
+                    <el-button @click="changeIcon = false;uploadHeadshot()" class="yes-buttons">确 定</el-button>
                   </div>
                 </el-dialog>
               </el-dropdown>
@@ -100,7 +101,8 @@
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
-                    class="date-choose-ed">
+                    class="date-choose-ed"
+                    value-format="yyyy-MM-dd HH:mm:ss">
                 </el-date-picker>
               </div>
               <div class="search-range">
@@ -130,9 +132,9 @@
                     @change="handleChange"></el-cascader>
               </div>
             </div>
-            <div class="project-total">
+            <div class="project-total" :key="this.changed">
               <div class="project-main">
-                <div class="project" v-for="(item,index) in currentPageData" :key="index" >
+                <div class="project" v-for="(item,index) in currentPageData" :key="item.project_name">
                   <div class="project-mode">
                     <div class="project-info" v-on:click="JumpTodesignManage(item.ID,item.project_name,item.description,item.creator_date,item.creator_id)">
                       <div class="project-name">
@@ -179,7 +181,7 @@
                         </el-dialog>
                       </div>
                       <div class="project-operation-copy">
-                        <img src="../assets/copy.png" class="project-copy-img" @click="copyProject(item.ID)">
+                        <img src="../assets/copy.png" class="project-copy-img" @click="copyProject(item.ID);update()">
                       </div>
                     </div>
                   </div>
@@ -276,6 +278,8 @@ export default {
     let param = new FormData() // 创建form对象
     param.append('searchID', window.localStorage.getItem('tid'))// 通过append向form对象添加数据
     param.append('searchType', 2)
+    param.append('sortMethod', this.time)
+    param.append('sortOrder', this.asc)
     let config = {
       headers: {'Content-Type': 'multipart/form-data'}
     } // 添加请求头
@@ -409,35 +413,48 @@ export default {
           })
     },
     searchjump(){
+
       console.log("date-start "+this.datechoose[0])
       console.log("date-end "+this.datechoose[1])
       console.log("value "+this.value)
       console.log("input "+this.input)
+      console.log('tid'+window.localStorage.getItem('tid'))
+      let param = new FormData() // 创建form对象
+      var startdate=''
+      var enddate=''
       if(this.datechoose[0]===undefined){
         console.log("no date")
+        startdate=''
+        enddate=''
+      }else{
+        startdate=this.datechoose[0]
+        enddate=this.datechoose[1]
+        param.append('startDate',startdate)// 通过append向form对象添加数据
+        param.append('endDate',enddate)
       }
-      let param = new FormData() // 创建form对象
-      param.append('searchKey', this.input)
-      param.append('sortMethod', 'time')
-      param.append('sortOrder', 'desc')
-      param.append('startDate',this.datechoose[0])// 通过append向form对象添加数据
-      param.append('endDate',this.datechoose[1])
+      var searchMode=''
+      searchMode=this.value
+      if(this.value===''||this.value==='project_name'){
+        console.log("no-value")
+        searchMode='name'
+        console.log(searchMode)
+        param.append('searchName', this.input)
+      }else{
+        searchMode='creator'
+        param.append('searchCreator', this.input)
+      }
+      param.append('sortMethod', this.time)
+      param.append('sortOrder', this.asc)
       param.append('teamID',window.localStorage.getItem('tid'))
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
-      var searchMode=''
-      searchMode=this.value
-      if(this.value===''){
-        console.log("no-value")
-        searchMode='search'
-        console.log(searchMode)
-      }
-      axios.post('http://43.138.21.64:8080/project/'+searchMode, param,config)
+      console.log(param)
+      axios.post('http://43.138.21.64:8080/project/search/'+searchMode, param,config)
           .then(response => {
             console.log(response.data.success)
             if(response.data.success===true){
-              this.data=response.data.data
+              this.data=response.data.message
               console.log(response.data.data)
               this.allprojectList=this.data.results
               this.alltotal=this.data.totalResults
@@ -452,6 +469,7 @@ export default {
               }
               this.currentPage=1;
               this.load();
+              this.changed=this.changed+1
             }else{
               console.log("没有相关结果")
               this.total=0;
@@ -464,63 +482,115 @@ export default {
     handleChange(){
       console.log("way "+this.sortout[0])
       console.log("sort "+this.sortout[1])
-      console.log("date-start "+this.datechoose[0])
-      console.log("date-end "+this.datechoose[1])
       console.log("value "+this.value)
       console.log("input "+this.input)
-      var way=''
-      var order=''
-      way=this.sortout[0]
-      order=this.sortout[1]
-      if(this.sortout[0]===undefined){
-        console.log("no sort")
-        way='time'
-        order='desc'
-      }
-      let param = new FormData() // 创建form对象
-      param.append('searchKey', this.input)
-      param.append('sortMethod', way)
-      param.append('sortOrder', order)
-      param.append('startDate',this.datechoose[0])// 通过append向form对象添加数据
-      param.append('endDate',this.datechoose[1])
-      param.append('teamID',window.localStorage.getItem('tid'))
-      let config = {
-        headers: {'Content-Type': 'multipart/form-data'}
-      } // 添加请求头
-      var searchMode=''
-      searchMode=this.value
-      if(this.value===''){
-        console.log("no-value")
-        searchMode='search'
-        console.log(searchMode)
-      }
-      axios.post('http://43.138.21.64:8080/project/'+searchMode, param,config)
-          .then(response => {
-            console.log(response.data.success)
-            if(response.data.success===true){
-              this.data=response.data.data
-              console.log(response.data.data)
-              this.allprojectList=this.data.results
-              this.alltotal=this.data.totalResults
-              this.total=0
-              this.projectList=[]
-              this.alltotal=this.allprojectList.length
-              for(var i=0;i<this.alltotal;i++) {
-                if (this.allprojectList[i].is_recycled === false) {
-                  this.projectList.push(this.allprojectList[i])
-                  this.total = this.total + 1
+      if(this.input===''){
+        let param = new FormData() // 创建form对象
+        param.append('searchID', window.localStorage.getItem('tid'))// 通过append向form对象添加数据
+        param.append('searchType', 2)
+        param.append('sortMethod', this.sortout[0])
+        param.append('sortOrder', this.sortout[1])
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        } // 添加请求头
+        axios.post('http://43.138.21.64:8080/project/view/all', param,config)
+            .then(response => {
+              if(response.data.success===true){
+                this.total=0
+                this.allprojectList=response.data.message
+                this.alltotal=this.allprojectList.length
+                this.projectList=[]
+                for(var i=0;i<this.alltotal;i++){
+                  if(this.allprojectList[i].is_recycled===false){
+                    this.projectList.push(this.allprojectList[i])
+                    this.total=this.total+1
+                  }
                 }
+              }else{
+                console.log(response.data.success)
               }
-              this.currentPage=1;
               this.load();
-            }else{
-              console.log("没有相关结果")
-              this.total=0;
-              this.projectList=[];
-              this.currentPage=1;
-              this.load();
-            }
-          })
+              console.log(this.currentPage)
+              this.changed=this.changed+1
+            })
+      }else{
+        let param = new FormData() // 创建form对象
+        var way=''
+        var order=''
+        var startdate=''
+        var enddate=''
+        way=this.sortout[0]
+        order=this.sortout[1]
+        if(this.sortout[0]===undefined){
+          console.log("no sort")
+          way='creator_date'
+          order='asc'
+        }
+        if(this.datechoose[0]===undefined){
+          console.log("no date")
+          startdate=''
+          enddate=''
+        }else{
+          console.log("date-start "+this.datechoose[0])
+          console.log("date-end "+this.datechoose[1])
+          startdate=this.datechoose[0]
+          enddate=this.datechoose[1]
+          param.append('startDate',startdate)// 通过append向form对象添加数据
+          param.append('endDate',enddate)
+        }
+        var searchMode=''
+        searchMode=this.value
+        if(this.value===''||this.value==='project_name'){
+          console.log("no-value")
+          searchMode='name'
+          console.log(searchMode)
+          param.append('searchName', this.input)
+        }else{
+          searchMode='creator'
+          param.append('searchCreator', this.input)
+        }
+
+        param.append('sortMethod', way)
+        param.append('sortOrder', order)
+
+        param.append('teamID',window.localStorage.getItem('tid'))
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        } // 添加请求头
+
+        axios.post('http://43.138.21.64:8080/project/search/'+searchMode, param,config)
+            .then(response => {
+              console.log(response.data.success)
+              if(response.data.success===true){
+                this.data=response.data.message
+                console.log(this.data)
+                console.log("new")
+                this.allprojectList=this.data.results
+                this.alltotal=this.data.totalResults
+                this.total=0
+                this.projectList=[]
+                this.alltotal=this.allprojectList.length
+                for(var i=0;i<this.alltotal;i++) {
+                  if (this.allprojectList[i].is_recycled === false) {
+                    this.projectList.push(this.allprojectList[i])
+                    this.total = this.total + 1
+                  }
+                }
+                console.log(this.projectList)
+                this.currentPage=1;
+                this.load();
+                this.changed=this.changed+1
+              }else{
+                console.log("没有相关结果")
+                this.total=0;
+                this.projectList=[];
+                this.currentPage=1;
+                this.load();
+              }
+            })
+      }
+
+
     },
     deleteRow(row){
       console.log(row);
@@ -687,6 +757,32 @@ export default {
             }
           })
     },
+    uploadFile(params){
+      this.newheadshot = params.file;
+      this.imageUrl = URL.createObjectURL(this.newheadshot);
+    },
+    uploadHeadshot(){
+      var formData = new FormData();
+      formData.append('is_change_headshot', '1')// 通过append向form对象添加数据
+      formData.append('new_headshot', this.newheadshot)
+      this.teamshot=this.imageUrl
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), formData,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 8000) {
+              this.$message.success(response.data.msg)
+              this.teamshot='http://43.138.21.64:8080'+response.data.new_headshot
+              window.localStorage.setItem('theadshot',this.teamshot)
+              this.update();
+            }else{
+              this.$message.error("头像更换失败");
+            }
+          })
+    },
   },
   data(){
     return{
@@ -702,7 +798,7 @@ export default {
       sortout:[],
       datechoose:'',
       sort:[{
-        value: 'name',
+        value: 'project_name',
         label: '按项目名称',
         children: [{
           value: 'asc',
@@ -712,7 +808,7 @@ export default {
           label: '逆序'
         }]
       },{
-        value: 'time',
+        value: 'creator_date',
         label: '按创建时间',
         children: [{
           value: 'asc',
@@ -722,7 +818,7 @@ export default {
           label: '逆序'
         }]
       },{
-        value: 'creator',
+        value: 'creator_id',
         label: '按创建者',
         children: [{
           value: 'asc',
@@ -733,13 +829,10 @@ export default {
         }]
       }],
       options: [{
-        value: 'search',
-        label: '不限'
-      },{
-        value: 'creator',
+        value: 'creator_id',
         label: '按创建者'
       }, {
-        value: 'name',
+        value: 'project_name',
         label: '按项目名'
       }],
       tableData: [],
@@ -765,6 +858,11 @@ export default {
       currentPageData:[],
       allprojectList:[],
       tintro:window.localStorage.getItem('tintro'),
+      theadshot:window.localStorage.getItem('theadshot'),
+      newheadshot:'',
+      time:'creator_date',
+      asc:'asc',
+      changed:0,
     }
   }
 };
