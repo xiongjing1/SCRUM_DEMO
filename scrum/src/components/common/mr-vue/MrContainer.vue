@@ -33,17 +33,18 @@ export default {
   },
   computed: {
     mrElements () {
-      return document.getElementById(this.$store.state.selectedItem.id).parentElement
-      //return this.$store.state.selectedItem.map(el => document.getElementById(el.id).parentElement)
+      return this.$store.state.selectedItem.map(el => document.getElementById(el.id).parentElement)
     }
   },
   methods: {
     mouseDownHandler (e) {
+
       let isMrs = false
       this.initialAbsPos = this.currentAbsPos = this.getMouseAbsPoint(e)
       this.initialRelPos = this.currentRelPos = this.getMouseRelPoint(e)
 
       if (e.target.dataset.mrContainer) {
+        console.log('clean')
         this.$store.commit('clear')
         //this.$emit('clearselection')
         //this.renderSelectionArea({x: -1, y: -1}, {x: -1, y: -1})
@@ -53,8 +54,10 @@ export default {
         this.handle = e.target.classList[1]
         // this.$emit('resizestart')
       } else if (this.getParentMr(e.target)) {
+        //this.$store.commit('set' , e.target)
         isMrs = this.moving = true
-        this.$store.commit('set' , e.target)
+        console.log(this.$store.state.selectedItem)
+        //this.$store.commit('set' , e.target)
         // this.$emit('movestart')
       }
 
@@ -65,6 +68,10 @@ export default {
     },
 
     mouseUpHandler () {
+      console.log((this.mrElements))
+      console.log('asd')
+      //
+      console.log(this.moveStopData())
       // Saves the scroll position before giving focus and sets it back after focus
       const mainContainer = document.getElementById('main')
       let currentScroll = mainContainer.scrollTop
@@ -73,7 +80,10 @@ export default {
 
       if (this.initialAbsPos !== this.currentAbsPos) {
         if (this.resizing) this.$emit('resizestop', this.resizeStopData())
-        else if (this.moving) this.$emit('movestop', this.moveStopData())
+        else if (this.moving) {
+          this.$emit('movestop', this.moveStopData())
+
+        }
       }
       this.moving = false
       this.resizing = false
@@ -99,8 +109,7 @@ export default {
         })
         // this.$emit('resizing')
       } else if (this.moving) {
-        this.moveElementBy(this.mrElements, offX, offY)
-        //this.$emit('moving', this.currentAbsPos.x, this.currentAbsPos.y)
+        this.mrElements.map(mrEl => this.moveElementBy(mrEl, offX, offY))
       }
         //this.renderSelectionArea(this.initialRelPos, this.currentRelPos)
         // this.$emit('selecting')
@@ -229,25 +238,20 @@ export default {
     },
 
     moveStopData () {
+      const el = this.mrElements[0]
       return {
-        elId: this.mrElements.childNodes[0].id,
-        top: (this.mrElements.style.top.indexOf('%') !== -1 || this.mrElements.style.top === 'auto')
-          ? this.mrElements.style.top
-          : parseInt(this.mrElements.style.top),
-        left: (this.mrElements.style.left.indexOf('%') !== -1 || this.mrElements.style.left === 'auto')
-          ? this.mrElements.style.left
-          : parseInt(this.mrElements.style.left),
-        bottom: (this.mrElements.style.bottom.indexOf('%') !== -1 || this.mrElements.style.bottom === 'auto')
-          ? this.mrElements.style.bottom
-          : parseInt(this.mrElements.style.bottom),
-        right: (this.mrElements.style.right.indexOf('%') !== -1 || this.mrElements.style.right === 'auto')
-          ? this.mrElements.style.right
-          : parseInt(this.mrElements.style.right),
-
-        relMouseX: Math.round(this.currentRelPos.x),
-        relMouseY: Math.round(this.currentRelPos.y),
-        absMouseX: this.currentAbsPos.x,
-        absMouseY: this.currentAbsPos.y
+        top: (el.style.top.indexOf('%') !== -1 || el.style.top === 'auto')
+            ? el.style.top
+            : parseInt(el.style.top),
+        left: (el.style.left.indexOf('%') !== -1 || el.style.left === 'auto')
+            ? el.style.left
+            : parseInt(el.style.left),
+        bottom: (el.style.bottom.indexOf('%') !== -1 || el.style.bottom === 'auto')
+            ? el.style.bottom
+            : parseInt(el.style.bottom),
+        right: (el.style.right.indexOf('%') !== -1 || el.style.right === 'auto')
+            ? el.style.right
+            : parseInt(el.style.right)
       }
     },
 

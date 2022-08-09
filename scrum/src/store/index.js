@@ -5,17 +5,17 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    selectedItem:null
+    selectedItem:[]
   },
   getters: {
   },
   mutations: {
     clear(state){
-      state.selectedItem = null
+      state.selectedItem = []
     },
     set(state , n){
-      state.selectedItem = null
-      state.selectedItem = n
+      state.selectedItem = []
+      state.selectedItem.push(n)
     }
   },
   actions: {

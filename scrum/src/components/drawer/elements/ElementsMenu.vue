@@ -47,6 +47,7 @@ export default {
   },
   methods:{
     addItemToStage (e, item) {
+      //console.log(item)
       this.$bus.$emit('addElement',this.initItem(item))
     },
     initItem (item) {

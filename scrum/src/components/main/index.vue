@@ -3,15 +3,8 @@
     <stageComp :page="pageselect"></stageComp>
   </div>
 </template>
-
-
 <script>
-
-
-
 import StageComp from './Stage'
-
-
 export default {
   name: 'mainEgg',
   components: { StageComp },
@@ -23,14 +16,7 @@ export default {
 
 <style scoped>
 .mainegg {
-  margin: 0 57px;
+  margin: 0 ;
   height: 100%;
-}
-
-.zoom-menu {
-  bottom: 24px;
-  left: 24px;
-  padding: 0 6px;
-  position: fixed;
 }
 </style>

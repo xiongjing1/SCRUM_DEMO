@@ -12,6 +12,7 @@
         <div class="picture-btn">jpg格式</div>
         <div class="picture-btn" >png格式</div>
       </div>
+
       <div id="left" >
         <div class="title">
           <img src="../assets/PrototypeMaterial/back.png" height="25px" class="backlogo"  alt="">
@@ -43,11 +44,10 @@
           <el-empty description="还没有创建原型实例"  v-show="pages.length===0" :image-size="200"></el-empty>
         </div>
       </div>
-
       <main id="main" role="main" >
         <mainEgg :pageselect="selectedPage"></mainEgg>
       </main>
-      <drawEgg></drawEgg>
+      <drawegg></drawegg>
 
       <el-dialog title="设置原型属性" :visible.sync="dialogAddVisible">
         <el-form :model="addForm">
@@ -103,21 +103,19 @@
 <script>
 import HeadSide from "@/components/HeadSide";
 import newPage from '@/Factory/pageFactory'
-import DrawEgg from "@/components/drawer";
+import Drawegg from '@/components/drawer'
 import MainEgg from '@/components/main';
-import { setElId, } from '@/helpers/recursiveMethods'
-
+import '@/assets/icons/system/elements/'
 export default {
   name: "PrototypeHtml",
-  components: {DrawEgg, HeadSide,MainEgg,},
+  components: { Drawegg , HeadSide,MainEgg,},
 
   data(){
     return{
       pages:[newPage('新建原型实例' , 500 , 500) , newPage('新建原型实例2' , 400 , 300)],
-      selectedPage:null,
+
       selectedElements:[],
-
-
+      selectedPage:null,
       changeForm:{
         width:150,
         height:150,
@@ -145,6 +143,7 @@ export default {
     }
   },
   methods:{
+
     addPrototype() {
       this.dialogAddVisible = false
       let page = newPage(this.addForm.name , this.addForm.height,this.addForm.width)
@@ -155,6 +154,8 @@ export default {
       this.indexSelected = index
       this.idSelected = elm.id
       this.selectedPage = this.pages[index]
+      console.log(this.selectedPage.id)
+      this.$store.commit('clear')
     },
     showChangeDialog(elm){
       this.changeForm.width = elm.width
@@ -162,9 +163,6 @@ export default {
       this.dialogChangeVisible = true
     },
     changePrototypeSize(){
-      //console.log(that.indexSelected)
-      //const prototypeContent = that.prototypeData[that.indexSelected]
-      //console.log(prototypeContent)
       this.dialogChangeVisible = false
       this.selectedPage.width = this.changeForm.width
       this.selectedPage.height = this.changeForm.height
@@ -179,34 +177,39 @@ export default {
       this.indexSelected = -1
       //todo
     },
-
     addElement(elm){
-      let egglement = setElId(elm, this.selectedPage.pageId)
-      //this.$store.commit('set' , egglement)
-      this.selectedPage.children.push(egglement)
-      console.log(egglement)
-      console.log(this.selectedPage)
+      this.selectedPage.children.push(elm)
     },
-    deleteElement(elm){
-      let eggIndex = this.selectedPage.children.findIndex(egg => egg.id === elm.elId)
-      this.selectedPage.children.splice(eggIndex, 1)
-      this.$store.commit('clear')
-    },
-    updateElement(elm , data){
-      let eggIndex = this.selectedPage.children.findIndex(egg => egg.id === elm.elId)
-      if ((typeof data.left !== 'undefined') && (data.left !== null)) this.selectedPage.children[eggIndex].left = data.left
-      if ((typeof data.top !== 'undefined') && (data.top !== null)) this.selectedPage.children[eggIndex].top = data.top
-      if ((typeof data.right !== 'undefined') && (data.right !== null)) this.selectedPage.children[eggIndex].right = data.right
-      if ((typeof data.bottom !== 'undefined') && (data.bottom !== null)) this.selectedPage.children[eggIndex].bottom = data.bottom
-      if ((typeof data.zIndex !== 'undefined') && (data.zIndex !== null)) this.selectedPage.children[eggIndex].zIndex = data.zIndex
-      if ((typeof data.height !== 'undefined') && (data.height !== null)) this.selectedPage.children[eggIndex].height = data.height
-      if ((typeof data.width !== 'undefined') && (data.width !== null)) this.selectedPage.children[eggIndex].width = data.width
-      if ((typeof data.text !== 'undefined') && (data.text !== null)) this.selectedPage.children[eggIndex].text = data.text
-      if (data.classes) this.selectedPage.children[eggIndex].classes = data.classes
-      if (data.styles) this.selectedPage.children[eggIndex].styles = data.styles
-      if (data.attrs) this.selectedPage.children[eggIndex].attrs = data.attrs
-    }
+    deleteElement(){
+      if(this.$store.state.selectedItem.length){
+        let eggIndex = this.selectedPage.children.findIndex(egg => egg.id === this.$store.state.selectedItem[0].elId)
+        this.selectedPage.children.splice(eggIndex, 1)
+        this.$store.commit('clear')
+      }
 
+    },
+    updateElement(payload) {
+      let eggIndex = this.selectedPage.children.findIndex(egg => egg.id === this.$store.state.selectedItem[0].id)
+      //eggIndex = 1
+      console.log('vv')
+      console.log(eggIndex)
+      console.log(this.selectedPage.children[0].id)
+      console.log(this.selectedPage.children[1].id)
+      console.log(this.$store.state.selectedItem[0].id)
+      console.log(this.selectedPage.children[eggIndex].left)
+      console.log(payload)
+      if ((typeof payload.left !== 'undefined') && (payload.left !== null)) this.selectedPage.children[eggIndex].left = payload.left
+      if ((typeof payload.top !== 'undefined') && (payload.top !== null)) this.selectedPage.children[eggIndex].top = payload.top
+      if ((typeof payload.right !== 'undefined') && (payload.right !== null)) this.selectedPage.children[eggIndex].right = payload.right
+      if ((typeof payload.bottom !== 'undefined') && (payload.bottom !== null)) this.selectedPage.children[eggIndex].bottom = payload.bottom
+      if ((typeof payload.zIndex !== 'undefined') && (payload.zIndex !== null)) this.selectedPage.children[eggIndex].zIndex = payload.zIndex
+      if ((typeof payload.height !== 'undefined') && (payload.height !== null)) this.selectedPage.children[eggIndex].height = payload.height
+      if ((typeof payload.width !== 'undefined') && (payload.width !== null)) this.selectedPage.children[eggIndex].width = payload.width
+      if ((typeof payload.text !== 'undefined') && (payload.text !== null)) this.selectedPage.children[eggIndex].text = payload.text
+      if (payload.classes) this.selectedPage.children[eggIndex].classes = payload.classes
+      if (payload.styles) this.selectedPage.children[eggIndex].styles = payload.styles
+      if (payload.attrs) this.selectedPage.children[eggIndex].attrs = payload.attrs
+    },
 
 
   },
@@ -214,6 +217,7 @@ export default {
     this.$bus.$on("addElement" , this.addElement)
     this.$bus.$on("deleteElement" , this.deleteElement)
     this.$bus.$on("updateElement" , this.updateElement)
+
   }
 }
 </script>
@@ -262,10 +266,16 @@ export default {
   border: black  1px;
 }
 #right{
-  width: 30%;
+
   height: 100%;
-  display: inline-block;
+  display: flex;
   float: right;
+  z-index: 1005;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
   margin-top: -10px;
   vertical-align: top;
   background-color: #404446;
@@ -278,7 +288,7 @@ export default {
   padding-top: 20px;
 }
 #work{
-  width: 49%;
+  width: 95%;
 
   height: 700px;
   border: black  1px;
@@ -392,5 +402,25 @@ canvas{
 }
 .picture-btn:hover{
   background-color: rgba(200,200,200,0.8);
+}
+.el-menu__el {
+  width: 79px;
+  cursor: pointer;
+  padding-top: 1em;
+  color: rgba(0,0,0,.87);
+  text-align: center;
+  border-radius: 2px;
+  background-color: transparent;
+  transition: all 0.20s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.el-menu__el:hover{
+  background-color: rgba(0,0,0,.08);
+}
+.el-menu__el span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: small;
+  padding: 0 8px;
 }
 </style>

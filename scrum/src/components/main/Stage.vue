@@ -1,11 +1,8 @@
 <template>
   <mr-container
     :id="page.id"
-
     :style="pageStyles"
     :class="[page.classes, {stage: true}]"
-
-
     @moving="movingHandler"
     @movestop="moveStopHandler"
 
@@ -67,9 +64,9 @@ export default {
     },
 
     deleteHandler () {
-      if (this.$store.state.selectedItem !== null) {
-        this.$bus.$emit('deleteElement' , this.$store.state.selectedItem)
-        this.$store.commit('clear')
+      if (this.$store.state.selectedItem.length) {
+        this.$bus.$emit('deleteElement')
+        //this.$store.commit('clear')
       }
     },
     //selectStopHandler (selectionBox) {
@@ -119,23 +116,17 @@ export default {
     },
 
     moveStopHandler (moveStopData) {
-
-      //const containegg = this.getContaineggOnPoint(moveStopData.absMouseX, moveStopData.absMouseY)
-      //const parentId = containegg ? containegg.id : null
-
-      //moveStopData.moveElData.map(moveData => this.moveElement({
+      console.log('yyy')
+      console.log(moveStopData)
+      this.$bus.$emit('updateElement', moveStopData)
+      //console.log(this.$store.state.selectedItem)
+      //moveStopData.moveElData.map(moveData => this.$emit('moveElement',{
       //  ...moveData,
       //  pageId: this.page.id,
-      //  parentId,
       //  mouseX: moveStopData.relMouseX,
       //  mouseY: moveStopData.relMouseY
       //}))
-      //let freshElements =  getChildNode(this.page, this.$store.state.selectedItem.id)
-      //this.$store.commit('clear')
-      //this.$store.commit('set' , freshElements)
-      //this.toggleDroppableCursor(false)
-      //this.dropContainer = null
-      this.$bus.$emit('updateElement' , moveStopData)
+      //this.$bus.$emit('updateElement' , moveStopData)
     },
 
     getContaineggOnPoint (x, y) {

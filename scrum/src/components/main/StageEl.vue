@@ -84,13 +84,16 @@ export default {
   },
   computed: {
     isActive () {
-      return (this.$store.state.selectedItem && this.$store.state.selectedItem.id === this.elem.id)
+      return (this.$store.state.selectedItem[0] && this.$store.state.selectedItem[0].id === this.elem.id)
     },
   },
   methods: {
     activatedHandler (e) {
       e.stopPropagation()
       e.preventDefault()
+      this.$store.commit('set' , this.elem)
+      console.log('bvc')
+      console.log(this.$store.state.selectedItem)
 
      // if (e.shiftKey && !this.isActive) {
       //  this._addSelectedElement(this.elem)
