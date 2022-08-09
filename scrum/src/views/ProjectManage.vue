@@ -827,7 +827,7 @@ export default {
         value: 'creator_id',
         label: '按创建者'
       }, {
-        value: 'name',
+        value: 'project_name',
         label: '按项目名'
       }],
       tableData: [],
