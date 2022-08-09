@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="buttons">
-        <div class="document-center" v-on:click="JumpToProjectManage()">
+        <div class="document-center" v-on:click="jumpToFileCenter()">
           文档中心
         </div>
         <div class="manage-project" v-on:click="JumpToProjectManage()">
@@ -299,6 +299,12 @@ export default {
       }
       return isJPG && isLt2M;
     },
+
+    jumpToFileCenter() {
+      this.$router.push({
+        name: 'fileCenter',
+      });
+    },
     uploadFile(params){
       this.newheadshot = params.file;
       this.imageUrl = URL.createObjectURL(this.newheadshot);
@@ -324,6 +330,7 @@ export default {
               this.$message.error("头像更换失败");
             }
           })
+
     },
     JumpToProjectManage(){
       this.$router.push({

@@ -5,15 +5,15 @@
       <div class="bottom-block"></div>
       <div class="middle-block"></div>
       <div class="title">
-        <div class="MO animate__animated animate__fadeInUp" >MO</div>
-        <div class="BOOK animate__animated animate__fadeInUp">Book</div>
-        <div class="mo0 animate__animated animate__fadeInUp">墨</div>
-        <div class="book0 animate__animated animate__fadeInUp">书</div>
+        <div class="MO wow fadeInUp" >MO</div>
+        <div class="BOOK wow fadeInUp">Book</div>
+        <div class="mo0 wow fadeInUp">墨</div>
+        <div class="book0 wow fadeInUp">书</div>
       </div>
-      <img src="../assets/Scribbles.svg" class="scribbles animate__animated animate__fadeInBottomLeft">
-      <div class="inform1 animate__animated animate__fadeInUp">一款高效团队协作设计平台</div>
-      <div class="start-btn animate__animated animate__bounceIn" v-on:click="jump"></div>
-      <div class="start-word animate__animated animate__bounceIn" v-on:click="jump">现在开始</div>
+      <img src="../assets/Scribbles.svg" class="scribbles wow fadeInLeft">
+      <div class="inform1 wow fadeInUp">一款高效团队协作设计平台</div>
+      <div class="start-btn wow bounceIn" v-on:click="jump"></div>
+      <div class="start-word wow bounceIn" v-on:click="jump">现在开始</div>
     </div>
     <div class="page2">
       <img src="../assets/back2.svg" class="back2 wow bounceInDown" data-wow-duration="1s" data-wow-delay="500ms">
@@ -28,8 +28,8 @@
     </div>
     <div class="page3">
       <img src="../assets/vuegg.png" class="back3 wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="1400ms">
-      <img src="../assets/middle3.svg" class="middle3 wow animate__flipInY" data-wow-duration="1s" data-wow-delay="500ms">
-      <img src="../assets/front3.svg" class="front3 wow animate__fadeInLeft" data-wow-duration="0.6s" data-wow-delay="2100ms">
+      <img src="../assets/middle3.svg" class="middle3 wow flipInY" data-wow-duration="1s" data-wow-delay="500ms">
+      <img src="../assets/front3.svg" class="front3 wow fadeInLeft" data-wow-duration="0.6s" data-wow-delay="2100ms">
       <div class="title31 wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="2500ms">在线</div>
       <div class="title32 wow fadeInUp"  data-wow-duration="0.6s" data-wow-delay="2500ms">原型设计</div>
       <div class="inform3 wow fadeInRight" data-wow-duration="0.6s" data-wow-delay="3000ms">
@@ -60,9 +60,9 @@
       <img src="../assets/cloud1.svg" class="cloud1 wow fadeInLeft" data-wow-duration="0.4s" data-wow-delay="600ms">
       <img src="../assets/cloud2.svg" class="cloud2 wow fadeInLeft" data-wow-duration="0.4s" data-wow-delay="800ms">
       <img src="../assets/cloud3.svg" class="cloud3 wow fadeInRight" data-wow-duration="0.5s" data-wow-delay="700ms">
-      <img src="../assets/ipad.png" class="ipad wow animate__slideInUp"  data-wow-duration="0.8s" data-wow-delay="1540ms">
+      <img src="../assets/ipad.png" class="ipad wow fadeInUp"  data-wow-duration="0.8s" data-wow-delay="1540ms">
       <img src="../assets/mailbox.svg" class="mailbox wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="1040ms">
-      <img src="../assets/dog.svg" class="dog wow animate__bounceInUp" data-wow-duration="0.5s" data-wow-delay="1000ms">
+      <img src="../assets/dog.svg" class="dog wow bounceInUp" data-wow-duration="0.5s" data-wow-delay="1000ms">
       <div class="title41 wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="2400ms">文档</div>
       <div class="title42 wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="2400ms">管理 便捷直达</div>
       <div class="inform4 wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="2900ms">
@@ -72,8 +72,8 @@
       </div>
     </div>
     <div class="page5">
-      <img src="../assets/back5.svg" class="back5 wow animate__zoomInRight" data-wow-duration="0.7s" data-wow-delay="400ms">
-      <img src="../assets/front5.svg" class="front5 wow animate__fadeInLeft" data-wow-duration="0.7s" data-wow-delay="1200ms">
+      <img src="../assets/back5.svg" class="back5 wow bounceInDown" data-wow-duration="0.7s" data-wow-delay="400ms">
+      <img src="../assets/front5.svg" class="front5 wow fadeInLeft" data-wow-duration="0.7s" data-wow-delay="1200ms">
       <div class="title51 wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="1640ms">高效协作  &ensp;&ensp;&ensp;&ensp;同步</div>
       <div class="title52 wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="1640ms">实时</div>
       <div class="inform5 wow fadeInLeft" data-wow-duration="0.6s" data-wow-delay="2000ms">
@@ -83,14 +83,14 @@
       </div>
     </div>
     <div class="page6">
-      <img src="../assets/back6.png" class="back6 wow animate__slideInUp"  data-wow-duration="0.8s" data-wow-delay="440ms">
-      <img src="../assets/front6.svg" class="front6 wow animate__slideInLeft"  data-wow-duration="1.0s" data-wow-delay="840ms">
+      <img src="../assets/back6.png" class="back6 wow fadeInUp"  data-wow-duration="0.8s" data-wow-delay="440ms">
+      <img src="../assets/front6.svg" class="front6 wow slideInLeft"  data-wow-duration="1.0s" data-wow-delay="840ms">
       <div class="title61 wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="1640ms">
         点击开启<br/>
         &ensp;&ensp;探索你的设计之旅
       </div>
       <div class="title62 wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="1640ms" >Start with us right now</div>
-      <div class="end-btn wow animate__jackInTheBox" data-wow-duration="0.8s" data-wow-delay="1840ms" v-on:click="jump">
+      <div class="end-btn wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="1640ms" v-on:click="jump">
         <div class="end-word">Click here</div>
       </div>
     </div>
@@ -102,6 +102,7 @@
 import { WOW } from 'wowjs'
 export default {
   name: "HomeView",
+
   mounted() {
     console.log(document.body.scrollWidth)
     console.log(document.body.clientHeight)
