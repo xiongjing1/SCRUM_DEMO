@@ -22,3 +22,11 @@
     font-family: 'bahnschrift';
     src:url("./bahnschrift.ttf");
 }
+@font-face {
+    font-family: 'cuti';
+    src:url("./cuti.otf");
+}
+@font-face {
+    font-family: 'jianhanzhen';
+    src:url("./jianhanzhen.ttf");
+}
