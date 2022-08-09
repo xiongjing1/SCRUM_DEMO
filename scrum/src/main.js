@@ -7,11 +7,10 @@ import ElementUI from 'element-ui';
 import axios from 'axios';
 import '@/assets/font/font.css';
 import infiniteScroll from "vue-infinite-scroll";
-import animate from "animate.css";
 import 'wowjs/css/libs/animate.css'
 
 
-Vue.use(animate);
+
 Vue.use(infiniteScroll);
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
