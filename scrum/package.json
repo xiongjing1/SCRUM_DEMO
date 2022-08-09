@@ -18,7 +18,9 @@
     "vue": "^2.6.14",
     "vue-infinite-scroll": "^2.0.2",
     "vue-router": "^3.5.1",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.2",
+    "shortid": "^2.2.8",
+    "vue-mdc-adapter": "^0.15.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -33,6 +35,8 @@
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.14",
     "wowjs": "^1.1.3"
+    "vue-svgicon": "^3.2.9",
+    "vue-template-compiler": "^2.6.14"
   },
   "eslintConfig": {
     "root": true,

@@ -3,6 +3,7 @@
   <div id="diva">
     <HeadSide></HeadSide>
     <div class="plusElement">
+      <img src="../assets/PrototypeMaterial/code.jpg" height="25px"   v-on:click="toPrototypeHtml" class="backlogo"  title="导出图片">
       <img src="../assets/PrototypeMaterial/aspicture.png" height="25px"   v-on:click="asPicture=!asPicture" class="backlogo"  title="导出图片">
       <img src="../assets/PrototypeMaterial/delete.png" height="25px"   v-on:click="deleteEle" class="backlogo"  title="删除选中元素">
       <img src="../assets/PrototypeMaterial/clear.png" height="23px"   v-on:click="clear" class="backlogo"  title="清空页面">
@@ -181,6 +182,11 @@ export default {
         params:{
           pid:window.localStorage.getItem('pid')
         }
+      });
+    },
+    toPrototypeHtml(){
+      this.$router.push({
+        name:'PrototypeHtml',
       });
     },
     showChangeDialog(elm){
