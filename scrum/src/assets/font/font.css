@@ -6,3 +6,19 @@
     font-family: 'blackfont';
     src:url("./blackfont.ttf");
 }
+@font-face {
+    font-family: 'AMCSongGBK-Light';
+    src:url("./AMC.ttf");
+}
+@font-face {
+    font-family: 'BIZ-X';
+    src:url("./BIZ-X.ttc");
+}
+@font-face {
+    font-family: 'BIZ-C';
+    src:url("./BIZ-C.ttc");
+}
+@font-face {
+    font-family: 'bahnschrift';
+    src:url("./bahnschrift.ttf");
+}

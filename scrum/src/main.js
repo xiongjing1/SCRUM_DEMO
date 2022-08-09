@@ -7,8 +7,12 @@ import ElementUI from 'element-ui';
 import axios from 'axios';
 import '@/assets/font/font.css';
 import infiniteScroll from "vue-infinite-scroll";
-Vue.use(infiniteScroll);
+import animate from "animate.css";
+import 'wowjs/css/libs/animate.css'
 
+
+Vue.use(animate);
+Vue.use(infiniteScroll);
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 axios.defaults.baseURL = 'http://43.138.21.64:8080'
