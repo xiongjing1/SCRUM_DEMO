@@ -1,16 +1,25 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import LoginView from "@/views/LoginView";
+
+import HomeView from "@/views/HomeView";
 //import HomeView from '../views/document.vue'
+
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
+    name: 'home',
+    component: HomeView,
+  },
+  {
+    path: '/login',
     name: 'login',
-    component: LoginView,
-
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/LoginView.vue')
   },
   {
     path: '/about',
@@ -77,12 +86,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/ProjectTrash')
   },
   {
-    path: '/document',
-    name: 'document',
+    path: '/fileCenter',
+    name: 'fileCenter',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/document')
+    component: () => import(/* webpackChunkName: "about" */ '../views/fileCenter')
   },
   {
     path: '/ProtoTypeView/:pid',
@@ -92,11 +101,25 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/ProtoTypeView')
   },
+  {
+    path: '/UmlEdit',
+    name: 'UmlEdit',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/UmlEdit')
+  },
 ]
-
+Vue.use(VueRouter)
 const router = new VueRouter({
   mode:"hash",
   routes
 })
+const VueRouterPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (to) {
+  return VueRouterPush.call(this, to).catch(err => err)
+}
+
+
 
 export default router

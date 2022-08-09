@@ -9,7 +9,7 @@
         <div class="title">
           <div class="team">
             <div class="TeamPhoto">
-              <el-avatar style="height: 60px;width:60px;background-color:cornflowerblue;padding-top: 10px;margin-top: 10px;float: left;margin-left: 20px;"> X </el-avatar>
+              <img :src="this.theadshot" style="height: 60px;width:60px;background-color:cornflowerblue;margin-top: 10px;float: left;margin-left: 20px;border-radius: 100%">
             </div>
             <div class="TeamName">
               {{ this.tname }}
@@ -62,13 +62,14 @@
                       action="https://jsonplaceholder.typicode.com/posts/"
                       :show-file-list="false"
                       :on-success="handleAvatarSuccess"
-                      :before-upload="beforeAvatarUpload">
+                      :before-upload="beforeAvatarUpload"
+                      :http-request="uploadFile">
                     <img v-if="imageUrl" :src="imageUrl" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </el-upload>
                   <div slot="footer" class="photo-footer">
                     <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
-                    <el-button @click="changeIcon = false" class="yes-buttons">确 定</el-button>
+                    <el-button @click="changeIcon = false;uploadHeadshot()" class="yes-buttons">确 定</el-button>
                   </div>
                 </el-dialog>
               </el-dropdown>
@@ -278,6 +279,7 @@ export default {
             console.log("ok");
             that.tableData = response.data.message.document.results || [];
             console.log('文档列表获取成功');
+            console.log(response.data.message.document.results)
             this.load();
           }
           else {
@@ -359,10 +361,13 @@ export default {
           }
         }else{
           this.searchData=[];
+          console.log('search:'+this.tableData.length);
+          console.log(search1);
           for(let i=this.tableData.length-1;i>=0;i--){
             if(this.tableData[i].name.search(search1)!==-1){
               if(!this.tableData[i].isRecycled){
                 this.searchData.push(this.tableData[i]);
+                console.log('search'+this.tableData[i].name);
               }
             }
           }
@@ -379,20 +384,16 @@ export default {
       this.total=this.searchData.length;
       if(this.currentPage===1){
         console.log('fen')
-        this.currentPageData = this.searchData.slice(1, 7);
+        this.currentPageData = this.searchData.slice(0, 6);
       }else{
         let begin = (this.currentPage - 1) * this.pageSize;
         let end = this.currentPage * this.pageSize;
         this.currentPageData = this.searchData.slice(begin, end);
       }
+      console.log('a'+this.currentPageData);
     },
     handleNew(){
       var add=true;
-      for(let i=0;i<this.tableData.length;i++) {
-        if(this.tableData[i].name===this.input1&&this.tableData[i].isRecycled===false){
-          add=false;
-        }
-      }
       if(add){
         let formData = new FormData();
         formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
@@ -404,6 +405,7 @@ export default {
         axios.post('http://43.138.21.64:8080/doc/add',formData,config)
             .then(response => {
               if(response.status === 200){
+                console.log('add')
                 console.log(response.data.message);
               }
               else {
@@ -411,9 +413,9 @@ export default {
               }
               //this.reload();
             })
-        this.input1='';
         global.filename=this.input1;
         global.filecontent='null';
+        this.input1='';
         this.$router.push({path: '/about'});
       }
       else{
@@ -527,6 +529,33 @@ export default {
       this.reload()
       console.log('刷新页面')
     },
+    uploadFile(params){
+      this.newheadshot = params.file;
+      this.imageUrl = URL.createObjectURL(this.newheadshot);
+    },
+    uploadHeadshot(){
+      var formData = new FormData();
+      formData.append('is_change_headshot', '1')// 通过append向form对象添加数据
+      formData.append('new_headshot', this.newheadshot)
+
+      this.teamshot=this.imageUrl
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid'), formData,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.errno === 8000) {
+              this.$message.success(response.data.msg)
+              this.teamshot='http://43.138.21.64:8080'+response.data.new_headshot
+              window.localStorage.setItem('theadshot',this.teamshot)
+              this.update();
+            }else{
+              this.$message.error("头像更换失败");
+            }
+          })
+    },
   },
   data(){
     return{
@@ -591,6 +620,8 @@ export default {
       p_creator:window.localStorage.getItem('p_creator'),
       p_create_time:window.localStorage.getItem('p_create_time'),
       p_doc_count:window.localStorage.getItem('p_doc_count'),
+      theadshot:window.localStorage.getItem('theadshot'),
+      newheadshot:'',
     }
   }
 };

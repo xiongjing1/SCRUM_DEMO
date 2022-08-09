@@ -203,6 +203,7 @@ export default {
   },
   methods: {
     getList(){
+      this.editfile=global.filename;
       console.log(this.tableData);
       this.searchData=[];
       for(let i=this.tableData.length-1;i>=0;i--){
