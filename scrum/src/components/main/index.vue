@@ -1,6 +1,6 @@
 <template>
-  <div class="mainegg">
-    <stageComp :page="pageselect"></stageComp>
+  <div class="mainegg" >
+    <stageComp :page="pageselect" ></stageComp>
   </div>
 </template>
 <script>
