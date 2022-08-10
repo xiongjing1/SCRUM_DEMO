@@ -186,6 +186,7 @@
                     </div>
                   </div>
                 </div>
+                <div class="no-result" v-if="this.Noresult===true">搜索无结果</div>
               </div>
               <div class="pagination">
                 <el-pagination
@@ -479,6 +480,7 @@ export default {
           .then(response => {
             console.log(response.data.success)
             if(response.data.success===true){
+              this.Noresult=false
               this.data=response.data.message
               console.log(response.data.data)
               this.allprojectList=this.data.results
@@ -496,6 +498,7 @@ export default {
               this.load();
               this.changed=this.changed+1
             }else{
+              this.Noresult=true
               console.log("没有相关结果")
               this.total=0;
               this.projectList=[];
@@ -587,6 +590,7 @@ export default {
             .then(response => {
               console.log(response.data.success)
               if(response.data.success===true){
+                this.Noresult=false
                 this.data=response.data.message
                 console.log(this.data)
                 console.log("new")
@@ -606,6 +610,7 @@ export default {
                 this.load();
                 this.changed=this.changed+1
               }else{
+                this.Noresult=true
                 console.log("没有相关结果")
                 this.total=0;
                 this.projectList=[];
@@ -932,6 +937,7 @@ export default {
       time:'creator_date',
       asc:'desc',
       changed:0,
+      Noresult:false,
     }
   }
 };
@@ -1416,6 +1422,12 @@ export default {
 
   width: 100%;
   height: 400px;
+}
+.no-result{
+  font-family: 'jianhanzhen';
+  font-size: 50px;
+  color: #d9d9d9;
+  margin-top: 50px;
 }
 .project-total{
   width: 100%;

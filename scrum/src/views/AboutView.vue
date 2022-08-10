@@ -116,6 +116,7 @@ export default {
       sendjson:{
         username:'',
         content:'',
+        headshot:'',
       },
       editinput:'',
       dialogVisible: false,
@@ -165,6 +166,8 @@ export default {
             console.log('文档列表获取失败');
           }
         })
+    this.initWebSocket();
+    console.log("wb")
     var _this=this
     this.editfile=global.filename;
     this.contentEditor = new Vditor('vditor', {
@@ -244,7 +247,6 @@ export default {
         console.log(_this.editinput)
       },
     });
-    this.initWebSocket();
   },
   methods: {
     getModel(index){
@@ -282,6 +284,7 @@ export default {
       global.fileid=id;
       global.filename=name;
       global.filecontent=content;
+      window.localStorage.setItem('docID',id)
       this.reload();
     },
     handleNew() {
@@ -368,7 +371,8 @@ export default {
        */
     },
     initWebSocket(){
-      const wsuri = "ws://43.138.21.64:8080/ws/chat"+global.fileid;
+      const wsuri = "ws://43.138.21.64:8080/ws/chat/"+ window.localStorage.getItem('docID')+'/';
+      console.log(wsuri)
       this.websock = new WebSocket(wsuri);
       this.websock.onmessage = this.websocketonmessage;
       this.websock.onopen = this.websocketonopen;
@@ -386,22 +390,27 @@ export default {
     },
     websocketonmessage(e){ //数据接收
       var jsondata=JSON.parse(e.data.replace(/\n/g,"\\n").replace(/\r/g,"\\r"));
+      console.log(jsondata)
       this.content=jsondata.content
+
       this.contentEditor.setValue(this.content)
       if(contains(this.userList,jsondata.username)){
         console.log("有了")
       }
       else {
         var tmp={
-          "username":jsondata.username
+          "username":jsondata.username,
+          "headshot":jsondata.headshot,
         }
         this.userList.push(tmp)
       }
     },
     sendcontent(){
-      this.sendjson.content=this.content;
-      this.sendjson.username=localStorage.getItem('name')
+      this.sendjson.content=this.editinput;
+      this.sendjson.username=window.localStorage.getItem('name')
+      this.sendjson.headshot=window.localStorage.getItem('headshot')
       this.websocketsend(JSON.stringify(this.sendjson));
+      console.log('发送数据')
     },
     websocketsend(Data){//数据发送
       this.websock.send(Data);
@@ -410,6 +419,7 @@ export default {
   watch: {
     editinput(){
         console.log('yes')
+        this.sendcontent();
     },
   },
 }

@@ -142,8 +142,8 @@
                   name="comment">
               </textarea>
                 <div slot="footer" class="rename-footer">
-                  <el-button @click="editSummary = false">取 消</el-button>
-                  <el-button @click="editSummary = false" class="el-buttons">确 定</el-button>
+                  <el-button @click="editSummary = false;pintrocancel();">取 消</el-button>
+                  <el-button @click="editSummary = false;pintroedit();" class="el-buttons">确 定</el-button>
                 </div>
               </el-dialog>
             </div>
@@ -175,7 +175,7 @@
             <el-divider></el-divider>
             <div class="lately-operation">
               <div class="lately-operation-title">
-                Recent operations
+
               </div>
             </div>
           </div>
@@ -210,6 +210,29 @@ export default {
     }
   },
   methods:{
+    pintrocancel(){
+      this.Summarycontent=''
+    },
+    pintroedit(){
+      let param = new FormData() // 创建form对象
+      param.append('projectID', window.localStorage.getItem('pid'))// 通过append向form对象添加数据
+      param.append('description', this.Summarycontent)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/project/description/update', param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.success === true) {
+              window.localStorage.setItem('pintro',this.Summarycontent)
+              this.$message.success(response.data.msg)
+            }else {
+              this.pintrocancel();
+              this.$message.error("编辑简介失败！");
+            }
+          })
+    },
     JumpToPrototype(){
       console.log(window.localStorage.getItem('pid'))
       this.$router.push({
