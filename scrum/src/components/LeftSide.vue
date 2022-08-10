@@ -67,15 +67,8 @@ export default {
       origin_teams:[],
       origin_projects:[],
       teams: [
-        {id: '1', name: 'Yigaaa Team'},
-        {id: '2', name: 'lluosi Team'},
       ],
       projects: [
-        {id: '1', name: 'Short term', teamid: '1'},
-        {id: '2', name: 'KinKi Kids', teamid: '2'},
-        {id: '3', name: 'Operate System', teamid: '1'},
-        {id: '4', name: 'Sina News', teamid: '2'},
-        {id: '5', name: 'KAT-TUN', teamid: '1'},
       ]
     }
   },
