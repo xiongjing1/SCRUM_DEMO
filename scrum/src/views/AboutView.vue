@@ -67,6 +67,29 @@
         <el-button type="primary"  @click="submit()">提交</el-button>
       </div>
     </el-col>
+
+    <el-dialog
+        title="模板选择"
+        :visible.sync="dialogVisible"
+        width="50%"
+        :before-close="handleClose">
+      <span><img src="../assets/PrototypeMaterial/model0.png" @click="getModel(0)" ></span>
+      <span> &ensp;</span>
+      <span><img src="../assets/PrototypeMaterial/model1.png" @click="getModel(1) " ></span>
+      <span> &ensp;</span>
+      <span><img src="../assets/PrototypeMaterial/model2.png" @click="getModel(2)" ></span>
+      <span> &ensp;</span>
+      <span><img src="../assets/PrototypeMaterial/model3.png" @click="getModel(3)" ></span>
+
+      <span><img src="../assets/PrototypeMaterial/model4.png" @click="getModel(4)" ></span>
+      <span> &ensp;&ensp;&ensp;</span>
+      <span><img src="../assets/PrototypeMaterial/model5.png" @click="getModel(5)" ></span>
+      <span> &ensp;&ensp;&ensp;</span>
+      <span><img src="../assets/PrototypeMaterial/model6.png" @click="getModel(6)" ></span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false;chooseModel()">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 
 </template>...
@@ -81,6 +104,7 @@ export default {
   inject:['reload'],
   data() {
     return {
+      dialogVisible: false,
       input1:'',
       editfile:'',
       contentEditor: {},
@@ -107,6 +131,7 @@ export default {
     }
   },
   mounted() {
+    this.dialogVisible=global.dialogVisible;
     const that=this;
     let formData = new FormData();
     formData.append('projectID', window.localStorage.getItem('pid'));//window.localStorage.getItem('pid')
@@ -202,17 +227,27 @@ export default {
     });
   },
   methods: {
+    getModel(index){
+      if(index===0) global.filecontent='';
+      else if(index===1) global.filecontent=global.model1;
+      else if(index===2) global.filecontent=global.model2;
+      else if(index===3) global.filecontent=global.model3;
+      else if(index===4) global.filecontent=global.model4;
+      else if(index===5) global.filecontent=global.model5;
+      else  global.filecontent=global.model6;
+    },
+    chooseModel(){
+      global.dialogVisible=false;
+      this.contentEditor.setValue(global.filecontent);
+    },
     getList(){
       this.editfile=global.filename;
-      console.log(this.tableData);
+      console.log('88'+global.fileid);
       this.searchData=[];
       for(let i=this.tableData.length-1;i>=0;i--){
         if(this.tableData[i].isRecycled === false){
-          if(this.tableData[i].name === global.filename){
-            global.fileid=this.tableData[i].ID;
-            global.filecontent=this.tableData[i].content;
-          }
-          else{
+          if(this.tableData[i].ID!== global.fileid){
+            console.log('kk'+this.tableData[i].ID+this.tableData[i].name)
             this.searchData.push(this.tableData[i]);
           }
         }
@@ -224,21 +259,16 @@ export default {
       }, 50)
     },
     jumpAnother(id,name,content){
-      console.log(id);
-      console.log(name);
-      console.log(content);
       global.fileid=id;
       global.filename=name;
       global.filecontent=content;
       this.reload();
     },
     handleNew() {
+      global.filename=this.input1;
+      this.editfile=this.input1;
+      var new_doc_id;
       var add = true;
-      for (let i = 0; i < this.tableData.length; i++) {
-        if (this.tableData[i].name === this.input1 && this.tableData[i].isRecycled === false) {
-          add = false;
-        }
-      }
       if (add) {
         let formData = new FormData();
         formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
@@ -250,11 +280,17 @@ export default {
         axios.post('http://43.138.21.64:8080/doc/add', formData, config)
             .then(response => {
               if (response.status === 200) {
+                new_doc_id=response.data.new_doc_id;
                 console.log(response.data.message);
+                global.fileid=new_doc_id;
+                global.filecontent='';
+                global.dialogVisible = true;
+                this.reload();
+                console.log('77'+this.editfile);
               } else {
+                new_doc_id=response.data.new_doc_id;
                 console.log(response.data.message);
               }
-              this.reload();
             })
         this.input1 = '';
       }

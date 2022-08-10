@@ -151,6 +151,32 @@
         <el-button type="primary"  @click="submit()">提交</el-button>
       </div>
     </el-col>
+
+    <el-dialog
+        title="模板选择"
+        :visible.sync="dialogVisible"
+        width="50%"
+        :before-close="handleClose">
+      <span><img src="../assets/PrototypeMaterial/model0.png" @click="getModel(0)" ></span>
+      <span> &ensp;</span>
+        <span><img src="../assets/PrototypeMaterial/model1.png" @click="getModel(1) " ></span>
+      <span> &ensp;</span>
+        <span><img src="../assets/PrototypeMaterial/model2.png" @click="getModel(2)" ></span>
+      <span> &ensp;</span>
+        <span><img src="../assets/PrototypeMaterial/model3.png" @click="getModel(3)" ></span>
+
+        <span><img src="../assets/PrototypeMaterial/model4.png" @click="getModel(4)" ></span>
+      <span> &ensp;&ensp;&ensp;</span>
+        <span><img src="../assets/PrototypeMaterial/model5.png" @click="getModel(5)" ></span>
+      <span> &ensp;&ensp;&ensp;</span>
+        <span><img src="../assets/PrototypeMaterial/model6.png" @click="getModel(6)" ></span>
+
+
+      <span slot="footer" class="dialog-footer">
+
+    <el-button type="primary" @click="dialogVisible = false;chooseModel()">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 
 </template>
@@ -165,6 +191,7 @@ export default {
   inject:['reload'],
   data() {
     return {
+      dialogVisible: false,
       activeIndex:'',
       input:'',
       input1:'',
@@ -175,6 +202,7 @@ export default {
     }
   },
   mounted() {
+    this.dialogVisible=global.dialogVisible;
     this.activeIndex=global.activeid;
     console.log('act'+this.activeIndex);
     axios.get('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/doc/info').then((res) => {
@@ -257,6 +285,19 @@ export default {
     });
   },
   methods: {
+    getModel(index){
+      if(index===0) global.filecontent='';
+      else if(index===1) global.filecontent=global.model1;
+      else if(index===2) global.filecontent=global.model2;
+      else if(index===3) global.filecontent=global.model3;
+      else if(index===4) global.filecontent=global.model4;
+      else if(index===5) global.filecontent=global.model5;
+      else  global.filecontent=global.model6;
+    },
+    chooseModel(){
+      global.dialogVisible=false;
+      this.contentEditor.setValue(global.filecontent);
+    },
     get2Content(itemid,iid){
       var project;
       if(itemid===0) {
@@ -293,8 +334,6 @@ export default {
               global.filecontent = response.data.content;
               global.fileid = jid;
               global.activeid = itemid +'-'+ iid + '-3-' + jid;
-              console.log(global.activeid);
-              console.log(response.data.msg);
               this.reload();
             })
       }
@@ -343,6 +382,7 @@ export default {
           })
     },
     handleNew2(itemid,iid){
+      var new_doc_id;
       if(itemid!==0){
         let param = new FormData();
         if(iid===null){
@@ -360,7 +400,25 @@ export default {
         axios.post('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')+'/folder/doc/add', param,config)
             .then(response => {
               console.log(response.data.msg);
-              this.reload();
+              if(response.data.errno === 1000) {
+                new_doc_id = response.data.new_doc_id;
+                console.log('55'+response.data.new_doc_id);
+                if (iid === null) {
+                  global.isproject = '0';
+                  global.filecontent = '';
+                  global.fileid = new_doc_id;
+                  global.activeid = itemid + '-2-' + new_doc_id;
+                  global.dialogVisible = true;
+                  this.reload();
+                } else {
+                  global.isproject = '0';
+                  global.filecontent = '';
+                  global.fileid = new_doc_id;
+                  global.activeid = itemid + '-' + iid + '-3-' + new_doc_id;
+                  global.dialogVisible = true;
+                  this.reload();
+                }
+              }
             })
       }
       else {
@@ -374,13 +432,20 @@ export default {
         axios.post('http://43.138.21.64:8080/doc/add',formData,config)
             .then(response => {
               if(response.status === 200){
-                console.log('add')
+                new_doc_id=response.data.new_doc_id;
+                console.log('999'+new_doc_id);
                 console.log(response.data.message);
+                global.isproject='1';
+                global.filecontent = '';
+                global.fileid = new_doc_id;
+                global.activeid = itemid +'-'+ iid + '-3-' +new_doc_id;
+                global.dialogVisible=true;
+                this.reload();
               }
               else {
+                new_doc_id=response.data.new_doc_id;
                 console.log(response.data.message);
               }
-              this.reload();
             })
       }
     },

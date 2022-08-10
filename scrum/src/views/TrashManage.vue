@@ -192,7 +192,7 @@
                           <span>确认要永久删除该文档吗？</span>
                           <span slot="footer" class="dialog-footer">
                               <el-button @click="remove = false">取 消</el-button>
-                              <el-button type="primary" @click="remove= false;" @click.native.prevent="deleteRow(currentRow)" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="remove= false;" @click.native.prevent="TotalDelete(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                         </el-dialog>
                       </div>
@@ -297,7 +297,7 @@ export default {
           if(response.status === 200){
             console.log(response.data.data.result);
             that.tableData = response.data.data.result|| [];
-            console.log('文档列表获取成功');
+            console.log('11文档列表获取成功');
             this.load();
           }
           else {
@@ -434,6 +434,24 @@ export default {
               this.$message.success("恢复成功")
             }else{
               this.$message.error("恢复失败")
+            }
+          })
+    },
+    TotalDelete(row){
+      let formData = new FormData();
+      formData.append('docID', row.ID);
+      formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
+      formData.append('docType', 3);
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/doc/remove/one',formData,config)
+          .then(response => {
+            if(response.status === 200){
+              console.log('1101'+response.data.message);
+            }
+            else {
+              console.log(response.data.message);
             }
           })
     },
