@@ -11,7 +11,10 @@ import 'wowjs/css/libs/animate.css'
 
 
 
+import VueSVGIcon from 'vue-svgicon'
 Vue.use(infiniteScroll);
+Vue.use(VueSVGIcon)
+
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 axios.defaults.baseURL = 'http://43.138.21.64:8080'
@@ -20,7 +23,10 @@ new Vue({
   axios,
   router,
   store,
-  render: h => h(App)
+  render: h => h(App),
+  beforeCreate(){
+    Vue.prototype.$bus = this
+  },
 }).$mount('#app')
 
 //axios.defaults.baseURL='/test'

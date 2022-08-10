@@ -401,6 +401,7 @@ export default {
       console.log('a'+this.currentPageData);
     },
     handleNew(){
+      var new_doc_id;
       var add=true;
       if(add){
         let formData = new FormData();
@@ -413,16 +414,19 @@ export default {
         axios.post('http://43.138.21.64:8080/doc/add',formData,config)
             .then(response => {
               if(response.status === 200){
-                console.log('add')
-                console.log(response.data.message);
+                new_doc_id=response.data.new_doc_id;
+                global.fileid=new_doc_id;
+                console.log('999'+new_doc_id);
               }
               else {
                 console.log(response.data.message);
               }
               //this.reload();
             })
+        console.log('11'+global.fileid);
         global.filename=this.input1;
-        global.filecontent='null';
+        global.filecontent='';
+        global.dialogVisible = true;
         this.input1='';
         this.$router.push({path: '/about'});
       }
