@@ -350,7 +350,7 @@ export default {
        */
     },
     initWebSocket(){
-      const wsuri = "ws://43.138.21.64/doc/update";
+      const wsuri = "ws://43.138.21.64:8080/ws/chat";
       this.websock = new WebSocket(wsuri);
       this.websock.onmessage = this.websocketonmessage;
       this.websock.onopen = this.websocketonopen;
