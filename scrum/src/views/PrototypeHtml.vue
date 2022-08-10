@@ -6,8 +6,8 @@
         <img src="../assets/PrototypeMaterial/back.png" height="25px" @click="BackToDesignManage" class="backlogo"  alt="">
         <img src="../assets/PrototypeMaterial/aspicture.png" height="25px"   v-on:click="asPicture=!asPicture" class="backlogo"  title="导出图片">
         <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="保存当前修改" @click="save">
-        <img src="../assets/PrototypeMaterial/delete.png" height="25px"   class="backlogo"  title="生成预览" v-if="this.playing" @click="changePlay('False')">
-        <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="终止预览" @click="changePlay('True')" v-if="!this.playing">
+        <img src="../assets/PrototypeMaterial/delete.png" height="25px"   class="backlogo"  title="生成预览" v-if="!playing" @click="dialogStartPlay = true">
+        <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="终止预览" @click="dialogStopPlay = true" v-if="playing">
       </div>
       <div class="show-picture" v-if="asPicture">
         <div class="picture-btn" @click="allTo(0)">导出为jpg</div>
@@ -97,6 +97,26 @@
           <el-button type="primary" @click="importModel(2)">模板3</el-button>
         </span>
       </el-dialog>
+      <el-dialog
+          title="提示"
+          :visible.sync="dialogStartPlay"
+          width="30%">
+        <span>演示地址：{{address}}</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogStartPlay = false">取 消</el-button>
+          <el-button type="primary" @click="startPlay">生成演示</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog
+          title="提示"
+          :visible.sync="dialogStopPlay"
+          width="30%">
+        <span>演示地址：{{address}}</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogStopPlay = false">取 消</el-button>
+          <el-button type="primary" @click="stopPlay">终止演示</el-button>
+        </span>
+      </el-dialog>
 
     </div>
   </div>
@@ -120,7 +140,10 @@ export default {
   data(){
     return{
       playing:false,
+      dialogStartPlay:false,
+      dialogStopPlay:false,
       dialogImportVisible:false,
+      address : "http://43.138.21.64:8080/#/Preview/" + this.$route.params.pid.toString() + '/' + window.localStorage.getItem('uid').toString(),
       pages:[],
       mmm:JSON.parse("{\"id\":\"SklUSjWb0c\",\"name\":\"Home\",\"path\":\"/\",\"width\":450,\"height\":660,\"styles\":{\"--mdc-theme-primary\":\"#673ab7\",\"--mdc-theme-secondary\":\"#f44336\",\"--mdc-theme-background\":\"#ffffff\",\"position\":\"relative\",\"margin\":\"auto\",\"background-color\":\"#ffffff\",\"overflow\":\"hidden\"},\"classes\":[],\"children\":[{\"zIndex\":\"auto\",\"top\":147,\"left\":818,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":274,\"height\":517,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[{\"zIndex\":\"auto\",\"top\":97,\"left\":0,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"Text\",\"egglement\":true,\"width\":270,\"height\":196,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"57px\"},\"classes\":{},\"id\":\"SklUSjWb0c.ryuYhGbCq.S1z6VmWAc\",\"children\":[]}],\"id\":\"SklUSjWb0c.ryuYhGbCq\"},{\"zIndex\":\"auto\",\"top\":156,\"left\":115,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":325,\"height\":495,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"SklUSjWb0c.BkCBpzZ05\"},{\"zIndex\":\"auto\",\"top\":0,\"left\":0,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":97,\"height\":652,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgba(18, 157, 254, 0.89)\"},\"children\":[],\"id\":\"SklUSjWb0c.H1Le5QWA5\"},{\"zIndex\":\"auto\",\"top\":42,\"left\":140,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"select\",\"type\":\"select\",\"egglement\":true,\"wrappegg\":true,\"width\":52,\"height\":40,\"attrs\":{},\"styles\":{},\"classes\":{},\"children\":[{\"type\":\"option\",\"text\":\"Option 1\",\"attrs\":{},\"styles\":{},\"classes\":{},\"id\":\"SklUSjWb0c.ByPk07Z09.HkgPyCQZR9\",\"children\":[]},{\"type\":\"option\",\"text\":\"Option 2\",\"attrs\":{},\"styles\":{},\"classes\":{},\"id\":\"SklUSjWb0c.ByPk07Z09.rJZDyCmb09\",\"children\":[]},{\"type\":\"option\",\"text\":\"Option 3\",\"attrs\":{},\"styles\":{},\"classes\":{},\"id\":\"SklUSjWb0c.ByPk07Z09.HJzv1C7b05\",\"children\":[]}],\"id\":\"SklUSjWb0c.ByPk07Z09\"},{\"zIndex\":\"auto\",\"top\":42,\"left\":365,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"button\",\"type\":\"button\",\"text\":\"Search\",\"egglement\":true,\"width\":74,\"height\":40,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\"},\"classes\":{},\"id\":\"SklUSjWb0c.Sy9kAQZCc\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":42,\"left\":191,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"input\",\"type\":\"input\",\"egglement\":true,\"width\":176,\"height\":40,\"attrs\":{\"value\":\"\",\"placeholder\":\"\",\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\"},\"styles\":{},\"classes\":{},\"id\":\"SklUSjWb0c.HJJx0mWR9\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":100,\"left\":163,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"button\",\"type\":\"button\",\"text\":\"essay\",\"egglement\":true,\"width\":200,\"height\":40,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"background-color\":\"rgb(18, 166, 254)\",\"color\":\"rgb(255, 255, 255)\",\"border-color\":\"rgb(254, 254, 254)\"},\"classes\":{},\"id\":\"SklUSjWb0c.SymF0QWRc\",\"children\":[]}]}"),
       model1:[
@@ -166,6 +189,14 @@ export default {
   },
 
   methods:{
+    startPlay(){
+      this.dialogStartPlay = false
+      this.changePlay('True')
+    },
+    stopPlay(){
+      this.dialogStopPlay = false
+      this.changePlay('False')
+    },
     changePlay(value){
       console.log()
       if(value === 'True') this.playing = true
@@ -548,8 +579,9 @@ export default {
     }
     axios.post("http://43.138.21.64:8080/project/preview/get",dataPost , config).then( res => {
       console.log(res)
-      if(res.status === 200) that.playing = true
-      else that.playing = false
+      that.playing = res.data.preview
+
+      console.log(that.playing)
       //const prototypeContent = that.prototypeData[that.indexSelected]
       //prototypeContent.content = json
       //that.prototypeData.splice(that.indexSelected , 1 , prototypeContent)
