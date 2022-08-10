@@ -19,7 +19,7 @@
       </div>
       <div class="team-part">
         <img src="../assets/add.png" height="16px" alt=" " style="float: left;margin-left: 16px; margin-top: 10px;">
-        <div class="teamname" style="margin-left: 17px" v-on:click="begin_create=true">Create new team</div>
+        <div class="teamname" style="margin-left: 17px" v-on:click="begin_create=true">创建一个新团队</div>
       </div>
     </div>
   </div>
