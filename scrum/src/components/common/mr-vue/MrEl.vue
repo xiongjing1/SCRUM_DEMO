@@ -10,54 +10,7 @@
     <slot></slot>
     <!-- IMPORTANT! KEEP SLOT AS FIRST CHILD -->
 
-    <div data-mr-handle="true"
-      v-if="resizable"
-      :key="handles[0]"
-      class="handle" :class="handles[0]"
-      :style="{ display: active ? 'block' : 'none'}">
-    </div>
-    <div data-mr-handle="true"
-         v-if="resizable"
-         :key="handles[1]"
-         class="handle" :class="handles[1]"
-         :style="{ display: active ? 'block' : 'none'}">
-    </div>
-    <div data-mr-handle="true"
-         v-if="resizable"
-         :key="handles[2]"
-         class="handle" :class="handles[2]"
-         :style="{ display: active ? 'block' : 'none'}">
-    </div>
-    <div data-mr-handle="true"
-         v-if="resizable"
-         :key="handles[3]"
-         class="handle" :class="handles[3]"
-         :style="{ display: active ? 'block' : 'none'}">
-    </div>
-    <div data-mr-handle="true"
-         v-if="resizable"
-         :key="handles[4]"
-         class="handle" :class="handles[4]"
-         :style="{ display: active ? 'block' : 'none'}">
-    </div>
-    <div data-mr-handle="true"
-         v-if="resizable"
-         :key="handles[5]"
-         class="handle" :class="handles[5]"
-         :style="{ display: active ? 'block' : 'none'}">
-    </div>
-    <div data-mr-handle="true"
-         v-if="resizable"
-         :key="handles[6]"
-         class="handle" :class="handles[6]"
-         :style="{ display: active ? 'block' : 'none'}">
-    </div>
-    <div data-mr-handle="true"
-         v-if="resizable"
-         :key="handles[7]"
-         class="handle" :class="handles[7]"
-         :style="{ display: active ? 'block' : 'none'}">
-    </div>
+
     <div v-if="!resizable"
       class="selection-box"
       :style="{ display: active ? 'block' : 'none'}">

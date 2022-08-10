@@ -394,7 +394,7 @@ const basicElements = [
     'width': 50,
     'height': 44.44,
     'attrs': {
-      'src': '/static/vuegg-fam.svg'
+      'src': '@/static/vuegg-fam.svg'
     },
     'styles': {},
     'classes': {}
