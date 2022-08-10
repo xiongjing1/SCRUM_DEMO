@@ -401,7 +401,7 @@ export default {
     },
     DelteTeam(){
       let param = new FormData() // 创建form对象
-      param.append('is_delete_team', this.addmember)// 通过append向form对象添加数据
+      param.append('is_delete_team', '1')// 通过append向form对象添加数据
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
@@ -426,7 +426,7 @@ export default {
     RenameTeam(){
       window.localStorage.setItem('tname',this.nameInput);
       let param = new FormData() // 创建form对象
-      param.append('is_rename_team', this.addmember)
+      param.append('is_rename_team', '1')
       param.append('new_name', this.nameInput)// 通过append向form对象添加数据
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
