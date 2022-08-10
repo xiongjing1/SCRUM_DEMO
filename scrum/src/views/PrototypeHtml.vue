@@ -6,8 +6,8 @@
         <img src="../assets/PrototypeMaterial/back.png" height="25px" @click="BackToDesignManage" class="backlogo"  alt="">
         <img src="../assets/PrototypeMaterial/aspicture.png" height="25px"   v-on:click="asPicture=!asPicture" class="backlogo"  title="导出图片">
         <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="保存当前修改" @click="save">
-        <img src="../assets/PrototypeMaterial/delete.png" height="25px"   class="backlogo"  title="生成预览" v-if="this.playing" @click="changePlay(true)">
-        <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="终止预览" @click="changePlay(false)" v-if="!this.playing">
+        <img src="../assets/PrototypeMaterial/delete.png" height="25px"   class="backlogo"  title="生成预览" v-if="this.playing" @click="changePlay('False')">
+        <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="终止预览" @click="changePlay('True')" v-if="!this.playing">
       </div>
       <div class="show-picture" v-if="asPicture">
         <div class="picture-btn" @click="allTo(0)">导出为jpg</div>
@@ -167,7 +167,9 @@ export default {
 
   methods:{
     changePlay(value){
-      this.playing = value
+      console.log()
+      if(value === 'True') this.playing = true
+      else this.playing = false
       console.log(value)
       let dataPost = new FormData();
       dataPost.append('projectID', this.$route.params.pid);
