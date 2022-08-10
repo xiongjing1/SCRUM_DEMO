@@ -3,7 +3,7 @@
   <div class="leftside" :style="{'height':this.wholeHeight}">
     <div class="team-inform">
       <img src="../assets/team.png" height="25px" alt=" " style="position: absolute; left: 15px;top:39px">
-      <div class="team-title">My Teams</div>
+      <div class="team-title">我的团队</div>
       <div class="real-team">
       <div class="ateam" v-for="(item,index) in teams" v-bind:key="index">
         <div class="team-part" v-on:click="teamjump(item.id,item.name,item.headshot)" >
@@ -17,21 +17,21 @@
         </div>
       </div>
       </div>
-      <div class="team-part">
+      <div class="team-part1">
         <img src="../assets/add.png" height="16px" alt=" " style="float: left;margin-left: 16px; margin-top: 10px;">
-        <div class="teamname" style="margin-left: 17px" v-on:click="begin_create=true">Create new team</div>
+        <div class="teamname" style="margin-left: 17px" v-on:click="begin_create=true">创建一个新团队</div>
       </div>
     </div>
   </div>
     <div class="mask" v-if="begin_create" :style="{height: this.wholeHeight}">
       <div class="name-block" v-if="begin_create">
-        <div class="edit_title" >Create new team</div>
+        <div class="edit_title" >创建一个新团队</div>
         <div class="close" v-on:click="begin_create=false">
           <img src="../assets/close.png" height="18px" alt=" "  style="margin-top:8px; margin-left: 2px">
         </div>
         <div class="underline"></div>
         <el-input class="change_name" v-model="new_team"  placeholder="Your new team name here..."></el-input>
-        <el-button type="primary" class="save-btn" v-on:click="create_sure">Save it</el-button>
+        <el-button type="primary" class="save-btn" v-on:click="create_sure">保 存</el-button>
       </div>
     </div>
   </div>
@@ -173,7 +173,7 @@ export default {
   line-height: 60px;
   font-family: Inter, "Segoe UI";
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: #383838;
 }
 
@@ -207,12 +207,23 @@ export default {
   width: 100%;
   height: 36px;
   cursor: default;
+
 }
 
 .team-part:hover {
   background-color: #ECECEC;
 }
+.team-part1 {
+  width: 100%;
+  height: 36px;
+  cursor: default;
+  position: absolute;
+  bottom: 40px;
+}
 
+.team-part1:hover {
+  background-color: #ECECEC;
+}
 .projectname {
   float: left;
   text-align: left;
@@ -259,7 +270,7 @@ export default {
   line-height: 60px;
   font-family: Inter,"Segoe UI";
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   color: #383838;
 
 }

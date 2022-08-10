@@ -19,7 +19,7 @@
 </div>
     <div class="mask" v-if="begin_edit" :style="{height: this.wholeHeight}">
       <div class="personal_edit" v-if="begin_edit&&!modify_nickname">
-        <div class="edit_title">Account setting</div>
+        <div class="edit_title">账 户 设 置</div>
         <div class="close" v-on:click="begin_edit=false">
           <img src="../assets/close.png" height="18px" alt=" "  style="margin-top:8px; margin-left: 2px">
         </div>
@@ -31,17 +31,17 @@
             <div class="upload-header" >Edit</div>
           </div>
           <div class="information">
-            <div class="atitle">Nickname</div>
+            <div class="atitle">用户昵称</div>
             <div class="content">{{ nickname }}</div>
-            <div class="name-edit" v-on:click="modify_nickname=true">Change nickname</div>
+            <div class="name-edit" v-on:click="modify_nickname=true">修改你的昵称...</div>
             <div class="underline2"></div>
-            <div class="atitle">Email</div>
+            <div class="atitle">邮箱地址</div>
             <div class="content">{{ email }}</div>
             <div class="underline2"></div>
-            <div class="atitle">Real Name</div>
+            <div class="atitle">真实姓名</div>
             <div class="content">{{ name }}</div>
             <div class="underline2"></div>
-            <div class="atitle">uid</div>
+            <div class="atitle">用户id</div>
             <div class="content">{{ uid }}</div>
           </div>
       </div>
@@ -59,7 +59,7 @@
    <div class="thewhole" v-if="ifNotification">
      <div class="atip"></div>
     <div class="notification" >
-      <div class="edit_title">Notification</div>
+      <div class="edit_title">消 息 通 知</div>
       <div class="underline"></div>
       <div class="n-context">
       <ul class="newsList" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="5">
@@ -434,9 +434,9 @@ export default {
   text-align: left;
   margin-left: 30px;
   line-height: 60px;
-  font-family: Inter,"Segoe UI";
+  font-family: Inter,"Segoe UI",黑体;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   color: #383838;
 
 }
