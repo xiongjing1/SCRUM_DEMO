@@ -812,7 +812,7 @@ export default {
 }
 .TeamName{
   padding-top: 20px;
-  width: 300px;
+  width: 600px;
   margin-top: 10px;
   margin-left: 30px;
   font-size: 30px;
@@ -826,6 +826,7 @@ export default {
   padding-top: 20px;
   width: 400px;
   height: 60px;
+
 }
 .manage-project{
   width: 80px;

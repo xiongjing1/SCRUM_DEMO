@@ -1,12 +1,12 @@
 <template>
   <div>
     <HeadSide></HeadSide>
-    <!--
+
     <div class="editing">
       <div class="tempavatar" v-for="(item,index) in userList" v-bind:key="index">
         <img  :src="item.headshot">
       </div>
-    </div> -->
+    </div>
     <div class="mainbody">
       <img src="../assets/click.png"  v-if="theclick===0&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 450px;height: 80px">
       <img src="../assets/click.png"  v-if="theclick===1&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 630px;height: 80px">
@@ -482,7 +482,7 @@ span::selection{
   left: 260px;
   width: 300px;
   height: 50px;
-  background-color: #3D89E9;
+
 }
 .tempavatar{
   width: 30px;
