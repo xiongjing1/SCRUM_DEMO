@@ -3,9 +3,9 @@
     <el-empty description="页面内容不可见！！！" v-show="!visable"></el-empty>
 
     <div class="preview" v-show="visable">
-      <img src="../assets/PrototypeMaterial/note.png" height="25px"  title="删除选中元素" id="left">
-      <img src="../assets/PrototypeMaterial/note.png" height="25px"  title="删除选中元素" id="right">
-      <prev-stage :page="prototypes[pageindex]"></prev-stage>
+      <img src="../assets/PrototypeMaterial/note.png" height="25px"  title="删除选中元素" id="left" @click="minus">
+      <img src="../assets/PrototypeMaterial/note.png" height="25px"  title="删除选中元素" id="right" @click="add">
+      <PrevStage :page="prototypes[pageindex]"></PrevStage>
     </div>
 
   </div>
@@ -14,17 +14,16 @@
 
 <script>
 
-//import PrevStage from "@/components/preview/PrevStage";
+import PrevStage from "@/components/preview/PrevStage";
 import axios from "axios";
 import newPage from '@/Factory/pageFactory'
 
 export default {
   name: 'previewView',
-  //components: { PrevStage },
+  components: { PrevStage },
   data: function () {
     return {
       visable:true,
-      length:0,
       pageindex:0,
       prototypes:[],
     }
@@ -37,37 +36,69 @@ export default {
   },
   methods: {
     init(){
+      //const that = this
+
       let dataPost = new FormData()
-      dataPost.append('userID', this.$route.params.userid)
+      dataPost.append('userID', window.localStorage.getItem('uid'))
       dataPost.append('projectID', this.$route.params.pid)
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
-       }
-      //const that = this
+      }
+      // const that = this
+      //axios.post('http://43.138.21.64:8080/prototype/get', dataPost , config).then( res => {
+      //  console.log(res)
+      //  if(res.status === 200){
+      //    console.log(res.data.message.prototype)
+      //    that.prototypeData = res.data.message.prototype.results
+      //  }
+      //})
       axios.post('http://43.138.21.64:8080/doc/get/all', dataPost , config).then( res => {
         console.log(res)
         if(res.status === 200){
           console.log(res.data.message.prototype.results)
           let dataArr = res.data.message.prototype.results.filter(ele =>{
-            return ele.isRecycled === false }) || []
+            return ele.isRecycled === false
+          }) || []
           for (var i=0;i<dataArr.length;i++)
           {
-           if(dataArr[i].content === null) {
+            if(dataArr[i].content === null) {
               const pageTemp = newPage(dataArr[i].ID ,dataArr[i].name ,dataArr[i].canvasHeight ,dataArr[i].canvasWidth)
-              this.pages.push(pageTemp)
+              this.prototypes.push(pageTemp)
             }
-            else this.pages.push(JSON.parse(dataArr[i].content))
+            else this.prototypes.push(JSON.parse(dataArr[i].content))
           }
-         console.log(this.pages)
+          console.log(this.prototypes)
         }
       })
+      //axios.post('http://43.138.21.64:8080/prototype/get', dataPost , config).then( res => {
+      //  console.log(res)
+      //  if(res.status === 200){
+      //    console.log(res)
+      //    let dataArr = res.data.message.prototype.results.filter(ele =>{
+      //      return ele.isRecycled === false }) || []
+      //    for (var i=0;i<dataArr.length;i++)
+      //    {
+      //     if(dataArr[i].content === null) {
+      //        const pageTemp = newPage(dataArr[i].ID ,dataArr[i].name ,dataArr[i].canvasHeight ,dataArr[i].canvasWidth)
+     //         this.pages.push(pageTemp)
+      //      }
+      //      else this.pages.push(JSON.parse(dataArr[i].content))
+      //    }
+      //   console.log(this.pages)
+      //  }
+      //})
     },
     add(){
-      if(this.pageindex < this.length - 1) this.pageindex = this.pageindex + 1
+      if(this.pageindex < this.prototypes.length - 1) this.pageindex = this.pageindex + 1
+      console.log(this.pageindex)
     },
     minus(){
       if(this.pageindex > 0) this.pageindex = this.pageindex - 1
+      console.log(this.pageindex)
     }
+  },
+  mounted() {
+    this.init()
   }
 }
 </script>
