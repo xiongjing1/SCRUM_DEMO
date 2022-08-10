@@ -134,7 +134,7 @@
             </div>
             <div class="project-total" :key="this.changed">
               <div class="project-main">
-                <div class="project" v-for="(item,index) in currentPageData" :key="item.project_name">
+                <div class="project" v-for="(item,index) in currentPageData" :key="item.ID">
                   <div class="project-mode">
                     <div class="project-info" v-on:click="JumpTodesignManage(item.ID,item.project_name,item.description,item.creator_date,item.creator_id)">
                       <div class="project-name">
@@ -326,6 +326,7 @@ export default {
         this.$message.error('项目名不能为空')
       }else{
         let formData = new FormData();
+        let param = new FormData();
         formData.append('userID', window.localStorage.getItem('uid'));
         formData.append('teamID', window.localStorage.getItem('tid'));
         formData.append('projectName', this.Projectnameinput);
@@ -338,6 +339,13 @@ export default {
               if(response.status === 200){
                 console.log(response.data.message);
                 window.localStorage.setItem('pid',response.data.id)
+                param.append('projectID',response.data.id)
+                param.append('umlName', this.Projectnameinput);
+                param.append('userID', window.localStorage.getItem('uid'));
+                axios.post('http://43.138.21.64:8080/uml/add',param,config)
+                    .then(response => {
+                      console.log(response.data);
+                    })
               }
               else if(response.status === 404){
                 console.log(response.data.message);
@@ -362,6 +370,7 @@ export default {
           nameInput:'',
         };
         this.projectList.push(newproject);
+
       }
 
     },

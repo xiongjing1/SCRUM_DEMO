@@ -570,6 +570,11 @@ export default {
           })
     },
   },
+  watch:{
+    input(){
+      console.log('yes')
+    }
+  },
   data(){
     return{
       input:'',
