@@ -213,7 +213,7 @@ export default {
     JumpToPrototype(){
       console.log(window.localStorage.getItem('pid'))
       this.$router.push({
-        name:'ProtoTypeView',
+        name:'PrototypeHtml',
         params:{
           pid:window.localStorage.getItem('pid')
         }

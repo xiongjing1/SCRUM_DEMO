@@ -3,10 +3,11 @@
   <div id="diva">
     <HeadSide></HeadSide>
     <div class="plusElement">
-      <img src="../assets/PrototypeMaterial/aspicture.png" height="25px"   v-on:click="asPicture=!asPicture" class="backlogo"  alt="">
-      <img src="../assets/PrototypeMaterial/delete.png" height="25px"   v-on:click="deleteEle" class="backlogo"  alt="">
-      <img src="../assets/PrototypeMaterial/clear.png" height="23px"   v-on:click="clear" class="backlogo"  alt="">
-      <img src="../assets/PrototypeMaterial/save.png" height="23px"   v-on:click="save" class="backlogo"  alt="">
+      <img src="../assets/PrototypeMaterial/code.jpg" height="25px"   v-on:click="toPrototypeHtml" class="backlogo"  title="导出图片">
+      <img src="../assets/PrototypeMaterial/aspicture.png" height="25px"   v-on:click="asPicture=!asPicture" class="backlogo"  title="导出图片">
+      <img src="../assets/PrototypeMaterial/delete.png" height="25px"   v-on:click="deleteEle" class="backlogo"  title="删除选中元素">
+      <img src="../assets/PrototypeMaterial/clear.png" height="23px"   v-on:click="clear" class="backlogo"  title="清空页面">
+      <img src="../assets/PrototypeMaterial/save.png" height="23px"   v-on:click="save" class="backlogo"  title="保存当前修改">
     </div>
     <div class="show-picture" v-if="asPicture">
       <div class="picture-btn" @click="allTo(0)">jpg格式</div>
@@ -36,8 +37,8 @@
         <ul style="padding: 0; width: 100%; margin: 0">
           <li v-for="(el,index) in prototypeData" :class="{classSelected:idSelected===el.ID}"
               :key="el.ID" class="prototypeList"  @click="changeCanvas(el,index)">{{el.name}}
-            <i class="el-icon-edit" style="padding: 5px" @click.stop="showChangeDialog(el)"></i>
-            <i class="el-icon-delete-solid" @click.stop="deletePrototype(el.ID)"></i>
+            <i class="el-icon-edit" style="padding: 5px"  title="修改页面大小" @click.stop="showChangeDialog(el)"></i>
+            <i class="el-icon-delete-solid" title="放入回收站" @click.stop="deletePrototype(el.ID)"></i>
           </li>
         </ul>
         <el-empty description="还没有创建原型实例" v-show="prototypeData.length===0" :image-size="200"></el-empty>
@@ -183,6 +184,11 @@ export default {
         }
       });
     },
+    toPrototypeHtml(){
+      this.$router.push({
+        name:'PrototypeHtml',
+      });
+    },
     showChangeDialog(elm){
       this.changeForm.width = elm.canvasWidth
       this.changeForm.height = elm.canvasHeight
@@ -319,7 +325,9 @@ export default {
         console.log(res)
         if(res.status === 200){
           console.log(res.data.message.prototype)
-          that.prototypeData = res.data.message.prototype.results || []
+          that.prototypeData = res.data.message.prototype.results.filter(ele =>{
+            return ele.isRecycled === false
+          }) || []
         }
       })
     },
