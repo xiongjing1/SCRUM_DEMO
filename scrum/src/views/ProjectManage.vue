@@ -68,7 +68,7 @@
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </el-upload>
                   <div slot="footer" class="photo-footer">
-                    <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
+                    <el-button @click="changeIcon = false;exitimage();" class="cancel-buttons">取 消</el-button>
                     <el-button @click="changeIcon = false;uploadHeadshot()" class="yes-buttons">确 定</el-button>
                   </div>
                 </el-dialog>
@@ -181,7 +181,7 @@
                         </el-dialog>
                       </div>
                       <div class="project-operation-copy">
-                        <img src="../assets/copy.png" class="project-copy-img" @click="copyProject(item.ID);update()">
+                        <img src="../assets/copy.png" class="project-copy-img" @click="copyProject(item.ID);">
                       </div>
                     </div>
                   </div>
@@ -231,23 +231,23 @@
               <div class="leader-nickname">
                 <img src="../assets/user.png" class="leader-img-size">
                 <div class="nickname">姓名</div>
-                <div class="name-info">徐亦佳</div>
+                <div class="name-info">{{leader.l_name}}</div>
               </div>
               <div class="leader-email">
                 <img src="../assets/mail.png" class="leader-img-size">
                 <div class="email">电子邮箱</div>
-                <div class="email-info">1223160472@qq.com</div>
+                <div class="email-info">{{ leader.l_email }}</div>
               </div>
               <div class="leader-active">
                 <img src="../assets/login.png" class="leader-img-size">
                 <div class="active">上次登录</div>
-                <div class="active-info">5分钟前</div>
+                <div class="active-info">{{leader.l_login_time}}</div>
               </div>
             </div>
             <el-divider></el-divider>
             <div class="lately-operation">
               <div class="lately-operation-title">
-                Recent operations
+                <img src="../assets/foot.png" class="foot-img">
               </div>
             </div>
           </div>
@@ -275,6 +275,9 @@ export default {
     HeadSide,
   },
   mounted() {
+    this.$axios.get('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
+      this.leader=res.data.leader
+    })
     let param = new FormData() // 创建form对象
     param.append('searchID', window.localStorage.getItem('tid'))// 通过append向form对象添加数据
     param.append('searchType', 2)
@@ -318,43 +321,49 @@ export default {
       console.log('刷新页面')
     },
     createProject(){
-      let formData = new FormData();
-      formData.append('userID', window.localStorage.getItem('uid'));
-      formData.append('teamID', window.localStorage.getItem('tid'));
-      formData.append('projectName', this.Projectnameinput);
-      formData.append('description', this.Projectdescriptioninput);
-      let config = {
-        headers: {'Content-Type': 'multipart/form-data'}
-      };
-      axios.post('http://43.138.21.64:8080/project/add',formData,config)
-          .then(response => {
-            if(response.status === 200){
-              console.log(response.data.message);
-              window.localStorage.setItem('pid',response.data.id)
-            }
-            else if(response.status === 404){
-              console.log(response.data.message);
-            }
-            else{
-              console.log(response.data.message);
-            }
-            window.localStorage.setItem('pintro',this.Projectdescriptioninput)
-            this.$router.push({
-              name:'ProtoTypeView',
-              params:{
-                pid:window.localStorage.getItem('pid')
+      console.log("name "+this.Projectnameinput)
+      if(this.Projectnameinput===''){
+        this.$message.error('项目名不能为空')
+      }else{
+        let formData = new FormData();
+        formData.append('userID', window.localStorage.getItem('uid'));
+        formData.append('teamID', window.localStorage.getItem('tid'));
+        formData.append('projectName', this.Projectnameinput);
+        formData.append('description', this.Projectdescriptioninput);
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        };
+        axios.post('http://43.138.21.64:8080/project/add',formData,config)
+            .then(response => {
+              if(response.status === 200){
+                console.log(response.data.message);
+                window.localStorage.setItem('pid',response.data.id)
               }
-            });
-          })
-      var newproject={
-        projectName:this.Projectnameinput,
-        leaderName:'徐亦佳',
-        latelyTime:'5分钟前',
-        deleteProject:false,
-        rename:false,
-        nameInput:'',
-      };
-      this.projectList.push(newproject);
+              else if(response.status === 404){
+                console.log(response.data.message);
+              }
+              else{
+                console.log(response.data.message);
+              }
+              window.localStorage.setItem('pintro',this.Projectdescriptioninput)
+              this.$router.push({
+                name:'ProtoTypeView',
+                params:{
+                  pid:window.localStorage.getItem('pid')
+                }
+              });
+            })
+        var newproject={
+          projectName:this.Projectnameinput,
+          leaderName:'徐亦佳',
+          latelyTime:'5分钟前',
+          deleteProject:false,
+          rename:false,
+          nameInput:'',
+        };
+        this.projectList.push(newproject);
+      }
+
     },
     deleteProject(current){
       let formData = new FormData();
@@ -407,13 +416,13 @@ export default {
             console.log(response.data.success)
             if(response.data.success===true){
               this.$message.success("复制成功")
+              this.remounted();
             }else{
               this.$message.error("复制失败")
             }
           })
     },
     searchjump(){
-
       console.log("date-start "+this.datechoose[0])
       console.log("date-end "+this.datechoose[1])
       console.log("value "+this.value)
@@ -442,6 +451,13 @@ export default {
       }else{
         searchMode='creator'
         param.append('searchCreator', this.input)
+      }
+      if(this.sortout[0]==undefined){
+        this.time='creator_date'
+        this.asc='desc'
+      }else{
+        this.time=this.sortout[0]
+        this.asc=this.sortout[1]
       }
       param.append('sortMethod', this.time)
       param.append('sortOrder', this.asc)
@@ -592,6 +608,44 @@ export default {
 
 
     },
+    remounted(){
+      if(this.sortout[0]==undefined){
+        this.time='creator_date'
+        this.asc='desc'
+      }else{
+        this.time=this.sortout[0]
+        this.asc=this.sortout[1]
+      }
+      let param = new FormData() // 创建form对象
+      param.append('searchID', window.localStorage.getItem('tid'))// 通过append向form对象添加数据
+      param.append('searchType', 2)
+      param.append('sortMethod', this.time)
+      param.append('sortOrder', this.asc)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/project/view/all', param,config)
+          .then(response => {
+            if(response.data.success===true){
+              this.currentPage=1;
+              this.total=0
+              this.allprojectList=response.data.message
+              this.alltotal=this.allprojectList.length
+              this.projectList=[]
+              for(var i=0;i<this.alltotal;i++){
+                if(this.allprojectList[i].is_recycled===false){
+                  this.projectList.push(this.allprojectList[i])
+                  this.total=this.total+1
+                }
+              }
+            }else{
+              console.log(response.data.success)
+            }
+
+            this.load();
+            console.log(this.currentPage)
+          })
+    },
     deleteRow(row){
       console.log(row);
     },
@@ -632,6 +686,7 @@ export default {
       });
     },
     JumpTodesignManage(pid,pname,pintro,p_create_time,p_creator){
+      console.log('pid'+pid)
       let storage = window.localStorage;
       storage.setItem('pid',pid);
       storage.setItem('pname',pname);
@@ -761,11 +816,14 @@ export default {
       this.newheadshot = params.file;
       this.imageUrl = URL.createObjectURL(this.newheadshot);
     },
+    exitimage(){
+      this.imageUrl=''
+    },
     uploadHeadshot(){
       var formData = new FormData();
       formData.append('is_change_headshot', '1')// 通过append向form对象添加数据
       formData.append('new_headshot', this.newheadshot)
-      this.teamshot=this.imageUrl
+
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
@@ -776,6 +834,7 @@ export default {
             if (response.data.errno === 8000) {
               this.$message.success(response.data.msg)
               this.teamshot='http://43.138.21.64:8080'+response.data.new_headshot
+              this.teamshot=this.imageUrl
               window.localStorage.setItem('theadshot',this.teamshot)
               this.update();
             }else{
@@ -786,6 +845,7 @@ export default {
   },
   data(){
     return{
+      leader:[],
       input:'',
       addProject:false,
       Projectnameinput:'',
@@ -861,7 +921,7 @@ export default {
       theadshot:window.localStorage.getItem('theadshot'),
       newheadshot:'',
       time:'creator_date',
-      asc:'asc',
+      asc:'desc',
       changed:0,
     }
   }
@@ -1246,10 +1306,15 @@ export default {
 }
 .lately-operation-title{
   font-size: 19px;
-  width:160px;
+  width:300px;
   margin-left: 10px;
-  font-family: Inter, "Segoe UI", 黑体;
   height: 250px;
+  margin-top:10px;
+}
+.foot-img{
+  margin-left: 10px;
+  width: 300px;
+  height: 230px;
 }
 .edit-summary{
   display: flex;
@@ -1427,7 +1492,7 @@ export default {
 }
 .project-lately-edit-time{
   float: left;
-  width: 60px;
+  width: 150px;
   margin-left: 28px;
   margin-top: 2px;
   font-size: 13px;

@@ -68,7 +68,7 @@
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                   </el-upload>
                   <div slot="footer" class="photo-footer">
-                    <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
+                    <el-button @click="changeIcon = false;exitimage()" class="cancel-buttons">取 消</el-button>
                     <el-button @click="changeIcon = false;uploadHeadshot()" class="yes-buttons">确 定</el-button>
                   </div>
                 </el-dialog>
@@ -220,7 +220,13 @@ export default {
       });
     },
     jumpDrawio(){
-      window.open('https://www.draw.io/', '_blank');
+      console.log(window.localStorage.getItem('pid'))
+      this.$router.push({
+        name:'UmlEdit',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
     JumpToProjectManage(){
       this.$router.push({
@@ -345,7 +351,7 @@ export default {
       formData.append('is_change_headshot', '1')// 通过append向form对象添加数据
       formData.append('new_headshot', this.newheadshot)
 
-      this.teamshot=this.imageUrl
+
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
@@ -356,12 +362,16 @@ export default {
             if (response.data.errno === 8000) {
               this.$message.success(response.data.msg)
               this.teamshot='http://43.138.21.64:8080'+response.data.new_headshot
+              this.teamshot=this.imageUrl
               window.localStorage.setItem('theadshot',this.teamshot)
               this.update();
             }else{
               this.$message.error("头像更换失败");
             }
           })
+    },
+    exitimage(){
+      this.imageUrl=''
     },
   },
   data(){
