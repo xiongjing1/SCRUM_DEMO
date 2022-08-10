@@ -267,6 +267,7 @@
 import LeftSide from "@/components/LeftSide";
 import HeadSide from "@/components/HeadSide";
 import axios from "axios";
+import global from "@/api/global";
 
 export default {
   name: "TeamManage",
@@ -680,6 +681,8 @@ export default {
       return isJPG && isLt2M;
     },
     jumpToFileCenter(){
+      global.activeid='';
+      global.filecontent='';
       this.$router.push({
         name:'fileCenter',
       });
@@ -765,6 +768,7 @@ export default {
           })
     },
     Edit(){
+      window.localStorage.setItem('tintro',this.Summarycontent);
       console.log(this.inviteEmail)
       let param = new FormData() // 创建form对象
       param.append('is_rewrite_introduction', '1')// 通过append向form对象添加数据
@@ -777,7 +781,7 @@ export default {
             console.log(response.data)
             // console.log("denglu:"+response.data);
             if (response.data.errno === 5000) {
-              this.$message.success(response.data.msg)
+              this.$message.success(response.data.msg);
             }else {
               this.$message.error("编辑简介失败！");
             }

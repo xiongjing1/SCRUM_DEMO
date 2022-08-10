@@ -95,7 +95,7 @@
                 <p><el-input v-model="input1" placeholder="请输入文件名" style="width: 400px;"></el-input></p>
                 <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew()">确认</el-button></p>
                 <div slot="reference" class="name-wrapper" >
-                  <el-button class="new-button">NEW<i class="el-icon-edit el-icon--right"></i></el-button>
+                  <el-button class="new-button">new<i class="el-icon-edit el-icon--right"></i></el-button>
                 </div>
               </el-popover>
             </div>
@@ -306,7 +306,8 @@ export default {
             // console.log("denglu:"+response.data);
             if (response.data.success === true) {
               window.localStorage.setItem('pintro',this.Summarycontent)
-              this.$message.success(response.data.msg)
+              this.$message.success(response.data.msg);
+              this.reload();
             }else {
               this.pintrocancel();
               this.$message.error("编辑简介失败！");
@@ -338,6 +339,8 @@ export default {
       return isJPG && isLt2M;
     },
     jumpToFileCenter(){
+      global.filecontent='';
+      global.activeid='';
       this.$router.push({
         name:'fileCenter',
       });
@@ -428,6 +431,10 @@ export default {
     handleNew(){
       var new_doc_id;
       var add=true;
+      if(this.input1===''){
+        this.$message.error("请输入文档名!");
+        add=false;
+      }
       if(add){
         let formData = new FormData();
         formData.append('userID', window.localStorage.getItem('uid'));//window.localStorage.getItem('uid')
@@ -454,10 +461,6 @@ export default {
         global.dialogVisible = true;
         this.input1='';
         this.$router.push({path: '/about'});
-      }
-      else{
-        this.$message.error(this.input1+'已存在，请重新输入');
-        this.input1='';
       }
     },
     handleEdit(index, row) {
