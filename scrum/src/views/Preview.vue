@@ -109,6 +109,9 @@ export default {
   margin: auto;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
 .preview {
   height: 100%;
   width: 100%;
