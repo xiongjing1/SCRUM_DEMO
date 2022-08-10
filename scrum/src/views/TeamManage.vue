@@ -730,7 +730,7 @@ export default {
 }
 .TeamName{
   padding-top: 20px;
-  width: 400px;
+  width: 600px;
   margin-top: 10px;
   margin-left: -60px;
   font-size: 30px;

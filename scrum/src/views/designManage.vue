@@ -617,10 +617,12 @@ export default {
 }
 .TeamName{
   padding-top: 20px;
-  width: 300px;
+  width: 800px;
+
   margin-top: 10px;
   margin-left: 30px;
   font-size: 30px;
+
   font-family: "Berlin Sans FB Demi";
 }
 .buttons{

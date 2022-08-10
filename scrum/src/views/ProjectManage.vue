@@ -995,7 +995,7 @@ export default {
 }
 .TeamName{
   padding-top: 20px;
-  width: 300px;
+  width: 600px;
   height: 70px;
 
   margin-top: 10px;
