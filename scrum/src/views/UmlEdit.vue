@@ -2,9 +2,8 @@
   <div class="top">
     <head-side></head-side>
     <div class="buttons">
-      <div class="document">文档</div>
-      <div class="prototype">原型设计</div>
-      <div class="uml">UML</div>
+      <div class="prototype" @click="choose=true;jumpchoose=1;tochoose()">原型设计</div>
+      <div class="uml" @click="choose=true;jumpchoose=3;tochoose()">UML</div>
     </div>
   </div>
 </template>
@@ -28,18 +27,50 @@ export default {
       umlid:'',
       docID:'',
       uml:'',
+      iframe:'',
+      choose:false,
+      jumpchoose:3,
+      docuchoose:false,
     }
   },
   mounted(){
       //this.start();
       //this.edit();
+    this.choose=false
     this.start();
     this.edit();
+
   },
   created() {
     this.clickd=false;
   },
   methods:{
+    tochoose(){
+      this.iframe.contentWindow.postMessage(JSON.stringify({action: 'exit'}), '*');
+    },
+    JumpToDocumentCenter(){
+      this.$router.push({
+        name:'fileCenter',
+      });
+    },
+    JumpToPrototype(){
+      console.log(window.localStorage.getItem('pid'))
+      this.$router.push({
+        name:'PrototypeHtml',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
+    },
+    JumpToUML(){
+      console.log(window.localStorage.getItem('pid'))
+      this.$router.push({
+        name:'UmlEdit',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
+    },
     saveuml(xmlpng){
       console.log('uid');
       console.log(window.localStorage.getItem('uid'))
@@ -163,7 +194,11 @@ export default {
           else if (msg.event == 'exit')
           {
             iframe.remove();
-            _this.JumpTodesignManage();
+            if(_this.choose===false){
+              _this.JumpTodesignManage();
+            }else if(_this.jumpchoose===1){
+              _this.JumpToPrototype();
+            }
           }
         }
       };
@@ -172,6 +207,7 @@ export default {
       if(this.clickd==false){
         this.getuml();
         content=this.content
+        this.iframe=iframe
         document.body.appendChild(iframe);
         this.clickd=true
       }
@@ -197,7 +233,7 @@ export default {
 .buttons{
   position: absolute;
   top: 0;
-  margin-left: 54px;
+  margin-left: 0px;
 }
 .document{
   position: absolute;
@@ -222,7 +258,7 @@ export default {
   width: 120px;
   height: 40px;
   float: left;
-  margin-left: 600px;
+  margin-left: 580px;
   z-index: 4;
   font-size:21px;
   font-family: 'jianhanzhen';
