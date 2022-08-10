@@ -8,7 +8,6 @@
 
     @clearselection="clearSelectionHandler"
     @delete="deleteHandler"
-
   >
     <!-- @resizestop="resizeStopHandler"  -->
     <!--@selectstop="selectStopHandler" -->
@@ -26,6 +25,7 @@
 import StageEl from './StageEl'
 import MrContainer from '@/components/common/mr-vue/MrContainer'
 import elementsFromPoint from '@/polyfills/elementsFromPoint'
+//import html2canvas from "html2canvas";
 //import {getChildNode} from "@/helpers/recursiveMethods";
 
 const DROP_BORDER = {
@@ -173,7 +173,8 @@ export default {
         newVal.style.borderColor = DROP_BORDER.color
       }
     }
-  }
+  },
+
 }
 </script>
 
@@ -189,7 +190,7 @@ html.droppable * {
 .stage {
   transform-origin: 0 0;
   user-select: none;
-  margin: 10px auto 35px !important;
+  margin: 10px auto 5px !important;
   border: 2px solid rgba(0, 0, 0, 0);
   /* for paper style */
   box-shadow:

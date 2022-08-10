@@ -3,35 +3,25 @@
     <div id="diva">
       <HeadSide></HeadSide>
       <div class="plusElement">
+        <img src="../assets/PrototypeMaterial/back.png" height="25px" @click="BackToDesignManage" class="backlogo"  alt="">
         <img src="../assets/PrototypeMaterial/aspicture.png" height="25px"   v-on:click="asPicture=!asPicture" class="backlogo"  title="导出图片">
         <img src="../assets/PrototypeMaterial/delete.png" height="25px"   class="backlogo"  title="删除选中元素">
-        <img src="../assets/PrototypeMaterial/clear.png" height="23px"    class="backlogo"  title="清空页面">
+        <img src="../assets/PrototypeMaterial/clear.png" height="23px"    class="backlogo"  title="清空页面" >
         <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="保存当前修改" @click="save">
       </div>
       <div class="show-picture" v-if="asPicture">
-        <div class="picture-btn">jpg格式</div>
-        <div class="picture-btn" >png格式</div>
+        <div class="picture-btn" @click="allTo(0)">导出为jpg</div>
+        <div class="picture-btn" @click="allTo(1)">导出为png</div>
       </div>
 
       <div id="left" >
         <div class="title">
-          <img src="../assets/PrototypeMaterial/back.png" height="25px" @click="BackToDesignManage" class="backlogo"  alt="">
+
           <div style="width:200px;height: 40px; color: #FFFFFF; font-size: 16px; letter-spacing: 2px;margin-top: 13px">
             {{ projName }}</div>
         </div>
         <div id="menu" >
           <el-button  id="buttonAdd" @click="dialogAddVisible = true" icon="el-icon-plus">添加页面</el-button>
-          <!--
-          <el-dropdown>
-            <el-button type="primary" v-show="prototypeData.length !== 0" style="background-color: #F2595D">导出图片
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native.prevent="allTo(0)">jpg格式</el-dropdown-item>
-              <el-dropdown-item @click.native.prevent="allTo(1)">png格式</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-          -->
         </div>
         <div id="list">
           <ul style="padding: 0; width: 100%; height:400px ; margin: 0 ">
@@ -44,9 +34,9 @@
           <el-empty description="还没有创建原型实例"  v-show="pages.length===0" :image-size="200"></el-empty>
         </div>
       </div>
-      <main id="main" role="main" v-if="selectedPage" >
-        <mainEgg :pageselect="selectedPage"></mainEgg>
-      </main>
+      <div id="main" role="main" v-if="selectedPage"  ref = "picArea">
+        <mainEgg :pageselect="selectedPage" ></mainEgg>
+      </div>
       <drawegg></drawegg>
 
       <el-dialog title="设置原型属性" :visible.sync="dialogAddVisible">
@@ -101,6 +91,8 @@
 </template>
 
 <script>
+import FileSaver from "file-saver"
+import html2canvas from "html2canvas"
 import HeadSide from "@/components/HeadSide";
 import newPage from '@/Factory/pageFactory'
 import Drawegg from '@/components/drawer'
@@ -108,15 +100,19 @@ import MainEgg from '@/components/main';
 import '@/assets/icons/system/elements/'
 import {setElId} from "@/helpers/recursiveMethods";
 import axios from "axios";
+import JSZip from "jszip";
 export default {
   name: "PrototypeHtml",
   components: { Drawegg , HeadSide,MainEgg,},
 
   data(){
     return{
-      pages:[],
+      pages:[newPage(1 , 'aaa' , 500 , 500)],
+      model3:JSON.parse("{\"id\":\"ByeOkqle0c\",\"name\":\"个人主页\",\"path\":\"/\",\"width\":\"1200\",\"height\":\"680\",\"styles\":{\"--mdc-theme-primary\":\"#673ab7\",\"--mdc-theme-secondary\":\"#f44336\",\"--mdc-theme-background\":\"#ffffff\",\"position\":\"relative\",\"margin\":\"auto\",\"background-color\":\"rgb(234, 224, 213)\",\"overflow\":\"hidden\"},\"classes\":[],\"children\":[{\"zIndex\":\"auto\",\"top\":22,\"left\":43,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":300,\"height\":615,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(255, 255, 255)\",\"border-radius\":\"10px\"},\"children\":[{\"zIndex\":\"auto\",\"top\":43,\"left\":78,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":133,\"height\":124,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(94, 80, 63)\",\"border-radius\":\"50px\"},\"children\":[{\"zIndex\":\"auto\",\"top\":43,\"left\":0,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"Avatar\",\"egglement\":true,\"width\":133,\"height\":35,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"text-align\":\"center\",\"background-color\":\"rgba(255, 255, 255, 0)\",\"font-size\":\"29px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"ByeOkqle0c.rkJQ5xeA5.Sky55exAq.SkDysgeAq\",\"children\":[]}],\"id\":\"ByeOkqle0c.rkJQ5xeA5.Sky55exAq\"},{\"zIndex\":\"auto\",\"top\":181,\"left\":88,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"Username\",\"egglement\":true,\"width\":150,\"height\":30,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"24px\"},\"classes\":{},\"id\":\"ByeOkqle0c.rkJQ5xeA5.rkefiee05\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":240,\"left\":33,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":223,\"height\":26,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(198, 172, 143)\"},\"children\":[],\"id\":\"ByeOkqle0c.rkJQ5xeA5.rkt4jxxRc\"},{\"zIndex\":\"auto\",\"top\":292,\"left\":32,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":223,\"height\":26,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(198, 172, 143)\"},\"children\":[],\"id\":\"ByeOkqle0c.rkJQ5xeA5.SkArsgx0c\"},{\"zIndex\":\"auto\",\"top\":346,\"left\":32,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":223,\"height\":26,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(198, 172, 143)\"},\"children\":[],\"id\":\"ByeOkqle0c.rkJQ5xeA5.Skw8oelC5\"},{\"zIndex\":\"auto\",\"top\":403,\"left\":32,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":223,\"height\":26,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(198, 172, 143)\"},\"children\":[],\"id\":\"ByeOkqle0c.rkJQ5xeA5.Sy9UieeRc\"},{\"zIndex\":\"auto\",\"top\":459,\"left\":32,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":223,\"height\":26,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(198, 172, 143)\"},\"children\":[],\"id\":\"ByeOkqle0c.rkJQ5xeA5.Bk3Lsll09\"}],\"id\":\"ByeOkqle0c.rkJQ5xeA5\"},{\"zIndex\":\"auto\",\"top\":22,\"left\":380,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":750,\"height\":151,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(255, 255, 255)\",\"border-radius\":\"8px\"},\"children\":[{\"zIndex\":\"auto\",\"top\":22,\"left\":47,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"title1\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\"},\"classes\":{},\"id\":\"ByeOkqle0c.HJ3SqelCq.BJQhoxxCc\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":55,\"left\":36,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":10,\"egglement\":true,\"width\":75,\"height\":64,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"54px\"},\"classes\":{},\"id\":\"ByeOkqle0c.HJ3SqelCq.Hk96sxlR9\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":22,\"left\":225,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"title1\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\"},\"classes\":{},\"id\":\"ByeOkqle0c.HJ3SqelCq.SJrk3xgC9\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":22,\"left\":381,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"title1\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\"},\"classes\":{},\"id\":\"ByeOkqle0c.HJ3SqelCq.Bk6JnxgA9\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":22,\"left\":552,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"title1\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\"},\"classes\":{},\"id\":\"ByeOkqle0c.HJ3SqelCq.rylgnelC5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":55,\"left\":219,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":10,\"egglement\":true,\"width\":75,\"height\":64,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"54px\"},\"classes\":{},\"id\":\"ByeOkqle0c.HJ3SqelCq.Hkwb2xeRc\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":55,\"left\":375,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":10,\"egglement\":true,\"width\":75,\"height\":64,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"54px\"},\"classes\":{},\"id\":\"ByeOkqle0c.HJ3SqelCq.SJY-3lgR9\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":55,\"left\":547,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":10,\"egglement\":true,\"width\":75,\"height\":64,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"54px\"},\"classes\":{},\"id\":\"ByeOkqle0c.HJ3SqelCq.B1nZhel09\",\"children\":[]}],\"id\":\"ByeOkqle0c.HJ3SqelCq\"},{\"zIndex\":\"auto\",\"top\":193,\"left\":382,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":749,\"height\":442,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(255, 255, 255)\",\"border-radius\":\"34px\"},\"children\":[{\"zIndex\":\"auto\",\"top\":37,\"left\":38,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":665,\"height\":70,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(234, 224, 213)\"},\"children\":[],\"id\":\"ByeOkqle0c.SJpP9xxRc.Bk9E3xeCc\"},{\"zIndex\":\"auto\",\"top\":138,\"left\":38,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":665,\"height\":70,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(234, 224, 213)\"},\"children\":[],\"id\":\"ByeOkqle0c.SJpP9xxRc.HJSL3lxAc\"},{\"zIndex\":\"auto\",\"top\":239,\"left\":38,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":665,\"height\":70,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(234, 224, 213)\"},\"children\":[],\"id\":\"ByeOkqle0c.SJpP9xxRc.HJ_UnggR5\"},{\"zIndex\":\"auto\",\"top\":335,\"left\":38,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":665,\"height\":70,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(234, 224, 213)\"},\"children\":[],\"id\":\"ByeOkqle0c.SJpP9xxRc.BybP2leA5\"}],\"id\":\"ByeOkqle0c.SJpP9xxRc\"}]}"),
+      model4:JSON.parse("{\"id\":\"HJgA2EqxRq\",\"name\":\"项目管理\",\"path\":\"/\",\"width\":1200,\"height\":680,\"styles\":{\"--mdc-theme-primary\":\"#673ab7\",\"--mdc-theme-secondary\":\"#f44336\",\"--mdc-theme-background\":\"#ffffff\",\"position\":\"relative\",\"margin\":\"auto\",\"background-color\":\"rgb(224, 240, 244)\",\"overflow\":\"hidden\"},\"classes\":[],\"children\":[{\"zIndex\":\"auto\",\"top\":0,\"left\":0,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":50,\"height\":657,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(3, 4, 94)\"},\"children\":[{\"zIndex\":\"auto\",\"top\":27,\"left\":9,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"image\",\"type\":\"img\",\"egglement\":true,\"width\":32,\"height\":26,\"attrs\":{\"src\":\"/static/vuegg-fam.svg\"},\"styles\":{},\"classes\":{},\"id\":\"HJgA2EqxRq.HyljHqgA9.rJDgI5gA5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":443,\"left\":8,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":31,\"height\":31,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"background-color\":\"rgb(255, 255, 255)\",\"border-radius\":\"50px\"},\"children\":[],\"id\":\"HJgA2EqxRq.HyljHqgA9.Bk_G89eRq\"},{\"zIndex\":\"auto\",\"top\":501.5,\"left\":7,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":31,\"height\":31,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"background-color\":\"rgb(255, 255, 255)\",\"border-radius\":\"50px\"},\"children\":[],\"id\":\"HJgA2EqxRq.HyljHqgA9.BklS8qx0c\"},{\"zIndex\":\"auto\",\"top\":559,\"left\":6,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":31,\"height\":31,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"background-color\":\"rgb(255, 255, 255)\",\"border-radius\":\"50px\"},\"children\":[],\"id\":\"HJgA2EqxRq.HyljHqgA9.rkoSUcx0c\"}],\"id\":\"HJgA2EqxRq.HyljHqgA9\"},{\"zIndex\":\"auto\",\"top\":0,\"left\":50,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":263,\"height\":657,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(0, 119, 182)\"},\"children\":[{\"zIndex\":\"auto\",\"top\":30,\"left\":28,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"Dialog\",\"egglement\":true,\"width\":150,\"height\":33,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"24px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.BJ-BD5gA5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":81,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.HyVrDqg09\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":122,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.SyEcvqlR9\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":163,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.B1jpu9xC5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":205,\"left\":32,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.SkTwKcgA5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":245,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.B1wdtcxAq\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":285,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.Bk1FtceR5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":322,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.By8YF5lAq\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":362,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.BJqtK9eA9\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":402,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.B1AYYclR5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":440,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.S1Z5FqeC5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":478,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.BkH9Y9l05\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":518,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.rk8iYceA9\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":562,\"left\":31,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"item\",\"egglement\":true,\"width\":150,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"18px\",\"color\":\"rgb(255, 255, 255)\"},\"classes\":{},\"id\":\"HJgA2EqxRq.By5hH5eA5.rJcjF9lRq\",\"children\":[]}],\"id\":\"HJgA2EqxRq.By5hH5eA5\"},{\"zIndex\":\"auto\",\"top\":37,\"left\":389,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"Project title\",\"egglement\":true,\"width\":296,\"height\":58,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"42px\"},\"classes\":{},\"id\":\"HJgA2EqxRq.B1F0s5x0c\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":127,\"left\":387,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":338,\"height\":148,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"border-radius\":\"9px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"HJgA2EqxRq.rycxnqgAq\"},{\"zIndex\":\"auto\",\"top\":128,\"left\":783,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":338,\"height\":148,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"border-radius\":\"9px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"HJgA2EqxRq.S1Uf29lC9\"},{\"zIndex\":\"auto\",\"top\":310,\"left\":391,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":338,\"height\":148,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"border-radius\":\"9px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"HJgA2EqxRq.HyMQnqxAc\"},{\"zIndex\":\"auto\",\"top\":310,\"left\":391,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":338,\"height\":148,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"border-radius\":\"9px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"HJgA2EqxRq.BkKmnqgA5\"},{\"zIndex\":\"auto\",\"top\":310,\"left\":391,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":338,\"height\":148,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"border-radius\":\"9px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"HJgA2EqxRq.S1cQhclCc\"},{\"zIndex\":\"auto\",\"top\":310,\"left\":391,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":338,\"height\":148,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"border-radius\":\"9px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"HJgA2EqxRq.Skecmn5lC9\"},{\"zIndex\":\"auto\",\"top\":309,\"left\":785,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":338,\"height\":148,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"border-radius\":\"9px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"HJgA2EqxRq.BkbqQ35xC5\"},{\"zIndex\":\"auto\",\"top\":488,\"left\":394,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":338,\"height\":148,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"border-radius\":\"9px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"HJgA2EqxRq.rJb43clA9\"},{\"zIndex\":\"auto\",\"top\":487,\"left\":786,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":338,\"height\":148,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"0px\",\"border-radius\":\"9px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[],\"id\":\"HJgA2EqxRq.S1QB2qxCq\"}]}"),
+      model5:JSON.parse("{\"id\":\"SJldK-ilC5\",\"name\":\"网站首页\",\"path\":\"/\",\"width\":\"1200\",\"height\":\"680\",\"styles\":{\"--mdc-theme-primary\":\"#673ab7\",\"--mdc-theme-secondary\":\"#f44336\",\"--mdc-theme-background\":\"#ffffff\",\"position\":\"relative\",\"margin\":\"auto\",\"background-color\":\"rgb(222, 224, 108)\",\"overflow\":\"hidden\"},\"classes\":[],\"children\":[{\"zIndex\":\"auto\",\"top\":29,\"left\":6,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":1155,\"height\":569,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(255, 255, 255)\"},\"children\":[{\"zIndex\":\"auto\",\"top\":234,\"left\":37,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":229,\"height\":300,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(148, 156, 129)\"},\"children\":[],\"id\":\"SJldK-ilC5.rJms7sxC9.r1T1rslA9\"},{\"zIndex\":\"auto\",\"top\":235,\"left\":287,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":143,\"height\":154,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(62, 80, 60)\"},\"children\":[],\"id\":\"SJldK-ilC5.rJms7sxC9.rkCbroeAc\"},{\"zIndex\":\"auto\",\"top\":386,\"left\":449,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":143,\"height\":154,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(240, 230, 209)\"},\"children\":[],\"id\":\"SJldK-ilC5.rJms7sxC9.S16XHsgA5\"},{\"zIndex\":\"auto\",\"top\":385,\"left\":607,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":143,\"height\":154,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(238, 156, 129)\"},\"children\":[],\"id\":\"SJldK-ilC5.rJms7sxC9.H1lrHslC9\"},{\"zIndex\":\"auto\",\"top\":385,\"left\":844,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":143,\"height\":154,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(148, 156, 129)\"},\"children\":[],\"id\":\"SJldK-ilC5.rJms7sxC9.r1H8SjxRc\"},{\"zIndex\":\"auto\",\"top\":219,\"left\":994,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":143,\"height\":154,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"background-color\":\"rgb(239, 193, 169)\"},\"children\":[],\"id\":\"SJldK-ilC5.rJms7sxC9.ry5PrsxRq\"},{\"zIndex\":\"auto\",\"top\":78,\"left\":92,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"ABOUT\",\"egglement\":true,\"width\":349,\"height\":92,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"87px\",\"font-family\":\"Arial, Helvetica, sans-serif\",\"font-weight\":\"bold\"},\"classes\":{},\"id\":\"SJldK-ilC5.rJms7sxC9.r1EFSsgC9\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":118,\"left\":491,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"KOUROS\",\"egglement\":true,\"width\":470,\"height\":106,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"98px\",\"font-family\":\"Arial, Helvetica, sans-serif\",\"font-weight\":\"bold\"},\"classes\":{},\"id\":\"SJldK-ilC5.rJms7sxC9.S1W6rjxCc\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":232,\"left\":504,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"The above ph\",\"egglement\":true,\"width\":414,\"height\":76,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\"},\"classes\":{},\"id\":\"SJldK-ilC5.rJms7sxC9.rkuN8slAq\",\"children\":[]}],\"id\":\"SJldK-ilC5.rJms7sxC9\"}]}"),
+      model6:JSON.parse("{\"id\":\"ryxGvvilR5\",\"name\":\"注册页面\",\"path\":\"/\",\"width\":1200,\"height\":680,\"styles\":{\"--mdc-theme-primary\":\"#673ab7\",\"--mdc-theme-secondary\":\"#f44336\",\"--mdc-theme-background\":\"#ffffff\",\"position\":\"relative\",\"margin\":\"auto\",\"background-color\":\"#ffffff\",\"overflow\":\"hidden\"},\"classes\":[],\"children\":[{\"zIndex\":\"auto\",\"top\":0,\"left\":0,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":1165,\"height\":60,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"border-bottom-width\":\"2px\",\"border-top-width\":\"0px\",\"border-left-width\":\"0px\",\"border-right-width\":\"0px\"},\"children\":[{\"zIndex\":\"auto\",\"top\":12,\"left\":14,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"LOGO\",\"egglement\":true,\"width\":150,\"height\":35,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-weight\":\"bold\",\"font-size\":\"29px\",\"color\":\"rgb(44, 103, 255)\"},\"classes\":{},\"id\":\"ryxGvvilR5.BkXjjogRq.SksJ3sxRq\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":6,\"left\":800,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"select\",\"type\":\"select\",\"egglement\":true,\"wrappegg\":true,\"width\":95,\"height\":40,\"attrs\":{},\"styles\":{\"border-width\":\"0px\"},\"classes\":{},\"children\":[{\"type\":\"option\",\"text\":\"Option 1\",\"attrs\":{},\"styles\":{},\"classes\":{},\"id\":\"ryxGvvilR5.BkXjjogRq.Hk_m3ieRc.S1lO7noxC5\",\"children\":[]},{\"type\":\"option\",\"text\":\"Option 2\",\"attrs\":{},\"styles\":{},\"classes\":{},\"id\":\"ryxGvvilR5.BkXjjogRq.Hk_m3ieRc.HyZdQ3ol05\",\"children\":[]},{\"type\":\"option\",\"text\":\"Option 3\",\"attrs\":{},\"styles\":{},\"classes\":{},\"id\":\"ryxGvvilR5.BkXjjogRq.Hk_m3ieRc.BJzu7hogRc\",\"children\":[]}],\"id\":\"ryxGvvilR5.BkXjjogRq.Hk_m3ieRc\"},{\"zIndex\":\"auto\",\"top\":16,\"left\":928,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"Sign In\",\"egglement\":true,\"width\":66,\"height\":25,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-size\":\"20px\"},\"classes\":{},\"id\":\"ryxGvvilR5.BkXjjogRq.HyuunixA5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":9,\"left\":1021,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"button\",\"type\":\"button\",\"text\":\"Sign Up\",\"egglement\":true,\"width\":127,\"height\":40,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"border-radius\":\"4px\",\"border-width\":\"0px\",\"color\":\"rgb(255, 255, 255)\",\"background-color\":\"rgb(44, 103, 255)\",\"font-size\":\"20px\"},\"classes\":{},\"id\":\"ryxGvvilR5.BkXjjogRq.S1dhnjx09\",\"children\":[]}],\"id\":\"ryxGvvilR5.BkXjjogRq\"},{\"zIndex\":\"auto\",\"top\":58,\"left\":0,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"input\",\"type\":\"input\",\"egglement\":true,\"width\":1165,\"height\":50,\"attrs\":{\"value\":\"\",\"placeholder\":\"Search with colors , topics , styles and ...\",\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\"},\"styles\":{\"border-width\":\"0px\",\"border-bottom-width\":\"1px\",\"background-color\":\"rgb(255, 255, 255)\",\"border-color\":\"rgb(233, 233, 233)\"},\"classes\":{},\"id\":\"ryxGvvilR5.rkF62jxR5\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":167,\"left\":273,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"Trending Color Palettes\",\"egglement\":true,\"width\":712,\"height\":76,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"font-family\":\"Geneva, Tahoma, sans-serif\",\"font-size\":\"56px\",\"font-weight\":\"bold\"},\"classes\":{},\"id\":\"ryxGvvilR5.ByrNTilAq\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":251,\"left\":414,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"text\",\"type\":\"span\",\"text\":\"The above photo is something that happens every day at the nursery. We have trash cans at the nursery by the parking lot.  \",\"egglement\":true,\"width\":412,\"height\":68,\"attrs\":{},\"styles\":{\"overflow\":\"hidden\",\"text-overflow\":\"ellipsis\",\"text-align\":\"center\",\"background-color\":\"rgba(255, 255, 255, 0)\",\"color\":\"rgb(100, 100, 100)\",\"border-color\":\"rgb(153, 153, 153)\"},\"classes\":{},\"id\":\"ryxGvvilR5.Hy5npjgCq\",\"children\":[]},{\"zIndex\":\"auto\",\"top\":365,\"left\":36,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":316,\"height\":181,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"border-radius\":\"8px\"},\"children\":[],\"id\":\"ryxGvvilR5.rys1RoxR9\"},{\"zIndex\":\"auto\",\"top\":365,\"left\":433,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":316,\"height\":181,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"border-radius\":\"8px\"},\"children\":[],\"id\":\"ryxGvvilR5.H1ybCjlCc\"},{\"zIndex\":\"auto\",\"top\":363,\"left\":827,\"bottom\":\"auto\",\"right\":\"auto\",\"name\":\"div\",\"type\":\"div\",\"egglement\":true,\"containegg\":true,\"width\":316,\"height\":181,\"attrs\":{\"hidden\":false},\"classes\":{},\"styles\":{\"overflow\":\"hidden\",\"border-color\":\"rgba(0, 0, 0, 0.15)\",\"border-style\":\"solid\",\"border-width\":\"1px\",\"border-radius\":\"8px\"},\"children\":[],\"id\":\"ryxGvvilR5.HyXZAilAc\"}]}"),
 
-      selectedElements:[],
       selectedPage:null,
       changeForm:{
         width:150,
@@ -134,17 +130,94 @@ export default {
       dialogChangeVisible:false,
       indexSelected:-1,
       idSelected:null,
-      prototypeData: [],
-      canvasWidth:400,
-      canvasHeight:400,
       dataArr:{},
-      pictureData:[],
-      wholeHeight:0,
+
+
       projName:window.localStorage.getItem('pname'),
-      arr:[{id:1 , name:"2222"} , {id:2 , name:"3333"}]
+      imgArr:[]
     }
   },
+
   methods:{
+    toPic(type) {
+      html2canvas(this.$refs.picArea).then(canvas => {
+        // 转成图片，生成图片地址
+        let imgUrl = (type === 0 ? canvas.toDataURL("image/jpg") : canvas.toDataURL("image/png"))
+        this.imgArr.push({url : imgUrl.toString() , id :this.selectedPage.name})
+      });
+    },
+    allTo(type){
+      console.log(this.pages.length)
+      const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+
+      const repeatAdd = async () => {
+        for (let i = 0; i < this.pages.length; i++) {
+          this.changeCanvas(this.pages[i] , i)
+          await sleep(500)
+          this.toPic(type)
+          await sleep(500)
+        }
+        await sleep(2000)
+        this.atchDownload()
+      }
+      repeatAdd(type)
+      this.imgArr = []
+    },
+    getImgArrayBuffer(url) {
+      console.log('---------------')
+      return new Promise((resolve, reject) => {
+        //通过请求获取文件blob格式
+        let xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", url, true);
+        xmlhttp.responseType = "blob";
+        xmlhttp.onload = function () {
+          if (this.status == 200) {
+            console.log(url)
+            resolve(this.response);
+          } else {
+            console.log('reject')
+            reject(this.status);
+          }
+        };
+        xmlhttp.send();
+      });
+    },
+    atchDownload(type) {
+      // this.images 是要下载的图片数组  [{url: 图片地址, id: 图片名称}]
+      // 定时器 loading
+      this.loading = true;
+      this.setTimeout = setTimeout(() => {
+        this.loading = false;
+      }, 500);
+      let _this = this;
+      let zip = new JSZip();
+      let cache = {};
+      let promises = [];
+      console.log('12121211221212212')
+      for (let item of this.imgArr) {
+        const promise = _this.getImgArrayBuffer(item.url).then((data) => {
+          // 下载文件, 并存成ArrayBuffer对象(blob)
+          if(type === 0) zip.file(item.id + ".jpg", data, { binary: true })
+          else zip.file(item.id + ".png", data, { binary: true })
+          //zip.file(item.id + ".png", data, { binary: true }); // 逐个添加文件
+          cache[item.id] = data;
+        });
+        promises.push(promise);
+      }
+
+      Promise.all(promises)
+          .then(() => {
+            zip.generateAsync({ type: "blob" }).then((content) => {
+              //_this.$message("正在压缩，请稍后！");
+              // 生成二进制流
+              FileSaver.saveAs(content, _this.projName); // 利用file-saver保存文件  自定义文件名
+              _this.$message("压缩完成！");
+            });
+          })
+          .catch((res) => {
+            console.log(res);
+          });
+    },
     BackToDesignManage(){
       this.$router.push({
         name:'designManage',
@@ -160,9 +233,9 @@ export default {
       let dataPost = new FormData()
       dataPost.append('userID', 1)
       dataPost.append('projectID', this.$route.params.pid)
-      let config ={
-        headers: {'Content-Type': 'multipart/form-data'}
-      }
+      //let config ={
+      //  headers: {'Content-Type': 'multipart/form-data'}
+     // }
      // const that = this
       //axios.post('http://43.138.21.64:8080/prototype/get', dataPost , config).then( res => {
       //  console.log(res)
@@ -171,24 +244,24 @@ export default {
       //    that.prototypeData = res.data.message.prototype.results
       //  }
       //})
-      axios.post('http://43.138.21.64:8080/doc/get/all', dataPost , config).then( res => {
-        console.log(res)
-        if(res.status === 200){
-          console.log(res.data.message.prototype.results)
-          let dataArr = res.data.message.prototype.results.filter(ele =>{
-            return ele.isRecycled === false
-          }) || []
-          for (var i=0;i<dataArr.length;i++)
-          {
-            if(dataArr[i].content === null) {
-              const pageTemp = newPage(dataArr[i].ID ,dataArr[i].name ,dataArr[i].canvasHeight ,dataArr[i].canvasWidth)
-              this.pages.push(pageTemp)
-            }
-            else this.pages.push(JSON.parse(dataArr[i].content))
-          }
-          console.log(this.pages)
-        }
-      })
+      //axios.post('http://43.138.21.64:8080/doc/get/all', dataPost , config).then( res => {
+      //  console.log(res)
+      //  if(res.status === 200){
+      //    console.log(res.data.message.prototype.results)
+      //    let dataArr = res.data.message.prototype.results.filter(ele =>{
+      //      return ele.isRecycled === false
+      //    }) || []
+      //    for (var i=0;i<dataArr.length;i++)
+      //    {
+       //     if(dataArr[i].content === null) {
+      //        const pageTemp = newPage(dataArr[i].ID ,dataArr[i].name ,dataArr[i].canvasHeight ,dataArr[i].canvasWidth)
+      //        this.pages.push(pageTemp)
+      //      }
+      //      else this.pages.push(JSON.parse(dataArr[i].content))
+      //    }
+      //    console.log(this.pages)
+      //  }
+      //})
     },
 
     addPrototype() {
@@ -330,6 +403,10 @@ export default {
     this.$bus.$on("deleteElement" , this.deleteElement)
     this.$bus.$on("updateElement" , this.updateElement)
     this.init()
+    this.pages.push(this.model3)
+    this.pages.push(this.model4)
+    this.pages.push(this.model5)
+    this.pages.push(this.model6)
 
   }
 }
@@ -535,5 +612,9 @@ canvas{
   text-overflow: ellipsis;
   font-size: small;
   padding: 0 8px;
+}
+main{
+  width: 100%;
+  height: 100%;
 }
 </style>
