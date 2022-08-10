@@ -6,8 +6,8 @@
         <img src="../assets/PrototypeMaterial/back.png" height="25px" @click="BackToDesignManage" class="backlogo"  alt="">
         <img src="../assets/PrototypeMaterial/aspicture.png" height="25px"   v-on:click="asPicture=!asPicture" class="backlogo"  title="导出图片">
         <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="保存当前修改" @click="save">
-        <img src="../assets/PrototypeMaterial/delete.png" height="25px"   class="backlogo"  title="生成预览" v-if="this.playing" @click="changePlay(true)">
-        <img src="../assets/PrototypeMaterial/save.png" height="23px"    class="backlogo"  title="终止预览" @click="changePlay(false)" v-if="!this.playing">
+        <img src="../assets/PrototypeMaterial/view.png" height="25px"   class="backlogo"  title="生成预览" v-if="this.playing" @click="changePlay(true)">
+        <img src="../assets/PrototypeMaterial/view.png" height="23px"    class="backlogo"  title="终止预览" @click="changePlay(false)" v-if="!this.playing">
       </div>
       <div class="show-picture" v-if="asPicture">
         <div class="picture-btn" @click="allTo(0)">导出为jpg</div>
@@ -21,9 +21,9 @@
             {{ projName }}</div>
         </div>
         <div id="menu" >
-          <el-button  id="buttonAdd" @click="dialogAddVisible = true" icon="el-icon-plus">添加页面</el-button>
-          <el-button  id="buttonImport" @click="dialogImportVisible = true" icon="el-icon-folder-add">导入模板</el-button>
-        </div>
+          <el-button  id="buttonAdd" @click="dialogAddVisible = true" icon="el-icon-plus">添加页面</el-button></div>
+          <div><el-button  id="buttonImport" @click="dialogImportVisible = true" icon="el-icon-folder-add" style="position: absolute;top:150px;left:0px">导入模板</el-button></div>
+
         <div id="list">
           <ul style="padding: 0; width: 100%; height:400px ; margin: 0 ">
             <li v-for="(el,index) in pages" :class="{classSelected:idSelected===el.id}"
@@ -90,11 +90,13 @@
           title="导入模板"
           :visible.sync="dialogImportVisible"
           width="30%">
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="dialogImportVisible = false">取消</el-button>
+        <span>
           <el-button type="primary" @click="importModel(0)">模板1</el-button>
           <el-button type="primary" @click="importModel(1)">模板2</el-button>
           <el-button type="primary" @click="importModel(2)">模板3</el-button>
+        </span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="dialogImportVisible = false">取消</el-button>
         </span>
       </el-dialog>
 
