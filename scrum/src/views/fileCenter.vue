@@ -1,21 +1,24 @@
 <template>
   <div>
-    <el-col :span="4" class="filelist" style="background-color:#87CEFA;color: white;">
-      <h4 style="text-align: center; " ><i class="el-icon-folder" style="color: yellow"></i>&emsp;文档中心</h4>
+    <HeadSide></HeadSide>
+    <div class="mainbody">
+    <el-col :span="4" class="filelist" >
+      <img src="../assets/backtohome.png" style="position: absolute;left: 14px;top:18px;z-index: 1000;height: 28px;width:28px;cursor: pointer" v-on:click="jumpback">
+      <h4 style="text-align: center; font-weight: 500;" ><i class="el-icon-folder" style="color: black"></i>&emsp;文档中心</h4>
       <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
         <p><el-input v-model="input1" placeholder="请输入文件名" style="width: 400px;"></el-input></p>
         <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew1()">确认</el-button></p>
         <div slot="reference" class="name-wrapper" >
-          <el-button class="new-button" style="width: 254px">新建文件夹<i class="el-icon-folder-add el-icon--right" style="color: deepskyblue"></i></el-button>
+          <el-button class="new-button" style="width: 100%;border-right: 0;border-radius: 0 " >新建文件夹<i class="el-icon-folder-add el-icon--right" style="color: black"></i></el-button>
         </div>
       </el-popover>
       <div>
-        <el-menu
+        <el-menu class="themenu"
             :default-active="activeIndex"
             :unique-opened="false">
-          <div v-for="(item,index) in tableData" :key="index">
+          <div v-for="(item,index) in tableData" :key="index" >
             <!-- 一级菜单（没有任何子级菜单）-->
-            <el-menu-item :index="'1-'+item.id" v-if="!item.doc_list">
+            <el-menu-item :index="'1-'+item.id" v-if="!item.doc_list" class="thedocument">
               {{item.name}}
               <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
                 <p><el-input v-model="input2" placeholder="请输入文档名" style="width: 400px;"></el-input></p>
@@ -26,7 +29,7 @@
                       type="text"
                       size="small"
                       class="move-button"
-                  ><i class="el-icon-document-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                  ><i class="el-icon-document-add" style="color:black;font-size: 20px;" ></i></el-button>
                 </div>
               </el-popover>
               <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
@@ -52,7 +55,7 @@
             </el-menu-item>
             <!-- 一级菜单（有子级菜单）-->
             <el-submenu :index="'1-'+item.id" v-else>
-              <template slot="title">
+              <template slot="title" >
                 {{item.name}}
                 <el-popover  trigger="click" placement="right" popper-class="moreinfo" v-if="index!==0">
                   <p><el-input v-model="input2" placeholder="请输入文档名" style="width: 400px;"></el-input></p>
@@ -63,7 +66,7 @@
                         type="text"
                         size="small"
                         class="move-button"
-                    ><i class="el-icon-document-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                    ><i class="el-icon-document-add" style="color:black;font-size: 20px;" ></i></el-button>
                   </div>
                 </el-popover>
                 <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
@@ -76,7 +79,7 @@
                         type="text"
                         size="small"
                         class="move-button"
-                    ><i class="el-icon-folder-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                    ><i class="el-icon-folder-add" style="color:black;font-size: 20px;" ></i></el-button>
                   </div>
                 </el-popover>
                 <el-button
@@ -91,7 +94,7 @@
               <!-- 遍历二级菜单容器 -->
               <div v-for="(i,index) in item.doc_list" :key="index">
                 <!-- 判断二级菜单（没有三级菜单）-->
-                <el-menu-item :index="item.id+'-2-'+i.id" v-if="!i.doc_list" @click.native="get2Content(item.id,i.id)">
+                <el-menu-item :index="item.id+'-2-'+i.id" v-if="!i.doc_list" @click.native="get2Content(item.id,i.id)" >
                   {{i.name}}
                   <el-button
                       style="position: absolute;left:180px;top:5px"
@@ -115,7 +118,7 @@
                             type="text"
                             size="small"
                             class="move-button"
-                        ><i class="el-icon-document-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                        ><i class="el-icon-document-add" style="color:black;font-size: 20px;" ></i></el-button>
                       </div>
                     </el-popover>
                     <el-button
@@ -148,28 +151,34 @@
     <el-col :span="4">
       <div id="vditor"  name="description" class="edit"  ></div>
       <div style="margin-top: 10px;position: absolute;left: 730px;top: 703px;">
-        <el-button type="primary"  @click="submit()">提交</el-button>
+        <el-button style="background-color: #383838; color:whitesmoke;width: 150px;letter-spacing: 10px;font-size: 16px;"  @click="submit()">提 交</el-button>
       </div>
     </el-col>
-
+    <img src="../assets/click.png"  v-if="theclick===0" style="position: absolute;z-index: 100000;top:178px;left: 450px;height: 80px">
+      <img src="../assets/click.png"  v-if="theclick===1" style="position: absolute;z-index: 100000;top:178px;left: 630px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===2" style="position: absolute;z-index: 100000;top:178px;left: 810px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===3" style="position: absolute;z-index: 100000;top:178px;left: 990px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===6" style="position: absolute;z-index: 100000;top:448px;left: 920px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===5" style="position: absolute;z-index: 100000;top:448px;left: 720px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===4" style="position: absolute;z-index: 100000;top:448px;left: 530px;height: 80px">
     <el-dialog
         title="模板选择"
         :visible.sync="dialogVisible"
         width="50%"
         :before-close="handleClose">
-      <span><img src="../assets/PrototypeMaterial/model0.png" @click="getModel(0)" ></span>
+      <span><img src="../assets/PrototypeMaterial/model0.png" class="modeldocument" @click="getModel(0)" ></span>
       <span> &ensp;</span>
-        <span><img src="../assets/PrototypeMaterial/model1.png" @click="getModel(1) " ></span>
+        <span><img src="../assets/PrototypeMaterial/model1.png" class="modeldocument" @click="getModel(1) " ></span>
       <span> &ensp;</span>
-        <span><img src="../assets/PrototypeMaterial/model2.png" @click="getModel(2)" ></span>
+        <span><img src="../assets/PrototypeMaterial/model2.png" class="modeldocument" @click="getModel(2)" ></span>
       <span> &ensp;</span>
-        <span><img src="../assets/PrototypeMaterial/model3.png" @click="getModel(3)" ></span>
+        <span><img src="../assets/PrototypeMaterial/model3.png" class="modeldocument" @click="getModel(3)" ></span>
 
-        <span><img src="../assets/PrototypeMaterial/model4.png" @click="getModel(4)" ></span>
+        <span><img src="../assets/PrototypeMaterial/model4.png" class="modeldocument" @click="getModel(4)" ></span>
       <span> &ensp;&ensp;&ensp;</span>
-        <span><img src="../assets/PrototypeMaterial/model5.png" @click="getModel(5)" ></span>
+        <span><img src="../assets/PrototypeMaterial/model5.png" class="modeldocument" @click="getModel(5)" ></span>
       <span> &ensp;&ensp;&ensp;</span>
-        <span><img src="../assets/PrototypeMaterial/model6.png" @click="getModel(6)" ></span>
+        <span><img src="../assets/PrototypeMaterial/model6.png" class="modeldocument" @click="getModel(6)" ></span>
 
 
       <span slot="footer" class="dialog-footer">
@@ -178,16 +187,18 @@
   </span>
     </el-dialog>
   </div>
-
+  </div>
 </template>
 <script>
 import Vditor from "vditor";
 import global from "@/api/global";
 import 'vditor/dist/index.css';
 import axios from "axios";
+import HeadSide from "@/components/HeadSide";
 
 
 export default {
+  components: {HeadSide},
   inject:['reload'],
   data() {
     return {
@@ -199,6 +210,7 @@ export default {
       input3:'',
       contentEditor: {},
       tableData: [],
+      theclick:9,
     }
   },
   mounted() {
@@ -293,10 +305,15 @@ export default {
       else if(index===4) global.filecontent=global.model4;
       else if(index===5) global.filecontent=global.model5;
       else  global.filecontent=global.model6;
+      this.theclick=index;
     },
     chooseModel(){
       global.dialogVisible=false;
+      this.theclick=9;
       this.contentEditor.setValue(global.filecontent);
+    },
+    jumpback(){
+      this.$router.push('/TeamManage/'+window.localStorage.getItem('tid'));
     },
     get2Content(itemid,iid){
       var project;
@@ -532,22 +549,60 @@ export default {
             })
       }
     },
+  },
+  watch:{
+
   }
 }
 </script>
 <style scoped>
+.mainbody{
+  position: absolute;
+  top:50px;
+
+}
 .edit{
   text-align: left;
   position: absolute;
   top: 0;
-  left:253px;
+
+  width: calc(100% - 250px);
+  left:236px;
 }
 .filelist{
   text-align: left;
   position: absolute;
-  top:0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  left: 0;
+  width: 260px;
   height: 750px;
+  border-right: 2px solid #EDEEF2;
+  background-color: #ffffff;
+  z-index: 100;
+  overflow-x: hidden;
+  overflow-y:auto ;
+}
+.new-button:hover{
+  background-color: #EEEFF2;
+  color: #383838;
+  border-color: transparent;
+}
+
+.themenu{
+
+}
+.whatit{
+ background-color: #42b983;
+}
+.modeldocument{
+  cursor: pointer;
+}
+.modeldocument:after{
+  box-shadow: 5px 0px 10px #2c3e50;
+}
+.modeldocument:hover{
+  box-shadow: 0px 0px 10px #2c3e50;
+}
+span::selection{
+  box-shadow: 0px 0px 10px #2c3e50;
 }
 </style>
