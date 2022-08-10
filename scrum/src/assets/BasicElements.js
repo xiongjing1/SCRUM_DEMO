@@ -18,6 +18,7 @@ const basicElements = [
     'styles': {
       'overflow': 'hidden',
       'border-color': 'rgba(0, 0, 0, 0.15)',
+      'background-color':'rgba(0, 0, 0, 0.15)',
       'border-style': 'solid',
       'border-width': '1px',
     },
@@ -393,7 +394,7 @@ const basicElements = [
     'width': 50,
     'height': 44.44,
     'attrs': {
-      'src': '/static/vuegg-fam.svg'
+      'src': '@/static/vuegg-fam.svg'
     },
     'styles': {},
     'classes': {}

@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    selectedItem:[]
+    selectedItem:[],
   },
   getters: {
   },
@@ -16,7 +16,8 @@ export default new Vuex.Store({
     set(state , n){
       state.selectedItem = []
       state.selectedItem.push(n)
-    }
+    },
+
   },
   actions: {
   },

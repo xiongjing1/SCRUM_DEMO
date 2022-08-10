@@ -42,7 +42,7 @@
                       type="text"
                       size="small"
                       class="move-button"
-                  ><i class="el-icon-folder-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                  ><i class="el-icon-folder-add" style="color:black;font-size: 20px;" ></i></el-button>
                 </div>
               </el-popover>
               <el-button
@@ -154,13 +154,13 @@
         <el-button style="background-color: #383838; color:whitesmoke;width: 150px;letter-spacing: 10px;font-size: 16px;"  @click="submit()">提 交</el-button>
       </div>
     </el-col>
-    <img src="../assets/click.png"  v-if="theclick===0" style="position: absolute;z-index: 100000;top:178px;left: 450px;height: 80px">
-      <img src="../assets/click.png"  v-if="theclick===1" style="position: absolute;z-index: 100000;top:178px;left: 630px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===2" style="position: absolute;z-index: 100000;top:178px;left: 810px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===3" style="position: absolute;z-index: 100000;top:178px;left: 990px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===6" style="position: absolute;z-index: 100000;top:448px;left: 920px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===5" style="position: absolute;z-index: 100000;top:448px;left: 720px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===4" style="position: absolute;z-index: 100000;top:448px;left: 530px;height: 80px">
+    <img src="../assets/click.png"  v-if="theclick===0&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 450px;height: 80px">
+      <img src="../assets/click.png"  v-if="theclick===1&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 630px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===2&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 810px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===3&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 990px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===6&&dialogVisible" style="position: absolute;z-index: 100000;top:448px;left: 920px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===5&&dialogVisible" style="position: absolute;z-index: 100000;top:448px;left: 720px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===4&&dialogVisible" style="position: absolute;z-index: 100000;top:448px;left: 530px;height: 80px">
     <el-dialog
         title="模板选择"
         :visible.sync="dialogVisible"
@@ -600,7 +600,7 @@ export default {
   box-shadow: 5px 0px 10px #2c3e50;
 }
 .modeldocument:hover{
-  box-shadow: 0px 0px 10px #2c3e50;
+  box-shadow: 0px 0px 6px #2c3e50;
 }
 span::selection{
   box-shadow: 0px 0px 10px #2c3e50;
