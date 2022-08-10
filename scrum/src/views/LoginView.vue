@@ -10,18 +10,18 @@
       <li v-for="(item, index) in tabList" :key="index" class="tab" :class="{'tab-current':  index == currentIndex}" @click="clickTab(index)">{{item}}</li>
     </ul>
     <div class="login" v-if="currentIndex===0&&iffind===0">
-    <h2 style="margin-left: 55px; margin-top: 50px">Log in to your account</h2>
-      <div class="small_title">Your Email</div>
+    <h2 style="margin-left: 55px; margin-top: 50px">登录到你的账户</h2>
+      <div class="small_title">你的邮箱地址</div>
       <el-input v-model="login_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址"></el-input>
-      <div class="small_title">Password</div>
+      <div class="small_title">你的密码</div>
       <el-input v-model="login_password" show-password prefix-icon="el-icon-key" placeholder="请输入密码"></el-input>
-      <div class="forget" v-on:click="find">Forgot your Password?</div>
-      <el-button type="login_button" v-on:click="login_0">Log in</el-button>
+      <div class="forget" v-on:click="find">是否忘记了你的密码？</div>
+      <el-button type="login_button" v-on:click="login_0">登 录</el-button>
     </div>
     <div class="register" v-if="currentIndex===1&&iffind===0">
-      <h2 style="margin-left: 55px; margin-top: 50px">Create account</h2>
+      <h2 style="margin-left: 55px; margin-top: 50px">创建你的账户</h2>
       <el-input class="register_input" v-model="register_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址" @blur="email_blur"></el-input>
-      <el-button type="email_check" v-on:click="send_code">send code</el-button>
+      <el-button type="email_check" v-on:click="send_code">发送验证码</el-button>
       <div class="email_warn" v-if="fault_code===1">邮箱已注册</div>
       <div class="email_warn" v-if="fault_code===2">邮箱格式错误</div>
       <el-input  class="code_input" v-model="register_code"  placeholder="请输入验证码"></el-input>
@@ -29,20 +29,20 @@
       <div class="name_warn" v-if="fault_code===3">请输入正确的姓名</div>
       <el-input  class="register_input" v-model="register_password" show-password prefix-icon="el-icon-key" placeholder="请输入密码"  @blur="password_blur"></el-input>
       <div class="password_warn" v-if="fault_code===4" >请输入8-16位数字字母或特殊符号且不能纯数字</div>
-      <el-button type="login_button" v-on:click="register_0">Register</el-button>
+      <el-button type="login_button" v-on:click="register_0">注 册</el-button>
     </div>
     <div class="find" v-if="iffind===1">
-      <h2 style="margin-left: 55px; margin-top: 50px">Forgot your password?</h2>
-      <div class="detail">Enter the email you registered with and we'll send the vertification code to reset the password</div>
+      <h2 style="margin-left: 55px; margin-top: 50px">是否忘记了你自己的密码？</h2>
+      <div class="detail">输入你的注册邮箱，我们会发送一封验证邮件到你的邮箱中，其中包含了验证码</div>
       <el-input class="register_input" v-model="reset_email" prefix-icon="el-icon-message" placeholder="请输入邮箱地址" @blur="email_blur_reset"></el-input>
-      <el-button type="email_check" v-on:click="send_code1">send code</el-button>
+      <el-button type="email_check" v-on:click="send_code1">发送验证码</el-button>
       <div class="email_warn0" v-if="fault_code===5">邮箱不存在</div>
       <div class="email_warn0" v-if="fault_code===6">邮箱格式错误</div>
       <el-input  class="code_input" v-model="reset_code"  placeholder="请输入验证码"></el-input>
       <el-input  class="register_input" v-model="reset_password" show-password prefix-icon="el-icon-key" placeholder="请输入新密码" @blur="password_blur_reset"></el-input>
       <div class="password_warn0" v-if="fault_code===7" >请输入8-16位数字字母或特殊符号且不能纯数字</div>
-      <div class="return" v-on:click="returnTologin">Return to Log in</div>
-      <el-button type="login_button" v-on:click="reset_0">Reset</el-button>
+      <div class="return" v-on:click="returnTologin">返 回 登 录</div>
+      <el-button type="login_button" v-on:click="reset_0">重 置</el-button>
     </div>
   </div>
 </div>
@@ -111,6 +111,13 @@ export default {
       this.iffind=0
     },
     login_0(){
+
+      if(this.login_email==''){
+        this.$message.error("未输入邮箱");
+      }
+      if(this.login_password==''){
+        this.$message.error("未输入密码");
+      }
       let param = new FormData() // 创建form对象
       param.append('password', this.login_password)// 通过append向form对象添加数据
       param.append('email', this.login_email)
@@ -148,6 +155,9 @@ export default {
           })
     },
     register_0(){
+     this.email_blur();
+     this.password_blur();
+     if (this.fault_code===0){
       let param = new FormData() // 创建form对象
       param.append('password', this.register_password)// 通过append向form对象添加数据
       param.append('email', this.register_email)
@@ -177,9 +187,12 @@ export default {
                 this.$message.error("验证码错误");
             }
           })
-
+     }
     },
     reset_0(){
+      this.email_blur_reset();
+      this.password_blur_reset();
+      if(this.fault_code===0){
       let param = new FormData() // 创建form对象
       param.append('new_password', this.reset_password)// 通过append向form对象添加数据
       param.append('email', this.reset_email)
@@ -204,7 +217,7 @@ export default {
                 this.$message.error("邮箱未注册");
             }
           })
-
+      }
 
     },
     email_blur() {
@@ -219,12 +232,14 @@ export default {
     },
     password_blur(){
       var verify = /^[\u0021-\u00ff]{8,16}$/;
-      if (!verify.test(this.register_password)) this.fault_code = 4
+      var ver=/^[0-9]*$/;
+      if (!verify.test(this.register_password)||ver.test(this.register_password)) this.fault_code = 4
       else this.fault_code=0
     },
     password_blur_reset(){
       var verify = /^[\u0021-\u00ff]{8,16}$/;
-      if (!verify.test(this.reset_password)) this.fault_code = 7
+      var ver=/^[0-9]*$/;
+      if (!verify.test(this.reset_password)||ver.test(this.register_password)) this.fault_code = 7
       else this.fault_code=0
     },
     send_code(){
