@@ -124,7 +124,8 @@
                     :header-cell-style="{'text-align':'center'}"
                     :cell-style="{'text-align':'center'}"
                     style="width: 100%"
-                    max-height="480">
+                    max-height="600"
+                    height="490px">
                   <el-table-column
                       fixed
                       prop="docname"

@@ -135,7 +135,8 @@
                     :header-cell-style="{'text-align':'center'}"
                     :cell-style="{'text-align':'center','padding':'0px'}"
                     :row-style="{'height':'72px'}"
-                    max-height="480"
+                    max-height="600"
+                    height="490px"
                     style="width: 100%">
                   <el-table-column
                       fixed
