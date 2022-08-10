@@ -1,18 +1,7 @@
 <template>
-  <nav class="navigation">
-    <div class="tab-bar">
-      <a title="Elements" class="tab" @click="toggleTab('elements')" >
-        <svgicon icon="system/widgets" width="24" height="24"
-                 :color="showElements ? '#2b6a73' : 'rgba(0,0,0,.38)'">
-        </svgicon>
-      </a>
+  <nav class="navigation" style="max-width: 400px">
+      <ElementsMenu v-show="showElements" style="position: absolute;left:0"></ElementsMenu>
 
-      <div class="tab-indicator mdc-theme--primary-bg" :style="{'left': indiLeft, 'right': indiRight}"></div>
-    </div>
-
-    <div class="tab-content">
-      <ElementsMenu v-show="showElements"></ElementsMenu>
-    </div>
   </nav>
 </template>
 
@@ -68,13 +57,21 @@ export default {
 }
 </script>
 
-
+<style>
+/deep/. {
+  overflow-x: hidden;
+}
+</style>
 <style scoped>
+/deep/. {
+  overflow-x: hidden;
+}
 .navigation {
+  overflow-x: hidden;
   top: 0;
   right: 0;
   z-index: 1005;
-  width: 240px;
+  width: 350px;
   height: 100%;
   max-height: 100%;
   background: #fafafa;

@@ -124,6 +124,7 @@
                   </div>
                 </div>
               </div>
+
               <div class="members-search">
 
               </div>
@@ -147,13 +148,6 @@
                     </template>
                   </el-table-column>
                   <el-table-column
-                      label="所属项目"
-                      width="200">
-                    <template slot-scope="scope">
-                      <span style="margin-left: 10px">{{ scope.row.projectID }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
                       label="创建者"
                       width="200">
                     <div  class="info" slot-scope="scope" >
@@ -161,10 +155,17 @@
                         <p>创建时间: {{ scope.row.createdDate }}</p>
                         <p>最后修改时间: {{ scope.row.modifiedDate }}</p>
                         <div slot="reference" class="name-wrapper" >
-                          <el-tag size="medium" effect="plain">{{ scope.row.creatorID }}</el-tag>
+                          <el-tag size="medium" effect="plain">{{ scope.row.creatorName }}</el-tag>
                         </div>
                       </el-popover>
                     </div>
+                  </el-table-column>
+                  <el-table-column
+                      label="联系创建者"
+                      width="200">
+                    <template slot-scope="scope">
+                      <span style="margin-left: 10px">{{ scope.row.creatorEmail }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
@@ -520,7 +521,7 @@ export default {
     },
     DelteTeam(){
       let param = new FormData() // 创建form对象
-      param.append('is_delete_team', this.addmember)// 通过append向form对象添加数据
+      param.append('is_delete_team', '1')// 通过append向form对象添加数据
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
@@ -545,7 +546,7 @@ export default {
     RenameTeam(){
       window.localStorage.setItem('tname',this.nameInput);
       let param = new FormData() // 创建form对象
-      param.append('is_rename_team', this.addmember)
+      param.append('is_rename_team', '1')
       param.append('new_name', this.nameInput)// 通过append向form对象添加数据
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
@@ -621,6 +622,8 @@ export default {
           content: '',
           createdDate: '',
           creatorID: '',
+          creatorName:'',
+          creatorEmail:'',
           isRecycled: false,
           is_subfile: '',
           modifiedDate: '',

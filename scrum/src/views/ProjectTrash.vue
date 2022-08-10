@@ -81,7 +81,7 @@
         <div class="left-side">
           <div class="members-top-side">
               <div class="Trash">
-              Project Trash
+              项目回收站
             </div>
             <div class="members-search">
               <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
@@ -408,7 +408,7 @@ export default {
     Edit(){
       console.log(this.inviteEmail)
       let param = new FormData() // 创建form对象
-      param.append('is_rewrite_introduction', this.addmember)// 通过append向form对象添加数据
+      param.append('is_rewrite_introduction', '1')// 通过append向form对象添加数据
       param.append('new_introduction', this.Summarycontent)
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
@@ -426,7 +426,7 @@ export default {
     },
     DelteTeam(){
       let param = new FormData() // 创建form对象
-      param.append('is_delete_team', this.addmember)// 通过append向form对象添加数据
+      param.append('is_delete_team', '1')// 通过append向form对象添加数据
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
@@ -451,7 +451,7 @@ export default {
     RenameProject(){
       window.localStorage.setItem('tname',this.nameInput);
       let param = new FormData() // 创建form对象
-      param.append('is_rename_team', this.addmember)
+      param.append('is_rename_team', '1')
       param.append('new_name', this.nameInput)// 通过append向form对象添加数据
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
@@ -699,10 +699,10 @@ export default {
 }
 .Trash{
   padding-left: 50px;
-  padding-top: 20px;
+  padding-top: 15px;
   display: flex;
   width: 100%;
-  font-family: "Berlin Sans FB Demi";
+  font-family: 'jianhanzhen';
   font-size: 30px;
 }
 .members-second-side{

@@ -42,7 +42,7 @@
                       type="text"
                       size="small"
                       class="move-button"
-                  ><i class="el-icon-folder-add" style="color:lightskyblue;font-size: 20px;" ></i></el-button>
+                  ><i class="el-icon-folder-add" style="color:black;font-size: 20px;" ></i></el-button>
                 </div>
               </el-popover>
               <el-button
@@ -154,13 +154,13 @@
         <el-button style="background-color: #383838; color:whitesmoke;width: 150px;letter-spacing: 10px;font-size: 16px;"  @click="submit()">提 交</el-button>
       </div>
     </el-col>
-    <img src="../assets/click.png"  v-if="theclick===0" style="position: absolute;z-index: 100000;top:178px;left: 450px;height: 80px">
-      <img src="../assets/click.png"  v-if="theclick===1" style="position: absolute;z-index: 100000;top:178px;left: 630px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===2" style="position: absolute;z-index: 100000;top:178px;left: 810px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===3" style="position: absolute;z-index: 100000;top:178px;left: 990px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===6" style="position: absolute;z-index: 100000;top:448px;left: 920px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===5" style="position: absolute;z-index: 100000;top:448px;left: 720px;height: 80px">
-      <img src="../assets/click.png" v-if="theclick===4" style="position: absolute;z-index: 100000;top:448px;left: 530px;height: 80px">
+    <img src="../assets/click.png"  v-if="theclick===0&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 450px;height: 80px">
+      <img src="../assets/click.png"  v-if="theclick===1&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 630px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===2&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 810px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===3&&dialogVisible" style="position: absolute;z-index: 100000;top:178px;left: 990px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===6&&dialogVisible" style="position: absolute;z-index: 100000;top:448px;left: 920px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===5&&dialogVisible" style="position: absolute;z-index: 100000;top:448px;left: 720px;height: 80px">
+      <img src="../assets/click.png" v-if="theclick===4&&dialogVisible" style="position: absolute;z-index: 100000;top:448px;left: 530px;height: 80px">
     <el-dialog
         title="模板选择"
         :visible.sync="dialogVisible"
@@ -196,6 +196,15 @@ import 'vditor/dist/index.css';
 import axios from "axios";
 import HeadSide from "@/components/HeadSide";
 
+function contains(arr, obj) {
+  var i = arr.length;
+  while (i--) {
+    if (arr[i].username=== obj) {
+      return true;
+    }
+  }
+  return false;
+}
 
 export default {
   components: {HeadSide},
@@ -211,6 +220,13 @@ export default {
       contentEditor: {},
       tableData: [],
       theclick:9,
+      sendjson:{
+        username:'',
+        content:'',
+        headshot:'',
+      },
+      editinput:'',
+      userList:[],
     }
   },
   mounted() {
@@ -221,7 +237,9 @@ export default {
       this.tableData=res.data.folder_list;
       console.log(this.tableData);
     })
-
+    this.initWebSocket();
+    console.log("wb")
+    var _this=this
     this.contentEditor = new Vditor('vditor', {
       height: 710,
       width: 1283,
@@ -293,7 +311,10 @@ export default {
         }],
       after:()=>{
         this.contentEditor.setValue(global.filecontent);
-      }
+      },input(md){
+        _this.editinput=md
+        console.log(_this.editinput)
+      },
     });
   },
   methods: {
@@ -332,6 +353,7 @@ export default {
             global.isproject='0';
               global.filecontent=response.data.content;
               global.fileid=iid;
+              window.localStorage.setItem('docID',iid)
               global.activeid=itemid+'-2-'+iid;
               console.log(response.data.msg);
               this.reload();
@@ -350,6 +372,7 @@ export default {
               global.isproject='1';
               global.filecontent = response.data.content;
               global.fileid = jid;
+              window.localStorage.setItem('docID',jid)
               global.activeid = itemid +'-'+ iid + '-3-' + jid;
               this.reload();
             })
@@ -367,6 +390,7 @@ export default {
               global.isproject='0';
               global.filecontent = response.data.content;
               global.fileid = jid;
+              window.localStorage.setItem('docID',jid)
               global.activeid = itemid +'-'+ iid + '-3-' + jid;
               console.log(response.data.msg);
               this.reload();
@@ -424,6 +448,7 @@ export default {
                   global.isproject = '0';
                   global.filecontent = '';
                   global.fileid = new_doc_id;
+                  window.localStorage.setItem('docID',new_doc_id)
                   global.activeid = itemid + '-2-' + new_doc_id;
                   global.dialogVisible = true;
                   this.reload();
@@ -431,6 +456,7 @@ export default {
                   global.isproject = '0';
                   global.filecontent = '';
                   global.fileid = new_doc_id;
+                  window.localStorage.setItem('docID',new_doc_id)
                   global.activeid = itemid + '-' + iid + '-3-' + new_doc_id;
                   global.dialogVisible = true;
                   this.reload();
@@ -455,6 +481,7 @@ export default {
                 global.isproject='1';
                 global.filecontent = '';
                 global.fileid = new_doc_id;
+                window.localStorage.setItem('docID',new_doc_id)
                 global.activeid = itemid +'-'+ iid + '-3-' +new_doc_id;
                 global.dialogVisible=true;
                 this.reload();
@@ -549,9 +576,60 @@ export default {
             })
       }
     },
+    initWebSocket(){
+      const wsuri = "ws://43.138.21.64:8080/ws/chat/"+ window.localStorage.getItem('docID')+'/';
+      console.log(wsuri)
+      this.websock = new WebSocket(wsuri);
+      this.websock.onmessage = this.websocketonmessage;
+      this.websock.onopen = this.websocketonopen;
+      this.websock.onerror = this.websocketonerror;
+      this.websock.onclose = this.websocketclose;
+    },
+    websocketonopen(){ //连接建立之后执行send方法发送数据
+      console.log('连接成功！')
+    },
+    websocketonerror(){//连接建立失败重连
+      this.initWebSocket();
+    },
+    websocketclose(){  //关闭
+      //console.log('断开连接');
+    },
+    websocketonmessage(e){ //数据接收
+      var jsondata=JSON.parse(e.data.replace(/\n/g,"\\n").replace(/\r/g,"\\r"));
+      console.log(jsondata)
+      this.content=jsondata.content
+      console.log("0the length"+this.userList.length);
+      this.contentEditor.setValue(this.content)
+      if(contains(this.userList,jsondata.username)){
+        console.log("有了")
+      }
+      else {
+        var tmp={
+          "username":jsondata.username,
+          "headshot":jsondata.headshot,
+        }
+        this.userList.push(tmp)
+        console.log("the length"+this.userList.length);
+        console.log("waht"+this.userList);
+      }
+      console.log(this.userList)
+    },
+    sendcontent(){
+      this.sendjson.content=this.editinput;
+      this.sendjson.username=window.localStorage.getItem('name')
+      this.sendjson.headshot=window.localStorage.getItem('headshot')
+      this.websocketsend(JSON.stringify(this.sendjson));
+      console.log('发送数据')
+    },
+    websocketsend(Data){//数据发送
+      this.websock.send(Data);
+    },
   },
   watch:{
-
+    editinput(){
+      console.log('yes')
+      this.sendcontent();
+    },
   }
 }
 </script>
@@ -600,7 +678,7 @@ export default {
   box-shadow: 5px 0px 10px #2c3e50;
 }
 .modeldocument:hover{
-  box-shadow: 0px 0px 10px #2c3e50;
+  box-shadow: 0px 0px 6px #2c3e50;
 }
 span::selection{
   box-shadow: 0px 0px 10px #2c3e50;
