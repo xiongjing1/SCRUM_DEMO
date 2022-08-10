@@ -5,8 +5,11 @@
            v-for="element in elements"
            @click="e => addItemToStage(e , element)"
            :title="element.name">
-        <svgicon :icon="'system/elements/'+element.name" width="24" height="24" color="rgba(0,0,0,.87)"></svgicon>
-        <span>{{element.displayName || element.name}}</span>
+        <div>
+          <svgicon :icon="'system/elements/'+element.name" width="24" height="24" color="rgba(0,0,0,.87)" v-if="element.name!==undefined"></svgicon>
+          <span v-if="element.name!==undefined">{{element.displayName || element.name}}</span>
+        </div>
+
 
       </div>
     </div>
@@ -59,16 +62,20 @@ export default {
 
 
 <style scoped>
+. {
+  overflow: hidden;
+}
 .menus-wrapper {
-  display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   height: calc(100% - 58px);
   width: 100%;
-  position: absolute;
-  overflow-y: auto;
 }
 
+.el-menu::before {
+  display: none;
+  content: "";
+}
 .el-menu {
   width: 100%;
   height: 100%;
