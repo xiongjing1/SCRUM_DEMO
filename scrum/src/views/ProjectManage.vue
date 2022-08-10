@@ -102,7 +102,7 @@
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     class="date-choose-ed"
-                    value-format="yyyy-MM-dd HH:mm:ss">
+                    value-format="yyyy-MM-dd">
                 </el-date-picker>
               </div>
               <div class="search-range">
