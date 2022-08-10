@@ -6,11 +6,6 @@
                  :color="showElements ? '#2b6a73' : 'rgba(0,0,0,.38)'">
         </svgicon>
       </a>
-      <a title="Settings" class="tab" @click="toggleTab('settings')" >
-        <svgicon icon="system/settings" width="24" height="24"
-                 :color="showSettings ? '#2b6a73' : 'rgba(0,0,0,.38)'">
-        </svgicon>
-      </a>
 
       <div class="tab-indicator mdc-theme--primary-bg" :style="{'left': indiLeft, 'right': indiRight}"></div>
     </div>
