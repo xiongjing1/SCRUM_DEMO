@@ -49,7 +49,7 @@
                               <el-button type="primary" @click="removeTeam = false;DelteTeam();update();" class="el-buttons">确 定</el-button>
                         </span>
                 </el-dialog>
-                <el-dialog title="Rename" :visible.sync="rename" width="350px">
+                <el-dialog title="重命名团队" :visible.sync="rename" width="350px">
                   <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                   <div slot="footer" class="rename-footer">
                     <el-button @click="rename = false">取 消</el-button>
@@ -102,7 +102,7 @@
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     class="date-choose-ed"
-                    value-format="yyyy-MM-dd HH:mm:ss">
+                    value-format="yyyy-MM-dd">
                 </el-date-picker>
               </div>
               <div class="search-range">
@@ -134,7 +134,7 @@
             </div>
             <div class="project-total" :key="this.changed">
               <div class="project-main">
-                <div class="project" v-for="(item,index) in currentPageData" :key="item.project_name">
+                <div class="project" v-for="(item,index) in currentPageData" :key="item.ID">
                   <div class="project-mode">
                     <div class="project-info" v-on:click="JumpTodesignManage(item.ID,item.project_name,item.description,item.creator_date,item.creator_id)">
                       <div class="project-name">
@@ -186,6 +186,7 @@
                     </div>
                   </div>
                 </div>
+                <div class="no-result" v-if="this.Noresult===true">搜索无结果</div>
               </div>
               <div class="pagination">
                 <el-pagination
@@ -202,11 +203,11 @@
           </div>
           <div class="right-side">
             <div class="team-summary">
-              <div class="summary-title">Profile</div>
+              <div class="summary-title">团队简述</div>
               <div class="edit-summary" @click="editSummary = true">
                 edit
               </div>
-              <el-dialog title="Rename" :visible.sync="editSummary" width="350px">
+              <el-dialog title="简述更新" :visible.sync="editSummary" width="350px">
               <textarea
                   placeholder="请输入简介内容"
                   v-model="Summarycontent"
@@ -226,7 +227,7 @@
             <el-divider></el-divider>
             <div class="team-leader">
               <div class="leader-name">
-                The Leader
+                队长信息
               </div>
               <div class="leader-nickname">
                 <img src="../assets/user.png" class="leader-img-size">
@@ -326,6 +327,7 @@ export default {
         this.$message.error('项目名不能为空')
       }else{
         let formData = new FormData();
+        let param = new FormData();
         formData.append('userID', window.localStorage.getItem('uid'));
         formData.append('teamID', window.localStorage.getItem('tid'));
         formData.append('projectName', this.Projectnameinput);
@@ -338,6 +340,13 @@ export default {
               if(response.status === 200){
                 console.log(response.data.message);
                 window.localStorage.setItem('pid',response.data.id)
+                param.append('projectID',response.data.id)
+                param.append('umlName', this.Projectnameinput);
+                param.append('userID', window.localStorage.getItem('uid'));
+                axios.post('http://43.138.21.64:8080/uml/add',param,config)
+                    .then(response => {
+                      console.log(response.data);
+                    })
               }
               else if(response.status === 404){
                 console.log(response.data.message);
@@ -362,6 +371,7 @@ export default {
           nameInput:'',
         };
         this.projectList.push(newproject);
+
       }
 
     },
@@ -470,6 +480,7 @@ export default {
           .then(response => {
             console.log(response.data.success)
             if(response.data.success===true){
+              this.Noresult=false
               this.data=response.data.message
               console.log(response.data.data)
               this.allprojectList=this.data.results
@@ -487,6 +498,7 @@ export default {
               this.load();
               this.changed=this.changed+1
             }else{
+              this.Noresult=true
               console.log("没有相关结果")
               this.total=0;
               this.projectList=[];
@@ -578,6 +590,7 @@ export default {
             .then(response => {
               console.log(response.data.success)
               if(response.data.success===true){
+                this.Noresult=false
                 this.data=response.data.message
                 console.log(this.data)
                 console.log("new")
@@ -597,6 +610,7 @@ export default {
                 this.load();
                 this.changed=this.changed+1
               }else{
+                this.Noresult=true
                 console.log("没有相关结果")
                 this.total=0;
                 this.projectList=[];
@@ -923,6 +937,7 @@ export default {
       time:'creator_date',
       asc:'desc',
       changed:0,
+      Noresult:false,
     }
   }
 };
@@ -1407,6 +1422,12 @@ export default {
 
   width: 100%;
   height: 400px;
+}
+.no-result{
+  font-family: 'jianhanzhen';
+  font-size: 50px;
+  color: #d9d9d9;
+  margin-top: 50px;
 }
 .project-total{
   width: 100%;

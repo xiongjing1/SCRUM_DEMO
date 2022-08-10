@@ -180,7 +180,7 @@ export default {
 .ateam {
 
 }
-
+.c{}
 .teamno {
   width: 10px;
   height: 10px;
