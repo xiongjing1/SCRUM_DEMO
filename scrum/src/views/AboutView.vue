@@ -77,6 +77,7 @@ import 'vditor/dist/index.css';
 import axios from 'axios';
 
 
+
 export default {
   inject:['reload'],
   data() {
@@ -200,6 +201,7 @@ export default {
         this.contentEditor.setValue(global.filecontent);
       }
     });
+    this.initWebSocket();
   },
   methods: {
     getList(){
@@ -311,6 +313,43 @@ export default {
       });
        */
     },
+    initWebSocket(){
+      const wsuri = "ws://43.138.21.64/doc/update";
+      this.websock = new WebSocket(wsuri);
+      this.websock.onmessage = this.websocketonmessage;
+      this.websock.onopen = this.websocketonopen;
+      this.websock.onerror = this.websocketonerror;
+      this.websock.onclose = this.websocketclose;
+    },
+    websocketonopen(){ //连接建立之后执行send方法发送数据
+      let actions = { test: 'test' }
+      this.websock.send(JSON.stringify(actions))
+      console.log('连接成功！')
+    },
+    websocketonerror(){//连接建立失败重连
+      this.initWebSocket();
+    },
+    websocketclose(){  //关闭
+      //console.log('断开连接');
+    },
+    websocketonmessage(e){ //数据接收
+      var jsondata=JSON.parse(e.data.replace(/\n/g,"\\n").replace(/\r/g,"\\r"));
+      this.content=jsondata.content
+      console.log(jsondata)
+      const redata = JSON.parse(e.data)
+      console.log('接收的数据', redata)
+    },
+  },
+  watch: {
+    contentEditor: {
+      sendcontent(){
+        this.sendjson.content=this.contentEditor.getValue();
+        this.sendjson.username=localStorage.getItem('token')
+        this.websocketsend(JSON.stringify(this.sendjson));
+      },
+    },
+    deep:true,
+    immediate:true
   },
 }
 </script>

@@ -68,7 +68,7 @@
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
                 <div slot="footer" class="photo-footer">
-                  <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
+                  <el-button @click="changeIcon = false;exitimage();" class="cancel-buttons">取 消</el-button>
                   <el-button @click="changeIcon = false;uploadHeadshot()" class="yes-buttons">确 定</el-button>
                 </div>
               </el-dialog>
@@ -100,11 +100,6 @@
                     fixed
                     prop="name"
                     label="项目名"
-                    width="200">
-                </el-table-column>
-                <el-table-column
-                    prop="ID"
-                    label="项目ID"
                     width="200">
                 </el-table-column>
                 <el-table-column
@@ -159,7 +154,7 @@
                         <span>确认要永久删除项目 {{currentRow.name}} 吗？</span>
                         <span slot="footer" class="dialog-footer">
                               <el-button @click="remove = false">取 消</el-button>
-                              <el-button type="primary" @click="remove= false;" @click.native.prevent="deleteRow(currentRow);update();" class="el-buttons">确 定</el-button>
+                              <el-button type="primary" @click="remove= false;" @click.native.prevent="deleteProject(currentRow);update();" class="el-buttons">确 定</el-button>
                         </span>
                       </el-dialog>
                     </div>
@@ -210,23 +205,23 @@
             <div class="leader-nickname">
               <img src="../assets/user.png" class="leader-img-size">
               <div class="nickname">姓名</div>
-              <div class="name-info">徐亦佳</div>
+              <div class="name-info">{{leader.l_name}}</div>
             </div>
             <div class="leader-email">
               <img src="../assets/mail.png" class="leader-img-size">
               <div class="email">电子邮箱</div>
-              <div class="email-info">1223160472@qq.com</div>
+              <div class="email-info">{{ leader.l_email }}</div>
             </div>
             <div class="leader-active">
               <img src="../assets/login.png" class="leader-img-size">
               <div class="active">上次登录</div>
-              <div class="active-info">5分钟前</div>
+              <div class="active-info">{{leader.l_login_time}}</div>
             </div>
           </div>
           <el-divider></el-divider>
           <div class="lately-operation">
             <div class="lately-operation-title">
-              Recent operations</div>
+            </div>
           </div>
         </div>
     </div>
@@ -249,6 +244,9 @@ export default {
     HeadSide,
   },
   mounted() {
+    this.$axios.get('http://43.138.21.64:8080/user/'+window.localStorage.getItem('uid')+'/team/'+window.localStorage.getItem('tid')).then((res) => {
+      this.leader=res.data.leader
+    })
     document.body.style.backgroundColor="#FFFFFF";
     let param = new FormData() // 创建form对象
     param.append('teamID',  window.localStorage.getItem('tid'))// 通过append向form对象添加数据
@@ -273,6 +271,29 @@ export default {
 
   },
   methods:{
+    deleteProject(current){
+      let formData = new FormData();
+      formData.append('projectID', current.ID);
+      formData.append('userID',  window.localStorage.getItem('uid'));
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      };
+      axios.post('http://43.138.21.64:8080/project/remove/one',formData,config)
+          .then(response => {
+            if(response.status === 200){
+              console.log(response.data.message);
+            }
+            else if(response.status === 404){
+              console.log(response.data.message);
+            }
+            else{
+              console.log(response.data.message);
+            }
+          })
+    },
+    exitimage(){
+      this.imageUrl=''
+    },
     update(){
       this.reload()
       console.log('刷新页面')
@@ -313,7 +334,6 @@ export default {
       var formData = new FormData();
       formData.append('is_change_headshot', '1')// 通过append向form对象添加数据
       formData.append('new_headshot', this.newheadshot)
-      this.teamshot=this.imageUrl
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
@@ -324,6 +344,7 @@ export default {
             if (response.data.errno === 8000) {
               this.$message.success(response.data.msg)
               this.teamshot='http://43.138.21.64:8080'+response.data.new_headshot
+              this.teamshot=this.imageUrl
               window.localStorage.setItem('theadshot',this.teamshot)
               this.update();
             }else{
@@ -450,6 +471,7 @@ export default {
   },
   data(){
     return{
+      leader:[],
       input:'',
       options: [{
         value: '选项1',
@@ -866,10 +888,15 @@ export default {
 }
 .lately-operation-title{
   font-size: 19px;
-  width:160px;
+  width:300px;
   margin-left: 10px;
-  font-family: Inter, "Segoe UI", 黑体;
   height: 250px;
+  margin-top:10px;
+}
+.foot-img{
+  margin-left: 10px;
+  width: 300px;
+  height: 230px;
 }
 .edit-summary{
   display: flex;

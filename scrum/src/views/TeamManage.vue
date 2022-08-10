@@ -68,7 +68,7 @@
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
                 <div slot="footer" class="photo-footer">
-                  <el-button @click="changeIcon = false" class="cancel-buttons">取 消</el-button>
+                  <el-button @click="changeIcon = false;exitimage();" class="cancel-buttons">取 消</el-button>
                   <el-button @click="changeIcon = false;uploadHeadshot()" class="yes-buttons">确 定</el-button>
                 </div>
               </el-dialog>
@@ -108,11 +108,6 @@
                     prop="m_name"
                     label="姓名"
                     width="180">
-                </el-table-column>
-                <el-table-column
-                    prop="m_id"
-                    label="uid"
-                    width="150">
                 </el-table-column>
                 <el-table-column
                     prop="m_nickname"
@@ -259,7 +254,7 @@
           <el-divider></el-divider>
           <div class="lately-operation">
             <div class="lately-operation-title">
-              Recent operations
+
             </div>
           </div>
         </div>
@@ -312,6 +307,9 @@ export default {
     }
   },
   methods:{
+    exitimage(){
+      this.imageUrl=''
+    },
     update(){
       this.reload()
       console.log('刷新页面')
@@ -396,7 +394,6 @@ export default {
       formData.append('is_change_headshot', this.addmember)// 通过append向form对象添加数据
       formData.append('new_headshot', this.newheadshot)
 
-      this.teamshot=this.imageUrl
       let config = {
         headers: {'Content-Type': 'multipart/form-data'}
       } // 添加请求头
@@ -407,6 +404,7 @@ export default {
             if (response.data.errno === 8000) {
               this.$message.success(response.data.msg)
               this.teamshot='http://43.138.21.64:8080'+response.data.new_headshot
+              this.teamshot=this.imageUrl
               window.localStorage.setItem('theadshot',this.teamshot)
               this.update();
             }else{
@@ -1022,10 +1020,15 @@ export default {
 }
 .lately-operation-title{
   font-size: 19px;
-  width:160px;
+  width:300px;
   margin-left: 10px;
-  font-family: Inter, "Segoe UI", 黑体;
   height: 250px;
+  margin-top:-25px;
+}
+.foot-img{
+  margin-left: 10px;
+  width: 300px;
+  height: 230px;
 }
 .edit-summary{
   display: flex;

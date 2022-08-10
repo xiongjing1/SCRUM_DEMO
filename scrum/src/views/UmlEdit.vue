@@ -24,6 +24,8 @@ export default {
       name:'',
       imgurl:'',
       clickd:false,
+      ss:'',
+      umlid:'',
     }
   },
   mounted(){
@@ -35,7 +37,43 @@ export default {
     this.edit();
   },
   methods:{
-
+    saveuml(xmlpng){
+      var formData = new FormData();
+      formData.append('userID', window.localStorage.getItem('uid'))
+      formData.append('docID', window.localStorage.getItem('pid'))// 通过append向form对象添加数据
+      formData.append('docType', '2')
+      formData.append('content', xmlpng)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/doc/update', formData,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.success === true) {
+              console.log('yeah')
+            }else{
+              console.log('nop')
+            }
+          })
+    },
+    getuml(){
+      var formData = new FormData();
+      formData.append('projectID', window.localStorage.getItem('pid'))// 通过append向form对象添加数据
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/uml/get', formData,config)
+          .then(response => {
+            console.log(response.data)
+            if (response.data.success === true) {
+              this.content=response.data.content
+              console.log('yeah1')
+            }else{
+              console.log('nop')
+            }
+          })
+    },
     start(){
       var current = localStorage.getItem(name);
 
@@ -57,6 +95,7 @@ export default {
     },
     edit(){
       var content=this.content
+      var _this=this
       var iframe = document.createElement('iframe');
       iframe.setAttribute('frameborder', '0');
       iframe.setAttribute('style', 'position:absolute;top:50px;width:100%;height:661px');
@@ -103,56 +142,30 @@ export default {
               console.log("导出xmlpng")
               console.log(msg.data)
               window.localStorage.setItem(name,JSON.stringify({lastModified: new Date(), xmlpng: msg.data}))
-              //this.saveuml(msg.data);
+              _this.saveuml(msg.data);
           }
           else if (msg.event == 'exit')
           {
-            close();
+            iframe.remove();
+            _this.JumpTodesignManage();
           }
         }
       };
       window.addEventListener('message', receive);
+      iframe.setAttribute('src', editor);
       if(this.clickd==false){
-        iframe.setAttribute('src', editor);
         document.body.appendChild(iframe);
         this.clickd=true
       }
     },
-    saveuml(xmlpng){
-      var formData = new FormData();
-      formData.append('projectID', window.localStorage.getItem('pid'))// 通过append向form对象添加数据
-      formData.append('content', xmlpng)
-      let config = {
-        headers: {'Content-Type': 'multipart/form-data'}
-      } // 添加请求头
-      axios.post('http://43.138.21.64:8080/uml/save', formData,config)
-          .then(response => {
-            console.log(response.data)
-            // console.log("denglu:"+response.data);
-            if (response.status === 200) {
-              this.$message.success(response.data.msg)
-            }else{
-              this.$message.error(response.data.msg);
-            }
-          })
+    JumpTodesignManage() {
+      this.$router.push({
+        name:'designManage',
+        params:{
+          pid:window.localStorage.getItem('pid')
+        }
+      });
     },
-    getuml(){
-      var formData = new FormData();
-      formData.append('projectID', window.localStorage.getItem('pid'))// 通过append向form对象添加数据
-      let config = {
-        headers: {'Content-Type': 'multipart/form-data'}
-      } // 添加请求头
-      axios.post('http://43.138.21.64:8080/uml/get', formData,config)
-          .then(response => {
-            console.log(response.data)
-            if (response.status === 200) {
-              this.content=response.data.content
-              console.log(response.data.msg)
-            }else{
-             console.log(response.data.msg);
-            }
-          })
-    }
   },
 
 }
