@@ -17,7 +17,7 @@
         </div>
       </div>
       </div>
-      <div class="team-part">
+      <div class="team-part1">
         <img src="../assets/add.png" height="16px" alt=" " style="float: left;margin-left: 16px; margin-top: 10px;">
         <div class="teamname" style="margin-left: 17px" v-on:click="begin_create=true">创建一个新团队</div>
       </div>
@@ -207,12 +207,23 @@ export default {
   width: 100%;
   height: 36px;
   cursor: default;
+
 }
 
 .team-part:hover {
   background-color: #ECECEC;
 }
+.team-part1 {
+  width: 100%;
+  height: 36px;
+  cursor: default;
+  position: absolute;
+  bottom: 40px;
+}
 
+.team-part1:hover {
+  background-color: #ECECEC;
+}
 .projectname {
   float: left;
   text-align: left;

@@ -102,7 +102,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/ProtoTypeView')
   },
   {
-    path: '/UmlEdit',
+    path: '/UmlEdit/:pid',
     name: 'UmlEdit',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
