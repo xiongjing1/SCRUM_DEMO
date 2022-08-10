@@ -1,6 +1,11 @@
 <template>
   <div>
     <HeadSide></HeadSide>
+    <div class="editing">
+      <div class="tempavatar" v-for="(item,index) in userList" v-bind:key="index">
+        <img  :src="item.headshot">
+      </div>
+    </div>
     <div class="mainbody">
     <el-col :span="4" class="filelist" >
       <img src="../assets/backtohome.png" style="position: absolute;left: 14px;top:18px;z-index: 1000;height: 28px;width:28px;cursor: pointer" v-on:click="jumpback">
@@ -682,5 +687,33 @@ export default {
 }
 span::selection{
   box-shadow: 0px 0px 10px #2c3e50;
+}
+.editing{
+  z-index: 10000;
+  top:0;
+  position: absolute;
+  left: 260px;
+  width: 300px;
+  height: 50px;
+
+}
+.tempavatar{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  float: left;
+  margin-left: 20px;
+  margin-top: 10px;
+  text-align: left;
+  background-color: #2c3e50;
+}
+.tempavatar img{
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0 auto;
+  height: 100%;
 }
 </style>

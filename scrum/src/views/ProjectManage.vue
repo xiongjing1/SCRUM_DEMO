@@ -998,7 +998,6 @@ export default {
   padding-top: 20px;
   width: 600px;
   height: 70px;
-
   margin-top: 10px;
   margin-left: 30px;
   font-size: 30px;
