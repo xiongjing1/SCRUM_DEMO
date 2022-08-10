@@ -191,6 +191,7 @@
 import LeftSide from "@/components/LeftSide";
 import HeadSide from "@/components/HeadSide";
 import axios from "axios";
+import global from "@/api/global";
 
 export default {
   name: "TeamManage",
@@ -226,7 +227,8 @@ export default {
             // console.log("denglu:"+response.data);
             if (response.data.success === true) {
               window.localStorage.setItem('pintro',this.Summarycontent)
-              this.$message.success(response.data.msg)
+              this.$message.success(response.data.msg);
+              this.reload();
             }else {
               this.pintrocancel();
               this.$message.error("编辑简介失败！");
@@ -281,6 +283,8 @@ export default {
       return isJPG && isLt2M;
     },
     jumpToFileCenter(){
+      global.activeid='';
+      global.filecontent='';
       this.$router.push({
         name:'fileCenter',
       });

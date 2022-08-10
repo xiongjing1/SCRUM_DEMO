@@ -269,6 +269,7 @@
 import HeadSide from "@/components/HeadSide";
 import LeftSide from "@/components/LeftSide";
 import axios from "axios";
+import global from "@/api/global";
 
 export default {
   name: "TeamManage",
@@ -425,6 +426,8 @@ export default {
       return isJPG && isLt2M;
     },
     jumpToFileCenter(){
+      global.activeid='';
+      global.filecontent='';
       this.$router.push({
         name:'fileCenter',
       });
