@@ -340,6 +340,7 @@ export default {
               if(response.status === 200){
                 console.log(response.data.message);
                 window.localStorage.setItem('pid',response.data.id)
+                window.localStorage.setItem('pname',this.Projectnameinput)
                 param.append('projectID',response.data.id)
                 param.append('umlName', this.Projectnameinput);
                 param.append('userID', window.localStorage.getItem('uid'));

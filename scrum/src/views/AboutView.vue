@@ -143,25 +143,7 @@ export default {
       editfile:'',
       contentEditor: {},
       tableData: [],
-      searchData:[{
-        ID:'1',
-        name:'1156151651',
-        creatorID: '1',
-        createdDate:'1',
-        modifiedDate: '1',
-        content: '',
-        projectID: '1',
-        isRecycled: false,
-      },{
-        ID:'2',
-        name:'2',
-        creatorID: '1',
-        createdDate:'1',
-        modifiedDate: '1',
-        content: '',
-        projectID: '1',
-        isRecycled: false,
-      }],
+      searchData:[],
       userList:[],
     }
   },
@@ -430,6 +412,7 @@ export default {
         console.log("the length"+this.userList.length);
         console.log("waht"+this.userList);
       }
+      console.log(this.userList)
     },
     sendcontent(){
       this.sendjson.content=this.editinput;
