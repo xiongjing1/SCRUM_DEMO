@@ -49,7 +49,7 @@
                               <el-button type="primary" @click="removeTeam = false;DelteTeam();update();" class="el-buttons">确 定</el-button>
                         </span>
                 </el-dialog>
-                <el-dialog title="Rename" :visible.sync="rename" width="350px">
+                <el-dialog title="重命名" :visible.sync="rename" width="350px">
                   <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                   <div slot="footer" class="rename-footer">
                     <el-button @click="rename = false">取 消</el-button>
@@ -214,11 +214,11 @@
           </div>
           <div class="right-side">
             <div class="team-summary">
-              <div class="summary-title">Project Profile</div>
+              <div class="summary-title">项目简述</div>
               <div class="edit-summary" @click="editSummary = true">
                 edit
               </div>
-              <el-dialog title="Rename" :visible.sync="editSummary" width="350px">
+              <el-dialog title="简述更新" :visible.sync="editSummary" width="350px">
               <textarea
                   placeholder="请输入简介内容"
                   v-model="Summarycontent"
@@ -238,7 +238,7 @@
             <el-divider></el-divider>
             <div class="team-leader">
               <div class="leader-name">
-                The Project
+                项目信息
               </div>
               <div class="leader-nickname">
                 <img src="../assets/user.png" class="leader-img-size">

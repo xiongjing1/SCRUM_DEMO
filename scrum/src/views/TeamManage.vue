@@ -49,7 +49,7 @@
                               <el-button type="primary" @click="removeTeam = false;DelteTeam();update();" class="el-buttons">确 定</el-button>
                         </span>
               </el-dialog>
-              <el-dialog title="Rename" :visible.sync="rename" width="350px">
+              <el-dialog title="重命名" :visible.sync="rename" width="350px">
                 <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="rename = false">取 消</el-button>
@@ -83,8 +83,8 @@
             <div class="members-add" v-on:click="invite = true" v-if="IsManage===true">
               Add member
             </div>
-            <el-dialog title="Invite By Email" :visible.sync="invite" width="350px">
-              <el-input v-model="inviteEmail" placeholder="Email" class="invite-input"></el-input>
+            <el-dialog title="邀请成员加入" :visible.sync="invite" width="350px">
+              <el-input v-model="inviteEmail" placeholder="请输入邮箱" class="invite-input"></el-input>
               <div slot="footer" class="rename-footer">
                 <el-button @click="invite = false">取 消</el-button>
                 <el-button @click="invite = false;sendInvite();" class="el-buttons">确 定</el-button>
@@ -209,11 +209,11 @@
         </div>
         <div class="right-side">
           <div class="team-summary">
-            <div class="summary-title">Profile</div>
+            <div class="summary-title">团队简述</div>
             <div class="edit-summary" @click="editSummary = true">
               edit
             </div>
-            <el-dialog title="Rename" :visible.sync="editSummary" width="350px">
+            <el-dialog title="简述更新" :visible.sync="editSummary" width="350px">
               <textarea
                   placeholder="请输入简介内容"
                   v-model="Summarycontent"
@@ -233,7 +233,7 @@
           <el-divider></el-divider>
           <div class="team-leader">
             <div class="leader-name">
-              The Leader
+              队长信息
             </div>
             <div class="leader-nickname">
               <img src="../assets/user.png" class="leader-img-size">
