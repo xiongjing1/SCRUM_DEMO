@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-empty description="页面内容不可见！！！" v-show="!visable"></el-empty>
+    <el-empty description="页面内容不可见！！！" v-show="!visable" id="pic"></el-empty>
 
     <div class="preview" v-show="visable">
-      <img src="../assets/PrototypeMaterial/note.png" height="25px"  title="删除选中元素" id="left" @click="minus">
-      <img src="../assets/PrototypeMaterial/note.png" height="25px"  title="删除选中元素" id="right" @click="add">
+      <i class="el-icon-arrow-left" style="padding: 5px" id="left" title="浏览之后页面" @click.stop="minus"></i>
+      <i class="el-icon-arrow-right" style="padding: 5px" id="right"  title="浏览之前页面" @click.stop="add"></i>
       <PrevStage :page="prototypes[pageindex]"></PrevStage>
     </div>
 
@@ -23,7 +23,7 @@ export default {
   components: { PrevStage },
   data: function () {
     return {
-      visable:true,
+      visable:false,
       pageindex:0,
       prototypes:[],
     }
@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     init(){
-      //const that = this
+      const that = this
 
       let dataPost = new FormData()
       dataPost.append('userID', window.localStorage.getItem('uid'))
@@ -44,14 +44,6 @@ export default {
       let config ={
         headers: {'Content-Type': 'multipart/form-data'}
       }
-      // const that = this
-      //axios.post('http://43.138.21.64:8080/prototype/get', dataPost , config).then( res => {
-      //  console.log(res)
-      //  if(res.status === 200){
-      //    console.log(res.data.message.prototype)
-      //    that.prototypeData = res.data.message.prototype.results
-      //  }
-      //})
       axios.post('http://43.138.21.64:8080/doc/get/all', dataPost , config).then( res => {
         console.log(res)
         if(res.status === 200){
@@ -63,37 +55,38 @@ export default {
           {
             if(dataArr[i].content === null) {
               const pageTemp = newPage(dataArr[i].ID ,dataArr[i].name ,dataArr[i].canvasHeight ,dataArr[i].canvasWidth)
-              this.prototypes.push(pageTemp)
+              that.prototypes.push(pageTemp)
             }
-            else this.prototypes.push(JSON.parse(dataArr[i].content))
+            else that.prototypes.push(JSON.parse(dataArr[i].content))
           }
           console.log(this.prototypes)
         }
       })
-      //axios.post('http://43.138.21.64:8080/prototype/get', dataPost , config).then( res => {
-      //  console.log(res)
-      //  if(res.status === 200){
-      //    console.log(res)
-      //    let dataArr = res.data.message.prototype.results.filter(ele =>{
-      //      return ele.isRecycled === false }) || []
-      //    for (var i=0;i<dataArr.length;i++)
-      //    {
-      //     if(dataArr[i].content === null) {
-      //        const pageTemp = newPage(dataArr[i].ID ,dataArr[i].name ,dataArr[i].canvasHeight ,dataArr[i].canvasWidth)
-     //         this.pages.push(pageTemp)
-      //      }
-      //      else this.pages.push(JSON.parse(dataArr[i].content))
-      //    }
-      //   console.log(this.pages)
-      //  }
-      //})
+      let dataPost2 = new FormData()
+      dataPost2.append('projectID', that.$route.params.pid);
+      let config2 ={
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      axios.post("http://43.138.21.64:8080/project/preview/get",dataPost2 , config2).then( res => {
+        console.log(res)
+        that.visable = res.data.preview
+
+        console.log(that.visable)
+        //const prototypeContent = that.prototypeData[that.indexSelected]
+        //prototypeContent.content = json
+        //that.prototypeData.splice(that.indexSelected , 1 , prototypeContent)
+        //console.log(that.prototypeData[that.indexSelected].content)
+      })
+
     },
     add(){
       if(this.pageindex < this.prototypes.length - 1) this.pageindex = this.pageindex + 1
+      else this.$message("已经到头了")
       console.log(this.pageindex)
     },
     minus(){
       if(this.pageindex > 0) this.pageindex = this.pageindex - 1
+      else this.$message("已经到头了")
       console.log(this.pageindex)
     }
   },
@@ -109,15 +102,15 @@ export default {
   margin: auto;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
 .preview {
   height: 100%;
   width: 100%;
   overflow: scroll;
 
-  box-shadow:
-    0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 1px 5px 0 rgba(0, 0, 0, 0.12),
-    0 3px 1px -2px rgba(0, 0, 0, 0.2);
+
 }
 
 .action-bar__wrapper {
@@ -176,8 +169,19 @@ export default {
 
 #left{
   float: left;
+  position:absolute;
+  top:300px;
+  left:0
 }
 #right{
   float: right;
+  position:absolute;
+  top:300px;
+  right: 10px;
+}
+#pic{
+  position: absolute;
+  top:30%;
+  left: 45%;
 }
 </style>

@@ -118,7 +118,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/PrototypeHtml')
   },
   {
-    path: '/Preview/:pid',
+    path: '/Preview/:pid/:userid',
     name: 'previewView',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
