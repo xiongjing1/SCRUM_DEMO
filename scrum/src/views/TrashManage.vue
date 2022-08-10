@@ -49,7 +49,7 @@
                               <el-button type="primary" @click="removeTeam = false;DelteTeam();update();" class="el-buttons">确 定</el-button>
                         </span>
                 </el-dialog>
-                <el-dialog title="Rename" :visible.sync="rename" width="350px">
+                <el-dialog title="重命名" :visible.sync="rename" width="350px">
                   <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                   <div slot="footer" class="rename-footer">
                     <el-button @click="rename = false">取 消</el-button>
@@ -214,11 +214,11 @@
           </div>
           <div class="right-side">
             <div class="team-summary">
-              <div class="summary-title">Project Profile</div>
+              <div class="summary-title">项目简述</div>
               <div class="edit-summary" @click="editSummary = true">
                 edit
               </div>
-              <el-dialog title="Rename" :visible.sync="editSummary" width="350px">
+              <el-dialog title="简述更新" :visible.sync="editSummary" width="350px">
               <textarea
                   placeholder="请输入简介内容"
                   v-model="Summarycontent"
@@ -226,8 +226,8 @@
                   name="comment">
               </textarea>
                 <div slot="footer" class="rename-footer">
-                  <el-button @click="editSummary = false">取 消</el-button>
-                  <el-button @click="editSummary = false" class="el-buttons">确 定</el-button>
+                  <el-button @click="editSummary = false;pintrocancel();">取 消</el-button>
+                  <el-button @click="editSummary = false;pintroedit();" class="el-buttons">确 定</el-button>
                 </div>
               </el-dialog>
             </div>
@@ -238,7 +238,7 @@
             <el-divider></el-divider>
             <div class="team-leader">
               <div class="leader-name">
-                The Project
+                项目信息
               </div>
               <div class="leader-nickname">
                 <img src="../assets/user.png" class="leader-img-size">
@@ -259,7 +259,7 @@
             <el-divider></el-divider>
             <div class="lately-operation">
               <div class="lately-operation-title">
-                Recent operations
+
               </div>
             </div>
           </div>
@@ -306,6 +306,29 @@ export default {
         })
   },
   methods:{
+    pintrocancel(){
+      this.Summarycontent=''
+    },
+    pintroedit(){
+      let param = new FormData() // 创建form对象
+      param.append('projectID', window.localStorage.getItem('pid'))// 通过append向form对象添加数据
+      param.append('description', this.Summarycontent)
+      let config = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      } // 添加请求头
+      axios.post('http://43.138.21.64:8080/project/description/update', param,config)
+          .then(response => {
+            console.log(response.data)
+            // console.log("denglu:"+response.data);
+            if (response.data.success === true) {
+              window.localStorage.setItem('pintro',this.Summarycontent)
+              this.$message.success(response.data.msg)
+            }else {
+              this.pintrocancel();
+              this.$message.error("编辑简介失败！");
+            }
+          })
+    },
     update(){
       this.reload()
       console.log('刷新页面')

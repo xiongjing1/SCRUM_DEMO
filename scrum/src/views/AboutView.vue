@@ -62,7 +62,7 @@
 
     </el-col>
     <el-col :span="4">
-      <div id="vditor"  name="description" class="edit"  ></div>
+      <div id="vditor"  name="description" class="edit" ></div>
       <div style="margin-top: 10px;position: absolute;left: 730px;top: 703px;">
         <el-button type="primary"  @click="submit()">提交</el-button>
       </div>
@@ -99,12 +99,26 @@ import global from "@/api/global";
 import 'vditor/dist/index.css';
 import axios from 'axios';
 
-
+function contains(arr, obj) {
+  var i = arr.length;
+  while (i--) {
+    if (arr[i].username=== obj) {
+      return true;
+    }
+  }
+  return false;
+}
 
 export default {
   inject:['reload'],
   data() {
     return {
+      sendjson:{
+        username:'',
+        content:'',
+        headshot:'',
+      },
+      editinput:'',
       dialogVisible: false,
       input1:'',
       editfile:'',
@@ -129,6 +143,7 @@ export default {
         projectID: '1',
         isRecycled: false,
       }],
+      userList:[],
     }
   },
   mounted() {
@@ -151,7 +166,9 @@ export default {
             console.log('文档列表获取失败');
           }
         })
-
+    this.initWebSocket();
+    console.log("wb")
+    var _this=this
     this.editfile=global.filename;
     this.contentEditor = new Vditor('vditor', {
       height: 710,
@@ -224,9 +241,12 @@ export default {
         }],
       after:()=>{
         this.contentEditor.setValue(global.filecontent);
-      }
+      },
+      input(md){
+        _this.editinput=md
+        console.log(_this.editinput)
+      },
     });
-    this.initWebSocket();
   },
   methods: {
     getModel(index){
@@ -264,6 +284,7 @@ export default {
       global.fileid=id;
       global.filename=name;
       global.filecontent=content;
+      window.localStorage.setItem('docID',id)
       this.reload();
     },
     handleNew() {
@@ -350,7 +371,8 @@ export default {
        */
     },
     initWebSocket(){
-      const wsuri = "ws://43.138.21.64/doc/update";
+      const wsuri = "ws://43.138.21.64:8080/ws/chat/"+ window.localStorage.getItem('docID')+'/';
+      console.log(wsuri)
       this.websock = new WebSocket(wsuri);
       this.websock.onmessage = this.websocketonmessage;
       this.websock.onopen = this.websocketonopen;
@@ -358,8 +380,6 @@ export default {
       this.websock.onclose = this.websocketclose;
     },
     websocketonopen(){ //连接建立之后执行send方法发送数据
-      let actions = { test: 'test' }
-      this.websock.send(JSON.stringify(actions))
       console.log('连接成功！')
     },
     websocketonerror(){//连接建立失败重连
@@ -370,22 +390,37 @@ export default {
     },
     websocketonmessage(e){ //数据接收
       var jsondata=JSON.parse(e.data.replace(/\n/g,"\\n").replace(/\r/g,"\\r"));
-      this.content=jsondata.content
       console.log(jsondata)
-      const redata = JSON.parse(e.data)
-      console.log('接收的数据', redata)
+      this.content=jsondata.content
+
+      this.contentEditor.setValue(this.content)
+      if(contains(this.userList,jsondata.username)){
+        console.log("有了")
+      }
+      else {
+        var tmp={
+          "username":jsondata.username,
+          "headshot":jsondata.headshot,
+        }
+        this.userList.push(tmp)
+      }
+    },
+    sendcontent(){
+      this.sendjson.content=this.editinput;
+      this.sendjson.username=window.localStorage.getItem('name')
+      this.sendjson.headshot=window.localStorage.getItem('headshot')
+      this.websocketsend(JSON.stringify(this.sendjson));
+      console.log('发送数据')
+    },
+    websocketsend(Data){//数据发送
+      this.websock.send(Data);
     },
   },
   watch: {
-    contentEditor: {
-      sendcontent(){
-        this.sendjson.content=this.contentEditor.getValue();
-        this.sendjson.username=localStorage.getItem('token')
-        this.websocketsend(JSON.stringify(this.sendjson));
-      },
+    editinput(){
+        console.log('yes')
+        this.sendcontent();
     },
-    deep:true,
-    immediate:true
   },
 }
 </script>
