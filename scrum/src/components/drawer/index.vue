@@ -68,7 +68,7 @@ export default {
 }
 .navigation {
   overflow-x: hidden;
-  top: 0;
+  top: 50px;
   right: 0;
   z-index: 1005;
   width: 350px;

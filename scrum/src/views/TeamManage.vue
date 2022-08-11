@@ -81,7 +81,7 @@
         <div class="left-side">
           <div class="members-top-side">
             <div class="members-add" v-on:click="invite = true" v-if="IsManage===true">
-              Add member
+              添加成员
             </div>
             <el-dialog title="邀请成员加入" :visible.sync="invite" width="350px">
               <el-input v-model="inviteEmail" placeholder="请输入邮箱" class="invite-input"></el-input>
@@ -211,7 +211,7 @@
           <div class="team-summary">
             <div class="summary-title">团队简述</div>
             <div class="edit-summary" @click="editSummary = true">
-              edit
+              编辑
             </div>
             <el-dialog title="简述更新" :visible.sync="editSummary" width="350px">
               <textarea

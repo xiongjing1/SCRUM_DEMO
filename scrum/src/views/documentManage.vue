@@ -89,13 +89,13 @@
                 <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump"></el-input>
               </div>
               <div class="search-button" @click="handleSearch()">
-                search
+                搜索
               </div>
               <el-popover  trigger="click" placement="right" popper-class="moreinfo" >
                 <p><el-input v-model="input1" placeholder="请输入文件名" style="width: 400px;"></el-input></p>
                 <p><el-button class="confirmbnt" type="primary" size="mini" @click="handleNew()">确认</el-button></p>
                 <div slot="reference" class="name-wrapper" >
-                  <el-button class="new-button">new<i class="el-icon-edit el-icon--right"></i></el-button>
+                  <el-button class="new-button">新建<i class="el-icon-edit el-icon--right"></i></el-button>
                 </div>
               </el-popover>
             </div>
@@ -105,14 +105,14 @@
                 <div class="design-box" v-on:click="JumpTodesignManage()">
                   <img src="../assets/design.png" class="design-img">
                   <div class="design-title">
-                    design
+                    设计
                   </div>
                 </div>
                 <div class="document-box" v-on:click="JumpTodocumentManage()">
                   <div class="document-content">
                     <img src="../assets/document-set.png" class="document-img">
                     <div class="document-title">
-                      document
+                      文档
                     </div>
                   </div>
                   <img src="../assets/line.png" class="line-img">
@@ -120,7 +120,7 @@
                 <div class="trash-box" v-on:click="JumpToTrashManage()">
                   <img src="../assets/trash.png" class="trash-img">
                   <div class="trash-title">
-                    trash
+                    回收站
                   </div>
                 </div>
               </div>
@@ -199,7 +199,7 @@
             <div class="team-summary">
               <div class="summary-title">项目简述</div>
               <div class="edit-summary" @click="editSummary = true">
-                edit
+                编辑
               </div>
               <el-dialog title="简述更新" :visible.sync="editSummary" width="350px">
               <textarea

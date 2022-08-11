@@ -92,20 +92,20 @@
                 <div class="design-box" v-on:click="JumpTodesignManage()">
                   <img src="../assets/design.png" class="design-img">
                   <div class="design-title">
-                    design
+                    设计
                   </div>
                 </div>
                 <div class="document-box" v-on:click="JumpTodocumentManage()">
                   <img src="../assets/document.png" class="document-img">
                   <div class="document-title">
-                    document
+                    文档
                   </div>
                 </div>
                 <div class="trash-box" v-on:click="JumpToTrashManage()">
                   <div class="trash-content">
                     <img src="../assets/trash-set.png" class="trash-img">
                     <div class="trash-title">
-                      trash
+                      回收站
                     </div>
                   </div>
                   <div class="trash-line">
@@ -217,7 +217,7 @@
             <div class="team-summary">
               <div class="summary-title">项目简述</div>
               <div class="edit-summary" @click="editSummary = true">
-                edit
+                编辑
               </div>
               <el-dialog title="简述更新" :visible.sync="editSummary" width="350px">
               <textarea

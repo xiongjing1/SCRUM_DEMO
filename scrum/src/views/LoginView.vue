@@ -67,7 +67,7 @@ export default {
   },
   data () {
     return {
-      tabList: ['Log in', 'Register'],
+      tabList: ['登陆', '注册'],
       tabLen: '',
       currentIndex: 0,
       slideLeft: '',

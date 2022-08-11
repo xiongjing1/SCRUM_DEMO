@@ -178,7 +178,7 @@
           <div class="team-summary">
             <div class="summary-title">团队简述</div>
             <div class="edit-summary" @click="editSummary = true">
-              edit
+              编辑
             </div>
             <el-dialog title="简述更新" :visible.sync="editSummary" width="350px">
               <textarea

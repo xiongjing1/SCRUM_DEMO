@@ -28,7 +28,7 @@
             <div class="edit-header">
               <img :src="imgStr" alt="">
             </div>
-            <div class="upload-header" >Edit</div>
+            <div class="upload-header" >编辑</div>
           </div>
           <div class="information">
             <div class="atitle">用户昵称</div>

@@ -81,18 +81,18 @@
           <div class="left-side">
             <div class="project-top-side">
               <div class="project-add" v-on:click="addProject = true">
-                Add project
+                添加项目
               </div>
-              <el-dialog title="Add New Project" :visible.sync="addProject" width="350px">
-                <el-input v-model="Projectnameinput" placeholder="Please input the name" class="project-input"></el-input>
-                <el-input v-model="Projectdescriptioninput" placeholder="Please input the description" class="project-input"></el-input>
+              <el-dialog title="添加新项目" :visible.sync="addProject" width="350px">
+                <el-input v-model="Projectnameinput" placeholder="请输入项目名" class="project-input"></el-input>
+                <el-input v-model="Projectdescriptioninput" placeholder="请输入项目描述" class="project-input"></el-input>
                 <div slot="footer" class="rename-footer">
                   <el-button @click="addProject = false">取 消</el-button>
                   <el-button class="el-buttons" @click="addProject = false ; createProject();update();" >确 定</el-button>
                 </div>
               </el-dialog>
               <div class="project-trash" v-on:click="JumpToProjectTrash()">
-                trash
+                回收站
               </div>
               <div class="date-choose">
                 <el-date-picker
@@ -119,7 +119,7 @@
                 <el-input v-model="input" prefix-icon="el-icon-search" placeholder="搜索..." v-on:keyup.enter.native="searchjump()"></el-input>
               </div>
               <div class="search-button" @click="searchjump()">
-                search
+                搜索
               </div>
             </div>
             <div class="project-second-side">
@@ -157,7 +157,7 @@
                     <div class="project-operation">
                       <div class="project-operation-rename">
                         <img src="../assets/rename.png" class="project-rename-img" @click="renamed = true;currentRow=index">
-                        <el-dialog title="Rename" :visible.sync="renamed" width="350px">
+                        <el-dialog title="重命名" :visible.sync="renamed" width="350px">
                           <el-input v-model="nameInput" placeholder="请输入新名称" class="rename-input"></el-input>
                           <div slot="footer" class="rename-footer">
                             <el-button @click="renamed = false">取 消</el-button>
@@ -205,7 +205,7 @@
             <div class="team-summary">
               <div class="summary-title">团队简述</div>
               <div class="edit-summary" @click="editSummary = true">
-                edit
+                编辑
               </div>
               <el-dialog title="简述更新" :visible.sync="editSummary" width="350px">
               <textarea
